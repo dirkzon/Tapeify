@@ -1,4 +1,8 @@
 name: Deploy static content to Pages
+env:
+  VITE_SPOTIFY_AUTH_URI: ${{ env.VITE_SPOTIFY_AUTH_URI }}
+  VITE_CLIENT_ID: ${{ env.VITE_CLIENT_ID }}
+  VITE_REDIRECT_URI: ${{ env.VITE_REDIRECT_URI }}
 
 on:
   # Runs on pushes targeting the default branch
@@ -26,10 +30,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    env:
-      VITE_SPOTIFY_AUTH_URI: ${{ env.VITE_SPOTIFY_AUTH_URI }}
-      VITE_CLIENT_ID: ${{ env.VITE_CLIENT_ID }}
-      VITE_REDIRECT_URI: ${{ env.VITE_REDIRECT_URI }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
