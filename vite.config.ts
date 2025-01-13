@@ -16,4 +16,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        callback: 'callback/index.html',
+      },
+    },
+  }
 })
