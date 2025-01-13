@@ -10,7 +10,7 @@ function AuthorizeUser() {
 
 <template>
   <main>
-    <h2>hello</h2>
+    <h2>hello!</h2>
     <button elevation="2" @click="AuthorizeUser"> log in with Spotify </button>
   </main>
 </template>
