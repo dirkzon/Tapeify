@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import { resolve } from 'path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -19,9 +20,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: 'index.html',
-        callback: 'callback/index.html',
+        home: resolve(__dirname, 'index.html'),
+        callback: resolve(__dirname, 'callback/index.html'),
       },
     },
-  }
+  },
 })
