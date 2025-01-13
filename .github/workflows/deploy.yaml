@@ -12,6 +12,7 @@ env:
   VITE_SPOTIFY_AUTH_URI: ${{ vars.VITE_SPOTIFY_AUTH_URI }}
   VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
   VITE_REDIRECT_URI: ${{ vars.VITE_REDIRECT_URI }}
+  VITE_CLIENT_SECRET: ${{ secrets.VITE_CLIENT_SECRET   }}
 
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
