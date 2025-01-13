@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
@@ -11,6 +11,6 @@ function AuthorizeUser() {
 <template>
   <main>
     <h2>hello!</h2>
-    <button elevation="2" @click="AuthorizeUser"> log in with Spotify </button>
+    <button elevation="2" @click="AuthorizeUser">log in with Spotify</button>
   </main>
 </template>
