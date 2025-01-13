@@ -17,12 +17,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  build: {
-    rollupOptions: {
-      input: {
-        home: resolve(__dirname, 'index.html'),
-        callback: resolve(__dirname, 'callback/index.html'),
-      },
-    },
-  },
 })
