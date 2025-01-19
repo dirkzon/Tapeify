@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { fetchWrapper } from '@/helpers/fetchWrapper'
 
 export const useAuthStore = defineStore('auth', {
   getters: {
@@ -26,17 +27,20 @@ export const useAuthStore = defineStore('auth', {
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
 
-      const response = await fetch(url, {
-        method: 'Post',
-        headers: headers,
-        body: searchParams.toString()
-      })
+      return await fetchWrapper.post(url, searchParams, headers)
+    },
+    async refreshAccessToken(refreshToken: string) {
+      const searchParams = new URLSearchParams()
+      searchParams.append('grant_type', 'refresh_code')
+      searchParams.append('refresh_token', refreshToken)
+      searchParams.append('client_id', import.meta.env.VITE_CLIENT_ID)
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error_description)
-      }
-      return await response.json()
+      const headers = new Headers()
+      headers.append('content-type', 'application/x-www-form-urlencoded')
+
+      const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
+
+      return await fetchWrapper.post(url, searchParams, headers)
     }
   }
 })

@@ -9,15 +9,12 @@ const { cookies } = useCookies()
 const router = useRouter()
 
 onMounted(async () => {
-  if (cookies.isKey('access_token')){
-    router.push({path: 'home'})
-  }
-
   const code = new URL(location.href).searchParams.get('code')
+  
   const { access_token, refresh_token } = await authStore.requestAccessToken(String(code))
   cookies.set('access_token', access_token)
   cookies.set("refresh_token", refresh_token)
-  router.push({path: 'home'})
+  router.push({path: '/'})
 })
 </script>
 

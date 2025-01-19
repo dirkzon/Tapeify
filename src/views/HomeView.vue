@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile';
+import { onMounted } from 'vue';
 
-const authStore = useAuthStore()
+const profileStore = useProfileStore()
 
-function AuthorizeUser() {
-  window.location.href = authStore.userAuthorizationUrl
-}
+onMounted(async () => {
+  profileStore.getProfile()
+})
+
 </script>
 
 <template>
   <main>
-    <h2>hello!</h2>
-    <button elevation="2" @click="AuthorizeUser">log in with Spotify</button>
+    {{ profileStore.getUser }}
   </main>
 </template>
