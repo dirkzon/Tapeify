@@ -15,7 +15,6 @@ export const fetchWrapper = {
 const request = (method: string) => async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()): Promise<any> => {
     if (cookies.isKey('access_token')){
         const accessToken = cookies.get('access_token')
-        headers.delete("Authorization")
         headers.append('Authorization', `Bearer ${accessToken}`)
     }
 
@@ -31,18 +30,15 @@ const handleResponse = async (response: Response, url: URL, method: string, head
 
     if (!response.ok) {
         if (response.status === 401) {
+            console.log(response)
             if (cookies.isKey('refresh_token')) {
                 console.info("Refreshing token.")
                 
-                const refreshToken = cookies.get('refresh_token')
+                const { access_token, refresh_token } = await authStore.refreshAccessToken(cookies.get('refresh_token'))
+                cookies.set('access_token', access_token, 3600)
+                cookies.set("refresh_token", refresh_token, '1d')
 
-                const { access_token, refresh_token } = await authStore.refreshAccessToken(refreshToken)
-                cookies.remove('access_token')
-                cookies.set('access_token', access_token)
-                cookies.remove('refresh_token')
-                cookies.set("refresh_token", refresh_token)
-
-                return request(method)(url, body, headers)
+                // return request(method)(url, body, headers)
             } else {
                 Router.push('/login')
             }

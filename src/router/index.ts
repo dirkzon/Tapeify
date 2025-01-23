@@ -26,13 +26,13 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const { cookies } = useCookies()
-  const publicPages = ['/callback', '/login']
-  const authRequired = publicPages.includes(to.path);
-  const accessTokenExists = cookies.isKey('access_token')
-  if (authRequired && accessTokenExists) {
-    router.push({path: '/'})
-  }
+  // const { cookies } = useCookies()
+  // const publicPages = ['/callback', '/login']
+  // const authRequired = publicPages.includes(to.path);
+  // const accessTokenExists = cookies.isKey('access_token')
+  // if (authRequired && accessTokenExists) {
+  //   router.push({path: '/'})
+  // }
 })
 
 export default router
