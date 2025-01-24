@@ -45,7 +45,7 @@ function search() {
 
 <template>
   <main>
-    <input v-model="query">
+    <input v-model="query" />
     <button elevation="2" @click="search">search</button>
     <li v-for="(playlist, index) in getPlaylists" :key="index">
       <PlaylistComponent :playlist="playlist"> </PlaylistComponent>

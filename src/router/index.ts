@@ -21,14 +21,14 @@ const router = createRouter({
     {
       path: '/callback',
       name: 'callback',
-      component: CallbackView 
+      component: CallbackView
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView
     }
-  ],
+  ]
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

@@ -9,11 +9,13 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
     "core-js": "^3.37.1",
+    "prettier": "^3.4.2",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vue3-cookies": "^1.0.6",
