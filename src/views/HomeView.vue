@@ -1,31 +1,54 @@
 <script setup lang="ts">
+import { useAlbumsStore } from '@/stores/album';
+import { usePaginationStore } from '@/stores/pagination';
 import { usePlaylistsStore } from '@/stores/playlists';
+import { useSearchStore } from '@/stores/search';
 import { onMounted, toRefs } from 'vue';
 
 const playlistsStore = usePlaylistsStore()
-const { getPlaylists, previousPageAvailable, nextPageAvailable } = toRefs(playlistsStore)
+const { getPlaylists } = toRefs(playlistsStore)
 
-let offset = 0
-const limit = 10
+const albumStore = useAlbumsStore()
+const { getAlbums } = toRefs(albumStore)
+
+const searchStore = useSearchStore()
+
+const paginationStore = usePaginationStore()
+const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(paginationStore)
+
+let query = ""
 
 onMounted(() => {
-  playlistsStore.FetchUsersPlayists(limit, offset)
+  search()
 })
 
 function previous() {
-  offset = offset - limit
-  playlistsStore.FetchUsersPlayists(limit, offset)
+  paginationStore.setOffset(offset.value - limit.value)
+  search()
 }
 
 function next() {
-  offset = offset + limit
-  playlistsStore.FetchUsersPlayists(limit, offset)
+  paginationStore.setOffset(offset.value + limit.value)
+  search()
+}
+
+function search() {
+  if (query){
+    searchStore.SearchPlaylistsAndAlbums(query)
+  } 
+  else {
+    albumStore.ClearAlbums()
+    playlistsStore.FetchUsersPlayists()
+  }
 }
 </script>
 
 <template>
   <main>
+    <input v-model="query">
+    <button elevation="2" @click="search">search</button>
     {{ getPlaylists }}
+    {{ getAlbums }}
     <button elevation="2" @click="previous" :disabled="previousPageAvailable">previous</button>
     <h1> {{ offset / limit }} </h1>
     <button elevation="2" @click="next" :disabled="nextPageAvailable">next</button>

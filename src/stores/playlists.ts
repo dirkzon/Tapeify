@@ -1,19 +1,20 @@
 import { fetchWrapper } from '@/helpers/fetchWrapper'
 import { defineStore } from 'pinia'
+import { usePaginationStore } from './pagination'
 
 const STORE_NAME = 'playlist'
 
 interface Playlist {
   name: string,
-  id: string
+  id: string,
+  owner: string,
+  image: string
 }
 
 export const usePlaylistsStore = defineStore(STORE_NAME, {
   persist: false,
   state: () => ({
     playlists: [] as Playlist[],
-    nextPageAvailable: true,
-    previousPageAvailable: false
   }),
   getters: {
     getPlaylists(state): Playlist[] {
@@ -22,32 +23,44 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     }
   },
   actions: {
-    async FetchUsersPlayists(limit?: number, offset?: number): Promise<void> {
+    async FetchUsersPlayists(): Promise<void> {
+      const paginationStore = usePaginationStore()
+      
       this.playlists = []
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/me/playlists')
 
-      if (limit) {
-        if (limit < 1 || limit > 50) throw new Error("Limit out of bounds")
-        url.searchParams.append('limit', String(limit));
-      }
-      if (offset) {
-        if (offset < 0 || offset > 100000) throw new Error("Offset out of bounds")
-        url.searchParams.append('offset', String(offset));
-      }
+      const limit = paginationStore.limit
+      if (limit < 1 || limit > 50) throw new Error("Limit out of bounds")
+      url.searchParams.append('limit', String(limit));
+  
+      const offset = paginationStore.offset
+      if (offset < 0 || offset > 10000) throw new Error("Offset out of bounds")
+      url.searchParams.append('offset', String(offset));
 
       const result = await fetchWrapper.get(url)
-      const playlists = result['items'] 
+      this.SetPlaylists(result['items'] )
 
-      for (const playlist of playlists) {
-        this.playlists.push({
-          name: playlist['name'],
-          id: playlist['id']
-        })
+      const nextPageAvailable = (result['next'] == null)
+      const previousPageAvailable = (result['previous'] == null)
+      paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SetPlaylists(items: Array<any>){
+      this.ClearPlaylists()
+      for (const playlist of items) {
+        if(playlist) {
+          this.playlists.push({
+            name: playlist['name'],
+            id: playlist['id'],
+            owner: playlist['owner']['display_name'],
+            image: playlist['images'][0]['url']
+          })
+        }
       }
-
-      this.nextPageAvailable = (result['next'] == null)
-      this.previousPageAvailable = (result['previous'] == null)
+    },
+    ClearPlaylists(){
+      this.playlists = []
     }
   }
 })
