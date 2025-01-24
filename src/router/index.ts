@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CallbackView from '../views/CallbackView.vue'
 import LoginView from '../views/LoginView.vue'
-import { useCookies } from "vue3-cookies";
+import { useCookies } from 'vue3-cookies'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -23,7 +23,10 @@ export const useAuthStore = defineStore('auth', {
 
       const headers = new Headers()
       headers.append('content-type', 'application/x-www-form-urlencoded')
-      headers.append('Authorization', `Basic ${btoa(`${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`)}`)
+      headers.append(
+        'Authorization',
+        `Basic ${btoa(`${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`)}`
+      )
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
 

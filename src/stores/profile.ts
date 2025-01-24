@@ -24,5 +24,5 @@ export const useProfileStore = defineStore(STORE_NAME, {
       this.name = display_name
       this.id = id
     }
-  },
+  }
 })

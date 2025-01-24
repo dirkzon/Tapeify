@@ -12,12 +12,12 @@ export const usePaginationStore = defineStore(STORE_NAME, {
   }),
   actions: {
     setAvailability(previous: boolean, next: boolean) {
-        this.nextPageAvailable = next
-        this.previousPageAvailable = previous
+      this.nextPageAvailable = next
+      this.previousPageAvailable = previous
     },
     setOffset(offset: number) {
-        if(offset < 0) this.offset = 0
-            this.offset = offset
+      if (offset < 0) this.offset = 0
+      this.offset = offset
     }
   }
 })
