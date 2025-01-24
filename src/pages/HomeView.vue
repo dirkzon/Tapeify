@@ -52,7 +52,7 @@ function search() {
     </li>
 
     {{ getAlbums }}
-    <button elevation="2" @click="previous" :disabled="previousPageAvailable">previous</button>
+    <button elevation="2" :disabled="previousPageAvailable" @click="previous">previous</button>
     <h1>{{ offset / limit }}</h1>
     <button elevation="2" @click="next" :disabled="nextPageAvailable">next</button>
   </main>

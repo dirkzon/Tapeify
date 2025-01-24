@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 const STORE_NAME = 'profile'
 
 export const useProfileStore = defineStore(STORE_NAME, {
-  persist: true,
   state: () => ({
     name: '',
     id: ''

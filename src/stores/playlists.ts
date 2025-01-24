@@ -1,6 +1,6 @@
-import { fetchWrapper } from '@/helpers/fetchWrapper'
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
+import { fetchWrapper } from '@/helpers/fetchWrapper'
 
 const STORE_NAME = 'playlists'
 
@@ -12,7 +12,6 @@ export interface Playlist {
 }
 
 export const usePlaylistsStore = defineStore(STORE_NAME, {
-  persist: false,
   state: () => ({
     playlists: [] as Playlist[]
   }),

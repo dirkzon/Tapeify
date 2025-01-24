@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
+import { fetchWrapper } from '@/helpers/fetchWrapper'
 
 const STORE_NAME = 'search'
 
 export const useSearchStore = defineStore(STORE_NAME, {
-  persist: false,
   actions: {
     async SearchPlaylistsAndAlbums(query: string): Promise<void> {
       const playlistsStore = usePlaylistsStore()

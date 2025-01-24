@@ -10,7 +10,6 @@ interface Album {
 }
 
 export const useAlbumsStore = defineStore(STORE_NAME, {
-  persist: false,
   state: () => ({
     albums: [] as Album[]
   }),

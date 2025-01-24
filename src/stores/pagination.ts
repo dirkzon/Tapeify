@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 const STORE_NAME = 'pagination'
 
 export const usePaginationStore = defineStore(STORE_NAME, {
-  persist: false,
   state: () => ({
     nextPageAvailable: true,
     previousPageAvailable: false,

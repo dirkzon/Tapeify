@@ -23,5 +23,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main></main>
+  <main>
+    <a>a</a>
+  </main>
 </template>

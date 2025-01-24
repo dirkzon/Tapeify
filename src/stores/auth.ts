@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   getters: {
