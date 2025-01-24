@@ -1,38 +1,36 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import CallbackView from '../views/CallbackView.vue'
-import LoginView from '../views/LoginView.vue'
-import { useCookies } from 'vue3-cookies'
+/**
+ * router/index.ts
+ *
+ * Automatic routes for `./src/pages/*.vue`
+ */
+
+// Composables
+import { createRouter, createWebHistory } from 'vue-router/auto'
+import { setupLayouts } from 'virtual:generated-layouts'
+import { routes } from 'vue-router/auto-routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/callback',
-      name: 'callback',
-      component: CallbackView
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-    }
-  ]
+  routes: setupLayouts(routes),
 })
 
-router.beforeEach((to) => {
-  // const { cookies } = useCookies()
-  // const publicPages = ['/callback', '/login']
-  // const authRequired = publicPages.includes(to.path);
-  // const accessTokenExists = cookies.isKey('access_token')
-  // if (authRequired && accessTokenExists) {
-  //   router.push({path: '/'})
-  // }
+// Workaround for https://github.com/vitejs/vite/issues/11804
+router.onError((err, to) => {
+  if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
+    if (!localStorage.getItem('vuetify:dynamic-reload')) {
+      console.log('Reloading page to fix dynamic import error')
+      localStorage.setItem('vuetify:dynamic-reload', 'true')
+      location.assign(to.fullPath)
+    } else {
+      console.error('Dynamic import error, reloading page did not fix it', err)
+    }
+  } else {
+    console.error(err)
+  }
+})
+
+router.isReady().then(() => {
+  localStorage.removeItem('vuetify:dynamic-reload')
 })
 
 export default router
