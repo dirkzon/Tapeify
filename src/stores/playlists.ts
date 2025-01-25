@@ -25,7 +25,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     async FetchUsersPlayists(): Promise<void> {
       const paginationStore = usePaginationStore()
 
-      this.playlists = []
+      this.ClearPlaylists()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/me/playlists')
 
@@ -46,7 +46,6 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SetPlaylists(items: Array<any>) {
-      this.ClearPlaylists()
       for (const playlist of items) {
         if (playlist) {
           this.playlists.push({

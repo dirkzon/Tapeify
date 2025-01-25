@@ -22,7 +22,6 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
   actions: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     SetAlbums(items: Array<any>) {
-      this.ClearAlbums()
       for (const album of items) {
         if (album) {
           const artists: string[] = []

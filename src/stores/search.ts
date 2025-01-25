@@ -13,6 +13,9 @@ export const useSearchStore = defineStore(STORE_NAME, {
       const albumsStore = useAlbumsStore()
       const paginationStore = usePaginationStore()
 
+      albumsStore.ClearAlbums()
+      playlistsStore.ClearPlaylists()
+
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/search')
       url.searchParams.append('market', 'ES')
       url.searchParams.append('type', ['album', 'playlist'].join(','))

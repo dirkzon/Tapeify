@@ -16,7 +16,10 @@ export const usePaginationStore = defineStore(STORE_NAME, {
     },
     setOffset(offset: number) {
       if (offset < 0) this.offset = 0
-      this.offset = offset
+      else this.offset = offset
+    },
+    resetPagination() {
+      this.offset = 0
     }
   }
 })

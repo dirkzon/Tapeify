@@ -1,6 +1,16 @@
 <template>
   <v-app>
-    <router-view />
+    <v-container
+      fill-height
+      fluid
+    >
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <router-view />
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 

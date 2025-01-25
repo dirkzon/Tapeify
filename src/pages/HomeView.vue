@@ -16,24 +16,30 @@ const searchStore = useSearchStore()
 const paginationStore = usePaginationStore()
 const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(paginationStore)
 
-// eslint-disable-next-line prefer-const
+ 
 let query = ''
 
 onMounted(() => {
-  search()
+  paginationStore.resetPagination()
+  GetItems()
 })
 
-function previous() {
+function Previous() {
   paginationStore.setOffset(offset.value - limit.value)
-  search()
+  GetItems()
 }
 
-function next() {
+function Next() {
   paginationStore.setOffset(offset.value + limit.value)
-  search()
+  GetItems()
 }
 
-function search() {
+function Search() {
+  paginationStore.resetPagination()
+  GetItems()
+}
+
+function GetItems() {
   if (query) {
     searchStore.SearchPlaylistsAndAlbums(query)
   } else {
@@ -41,58 +47,111 @@ function search() {
     playlistsStore.FetchUsersPlayists()
   }
 }
+
+function ClearSearchBar(){
+  query = ''
+  Search()
+}
+
+function SelectItem(id: string) {
+  alert(id)
+}
 </script>
 
 <template>
   <main>
-    <input v-model="query">
-    <button
-      elevation="2"
-      @click="search"
+    <v-card
+      class="ma-10 pa-3"
+      min-width="400px"
     >
-      search
-    </button>
-
-    <v-card max-width="400">
-      <v-toolbar>
-        <v-toolbar-title>Playlists</v-toolbar-title>
-      </v-toolbar>
-
-      <v-list
-        lines="two"
-        density="compact"
-      >
-        <v-list-item
-          v-for="item in getPlaylists"
-          :key="item.id"
-          :title="item.name"
-          :subtitle="item.owner"
+      <v-text-field
+        v-model="query"
+        label="Search Playlists & Albums"
+        append-inner-icon="mdi-magnify"
+        clear-icon="mdi-close-circle"
+        clearable
+        type="text"
+        :loading="(getAlbums.length == 0 && getPlaylists.length == 0)"
+        @click:clear="ClearSearchBar"
+        @click:append-inner="Search"
+        @keydown.enter="Search"
+      />
+      <v-row>
+        <v-col
+          cols="12"
+          :md="(getAlbums.length > 0) ? 6 : 12"
         >
-          <template #prepend>
-            <v-avatar tile>
-              <v-img :src="String(item.image)" />
-            </v-avatar>
-          </template>
-          <v-divider />
-        </v-list-item>
-      </v-list>
+          <v-list
+            lines="two"
+            density="compact"
+          >
+            <v-list-subheader>Playlists</v-list-subheader>
+            <v-list-item
+              v-for="playlist in getPlaylists"
+              :key="playlist.id"
+              :title="playlist.name"
+              :subtitle="playlist.owner"
+              @click="SelectItem(playlist.id)"
+            >
+              <template #prepend>
+                <v-avatar tile>
+                  <v-img :src="String(playlist.image)" />
+                </v-avatar>
+              </template>
+              <v-divider />
+            </v-list-item>
+          </v-list>
+        </v-col>
+        <v-col
+          v-if="getAlbums.length > 0"
+          cols="12"
+          md="6"
+        >
+          <v-list
+            lines="two"
+            density="compact"
+          >
+            <v-list-subheader>Albums</v-list-subheader>
+            <v-list-item
+              v-for="album in getAlbums"
+              :key="album.id"
+              :title="album.name"
+              :subtitle="album.artists.toString()"
+              @click="SelectItem(album.id)"
+            >
+              <template #prepend>
+                <v-avatar tile>
+                  <v-img :src="String(album.image)" />
+                </v-avatar>
+              </template>
+              <v-divider />
+            </v-list-item>
+          </v-list>
+        </v-col>
+      </v-row>
+      <v-row
+        class="ma-1"
+        align="center"
+        justify="center"
+      >
+        <v-btn
+          variant="plain"
+          density="comfortable"
+          icon="mdi-chevron-left"
+          :disabled="previousPageAvailable"
+          @click="Previous"
+        />
+        <div class="button">
+          {{ (offset / limit) + 1 }}
+        </div>
+        <v-btn
+          variant="plain"
+          density="comfortable"
+          icon="mdi-chevron-right"
+          :disabled="nextPageAvailable"
+          @click="Next"
+        />
+      </v-row>
     </v-card>
-
-    {{ getAlbums }}
-    <button
-      elevation="2"
-      :disabled="previousPageAvailable"
-      @click="previous"
-    >
-      previous
-    </button>
-    <h1>{{ offset / limit }}</h1>
-    <button
-      elevation="2"
-      :disabled="nextPageAvailable"
-      @click="next"
-    >
-      next
-    </button>
   </main>
 </template>
