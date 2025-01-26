@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 const STORE_NAME = 'albums'
 
-interface Album {
+export interface Album {
   name: string
   id: string
   artists: string[]
