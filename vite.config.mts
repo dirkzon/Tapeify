@@ -8,7 +8,7 @@ import VueRouter from 'unplugin-vue-router/vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // Utilities
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config';
 import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
@@ -79,4 +79,11 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    server: {
+      deps: {
+        inline: ['vuetify'],
+      },
+    },
+  }
 })

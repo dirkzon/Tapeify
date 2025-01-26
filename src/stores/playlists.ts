@@ -29,19 +29,19 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/me/playlists')
 
-      const limit = paginationStore.limit
+      const limit = paginationStore.getLimit
       if (limit < 1 || limit > 50) throw new Error('Limit out of bounds')
       url.searchParams.append('limit', String(limit))
 
-      const offset = paginationStore.offset
+      const offset = paginationStore.getOffset
       if (offset < 0 || offset > 10000) throw new Error('Offset out of bounds')
       url.searchParams.append('offset', String(offset))
 
       const result = await fetchWrapper.get(url)
       this.SetPlaylists(result['items'])
 
-      const nextPageAvailable = result['next'] == null
-      const previousPageAvailable = result['previous'] == null
+      const nextPageAvailable = (result['next'] != null)
+      const previousPageAvailable = result['previous'] != null
       paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

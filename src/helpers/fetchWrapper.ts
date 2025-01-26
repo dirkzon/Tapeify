@@ -1,5 +1,4 @@
 import { useCookies } from 'vue3-cookies'
-import Router from '../router'
 import { useAuthStore } from '@/stores/auth'
 
 const { cookies } = useCookies()
@@ -26,15 +25,15 @@ const request =
       method: method,
       headers: headers,
       body: body
-    }).then((response) => handleResponse(response, url, method, headers))
+    }).then((response) => handleResponse(response))
   }
 
 const handleResponse = async (
   response: Response,
-  url: URL,
-  method: string,
-  headers: Headers,
-  body?: URLSearchParams
+  // url: URL,
+  // method: string,
+  // headers: Headers,
+  // body?: URLSearchParams
 ) => {
   const authStore = useAuthStore()
 
@@ -52,7 +51,6 @@ const handleResponse = async (
 
         // return request(method)(url, body, headers)
       } else {
-        Router.push('/login')
       }
     }
   }
