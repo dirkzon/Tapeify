@@ -138,7 +138,7 @@ function SelectItem(id: string) {
           variant="plain"
           density="comfortable"
           icon="mdi-chevron-left"
-          :disabled="previousPageAvailable"
+          :disabled="!previousPageAvailable"
           @click="Previous"
         />
         <div class="button">
@@ -148,7 +148,7 @@ function SelectItem(id: string) {
           variant="plain"
           density="comfortable"
           icon="mdi-chevron-right"
-          :disabled="nextPageAvailable"
+          :disabled="!nextPageAvailable"
           @click="Next"
         />
       </v-row>
