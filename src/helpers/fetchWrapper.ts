@@ -1,5 +1,6 @@
 import { useCookies } from 'vue3-cookies'
 import { useAuthStore } from '@/stores/auth'
+import router from '../router'
 
 const { cookies } = useCookies()
 
@@ -14,9 +15,8 @@ export const fetchWrapper = {
 
 const request =
   (method: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()): Promise<any> => {
-    if (cookies.isKey('access_token')) {
+  async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()) => {
+    if (!headers.has('Authorization') && cookies.isKey('access_token')) {
       const accessToken = cookies.get('access_token')
       headers.append('Authorization', `Bearer ${accessToken}`)
     }
@@ -25,35 +25,34 @@ const request =
       method: method,
       headers: headers,
       body: body
-    }).then((response) => handleResponse(response))
+    }).then((response) => handleResponse(response, url, method, headers, body))
   }
 
 const handleResponse = async (
   response: Response,
-  // url: URL,
-  // method: string,
-  // headers: Headers,
-  // body?: URLSearchParams
+  url: URL,
+  method: string,
+  headers: Headers,
+  body?: URLSearchParams
 ) => {
-  const authStore = useAuthStore()
-
   if (!response.ok) {
     if (response.status === 401) {
-      console.log(response)
       if (cookies.isKey('refresh_token')) {
-        console.info('Refreshing token.')
-
+        const authStore = useAuthStore()
         const { access_token, refresh_token } = await authStore.refreshAccessToken(
           cookies.get('refresh_token')
         )
         cookies.set('access_token', access_token, 3600)
         cookies.set('refresh_token', refresh_token, '1d')
-
-        // return request(method)(url, body, headers)
+        fetch(url, {
+          method: method,
+          headers: headers,
+          body: body
+        }).then(() => response.json())
       } else {
+        router.push('/login')
       }
     }
   }
-
   return response.json()
 }
