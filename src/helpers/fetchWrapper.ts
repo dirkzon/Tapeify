@@ -1,6 +1,6 @@
 import { useCookies } from 'vue3-cookies'
 import { useAuthStore } from '@/stores/auth'
-// import router from '@/router'
+import router from '../router'
 
 const { cookies } = useCookies()
 
@@ -15,7 +15,6 @@ export const fetchWrapper = {
 
 const request =
   (method: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()) => {
     if (!headers.has('Authorization') && cookies.isKey('access_token')) {
       const accessToken = cookies.get('access_token')
@@ -36,10 +35,10 @@ const handleResponse = async (
   headers: Headers,
   body?: URLSearchParams
 ) => {
-  const authStore = useAuthStore()
   if (!response.ok) {
     if (response.status === 401) {
       if (cookies.isKey('refresh_token')) {
+        const authStore = useAuthStore()
         const { access_token, refresh_token } = await authStore.refreshAccessToken(
           cookies.get('refresh_token')
         )
@@ -51,7 +50,7 @@ const handleResponse = async (
           body: body
         }).then(() => response.json())
       } else {
-        // router.push('/login')
+        router.push('/login')
       }
     }
   }

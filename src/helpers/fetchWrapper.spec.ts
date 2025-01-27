@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth';
 import { setActivePinia, createPinia } from 'pinia';
 import { describe, expect, vi, it, beforeEach, afterAll } from "vitest";
 import { useCookies } from 'vue3-cookies'
+import router from '../router'
 
 const { cookies } = useCookies()
 
@@ -29,7 +30,7 @@ describe('Fetchwrapper Tests', () => {
                     return mockRefreshToken
             }
         })
-        cookies.set = vi.fn().mockImplementation(() => '')
+        cookies.set = vi.fn().mockReturnThis()
         cookies.isKey = vi.fn().mockImplementation((keyName: string) => {
             switch(keyName) {
                 case 'access_token':
@@ -38,6 +39,11 @@ describe('Fetchwrapper Tests', () => {
                     return true
             }
         })
+        vi.mock('../router', () => ({
+            default: {
+              push: vi.fn(),
+            },
+          }));
     })
 
     afterAll(() => {
@@ -144,7 +150,6 @@ describe('Fetchwrapper Tests', () => {
         })
         describe('Unsuccessful', () => {
             it('401 with refresh token', async () => {
-                cookies.isKey = vi.fn().mockReturnValue(true)
                 const unauthorizedFetchResponse = {
                     status: 401,
                     ok: false,
@@ -167,6 +172,22 @@ describe('Fetchwrapper Tests', () => {
 
                 const fetchSpy = vi.spyOn(global, 'fetch');
                 expect(fetchSpy).toBeCalled()
+            })
+            it('401 without refresh token', async () => {
+                cookies.isKey = vi.fn().mockReturnValue(false)
+                const unauthorizedFetchResponse = {
+                    status: 401,
+                    ok: false,
+                    json: async () => ({
+                        message: "unauthorized",
+                    })
+                } as Response
+                global.fetch = vi.fn().mockResolvedValue(unauthorizedFetchResponse)
+                
+                await fetchWrapper.get(mockUrl);
+
+                const navigateSpy = vi.spyOn(router, 'push');
+                expect(navigateSpy).toHaveBeenCalledWith('/login')
             })
         })
     })

@@ -7,6 +7,11 @@ import { usePaginationStore } from './pagination'
 describe('Playlist Tests', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.mock('../router', () => ({
+      default: {
+        push: vi.fn(),
+      },
+    }));
   })
 
   describe('getters', () => {
