@@ -35,9 +35,9 @@ export const useSearchStore = defineStore(STORE_NAME, {
       albumsStore.SetAlbums(result['albums']['items'])
 
       const nextPageAvailable =
-        result['albums']['next'] == null && result['playlists']['next'] == null
+        result['albums']['next'] != null && result['playlists']['next'] != null
       const previousPageAvailable =
-        result['albums']['previous'] == null && result['playlists']['previous'] == null
+        result['albums']['previous'] != null && result['playlists']['previous'] != null
       paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     }
   }
