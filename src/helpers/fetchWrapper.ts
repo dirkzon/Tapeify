@@ -16,7 +16,7 @@ const request =
   (method: string) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()): Promise<any> => {
-    if (cookies.isKey('access_token')) {
+    if (!headers.has('Authorization') && cookies.isKey('access_token')) {
       const accessToken = cookies.get('access_token')
       headers.append('Authorization', `Bearer ${accessToken}`)
     }
@@ -54,6 +54,6 @@ const handleResponse = async (
       }
     }
   }
-
+  
   return response.json()
 }
