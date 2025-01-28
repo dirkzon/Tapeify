@@ -2,7 +2,7 @@
 import { useAlbumsStore } from '@/stores/album'
 import { usePaginationStore } from '@/stores/pagination'
 import { usePlaylistsStore } from '@/stores/playlists'
-import { useSearchStore } from '@/stores/search'
+import { UseSearchStore } from '@/stores/search'
 import { onMounted, toRefs } from 'vue'
 
 const playlistsStore = usePlaylistsStore()
@@ -11,7 +11,7 @@ const { getPlaylists } = toRefs(playlistsStore)
 const albumStore = useAlbumsStore()
 const { getAlbums } = toRefs(albumStore)
 
-const searchStore = useSearchStore()
+const searchStore = UseSearchStore()
 
 const paginationStore = usePaginationStore()
 const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(paginationStore)

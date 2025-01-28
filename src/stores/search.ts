@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
-import { usePlaylistsStore } from '@/stores/playlists'
+import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
 
 const STORE_NAME = 'search'
 
-export const useSearchStore = defineStore(STORE_NAME, {
+export const UseSearchStore = defineStore(STORE_NAME, {
   actions: {
     async SearchPlaylistsAndAlbums(query: string): Promise<void> {
       const playlistsStore = usePlaylistsStore()
@@ -21,11 +21,11 @@ export const useSearchStore = defineStore(STORE_NAME, {
       url.searchParams.append('type', ['album', 'playlist'].join(','))
       url.searchParams.append('q', query)
 
-      const limit = paginationStore.limit
+      const limit = paginationStore.getLimit
       if (limit < 1 || limit > 50) throw new Error('Limit out of bounds')
       url.searchParams.append('limit', String(limit))
 
-      const offset = paginationStore.offset
+      const offset = paginationStore.getOffset
       if (offset < 0 || offset > 1000) throw new Error('Offset out of bounds')
       url.searchParams.append('offset', String(offset))
 
