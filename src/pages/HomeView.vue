@@ -16,7 +16,6 @@ const searchStore = useSearchStore()
 const paginationStore = usePaginationStore()
 const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(paginationStore)
 
- 
 let query = ''
 
 onMounted(() => {
@@ -48,7 +47,7 @@ function GetItems() {
   }
 }
 
-function ClearSearchBar(){
+function ClearSearchBar() {
   query = ''
   Search()
 }
@@ -60,10 +59,7 @@ function SelectItem(id: string) {
 
 <template>
   <main>
-    <v-card
-      class="ma-10 pa-3"
-      min-width="400px"
-    >
+    <v-card class="ma-10 pa-3" min-width="400px">
       <v-text-field
         v-model="query"
         label="Search Playlists & Albums"
@@ -71,20 +67,14 @@ function SelectItem(id: string) {
         clear-icon="mdi-close-circle"
         clearable
         type="text"
-        :loading="(getAlbums.length == 0 && getPlaylists.length == 0)"
+        :loading="getAlbums.length == 0 && getPlaylists.length == 0"
         @click:clear="ClearSearchBar"
         @click:append-inner="Search"
         @keydown.enter="Search"
       />
       <v-row>
-        <v-col
-          cols="12"
-          :md="(getAlbums.length > 0) ? 6 : 12"
-        >
-          <v-list
-            lines="two"
-            density="compact"
-          >
+        <v-col cols="12" :md="getAlbums.length > 0 ? 6 : 12">
+          <v-list lines="two" density="compact">
             <v-list-subheader>Playlists</v-list-subheader>
             <v-list-item
               v-for="playlist in getPlaylists"
@@ -102,15 +92,8 @@ function SelectItem(id: string) {
             </v-list-item>
           </v-list>
         </v-col>
-        <v-col
-          v-if="getAlbums.length > 0"
-          cols="12"
-          md="6"
-        >
-          <v-list
-            lines="two"
-            density="compact"
-          >
+        <v-col v-if="getAlbums.length > 0" cols="12" md="6">
+          <v-list lines="two" density="compact">
             <v-list-subheader>Albums</v-list-subheader>
             <v-list-item
               v-for="album in getAlbums"
@@ -129,11 +112,7 @@ function SelectItem(id: string) {
           </v-list>
         </v-col>
       </v-row>
-      <v-row
-        class="ma-1"
-        align="center"
-        justify="center"
-      >
+      <v-row class="ma-1" align="center" justify="center">
         <v-btn
           variant="plain"
           density="comfortable"
@@ -142,7 +121,7 @@ function SelectItem(id: string) {
           @click="Previous"
         />
         <div class="button">
-          {{ (offset / limit) + 1 }}
+          {{ offset / limit + 1 }}
         </div>
         <v-btn
           variant="plain"

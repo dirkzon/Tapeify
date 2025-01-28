@@ -40,7 +40,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       const result = await fetchWrapper.get(url)
       this.SetPlaylists(result['items'])
 
-      const nextPageAvailable = (result['next'] != null)
+      const nextPageAvailable = result['next'] != null
       const previousPageAvailable = result['previous'] != null
       paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     },

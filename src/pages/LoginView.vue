@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
 function AuthorizeUser() {
-  window.location.href = authStore.userAuthorizationUrl
+  window.location.href = authStore.userAuthorizationUrl.toString()
 }
 </script>
 
