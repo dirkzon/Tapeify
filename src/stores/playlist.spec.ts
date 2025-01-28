@@ -9,9 +9,9 @@ describe('Playlist Tests', () => {
     setActivePinia(createPinia())
     vi.mock('../router', () => ({
       default: {
-        push: vi.fn(),
-      },
-    }));
+        push: vi.fn()
+      }
+    }))
   })
 
   describe('getters', () => {
@@ -62,15 +62,15 @@ describe('Playlist Tests', () => {
     it('clearPlaylists', () => {
       const playlistsStore = usePlaylistsStore()
       playlistsStore.SetPlaylists(spotifyPlaylistsResponse['items'])
-  
+
       playlistsStore.ClearPlaylists()
-  
+
       const albums = playlistsStore.getPlaylists
       expect(albums).toBeDefined()
       expectTypeOf(albums).toEqualTypeOf<Playlist[]>()
       expect(albums.length).toEqual(0)
     })
-    describe('FetchUsersPlayists', () => { 
+    describe('FetchUsersPlayists', () => {
       it('FetchUsersPlayists', async () => {
         fetchWrapper.get = vi.fn().mockResolvedValue(spotifyPlaylistsResponse)
 
@@ -104,32 +104,40 @@ describe('Playlist Tests', () => {
         it('limit too high', async () => {
           const paginationStore = usePaginationStore()
           paginationStore.limit = 10000
-  
+
           const playlistsStore = usePlaylistsStore()
-          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError('Limit out of bounds')
+          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError(
+            'Limit out of bounds'
+          )
         })
         it('limit too low', async () => {
           const paginationStore = usePaginationStore()
           paginationStore.limit = 0
-  
+
           const playlistsStore = usePlaylistsStore()
-          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError('Limit out of bounds')
+          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError(
+            'Limit out of bounds'
+          )
         })
       })
       describe('FetchUsersPlayists with invalid offset', async () => {
         it('offset too high', async () => {
           const paginationStore = usePaginationStore()
           paginationStore.offset = 100000
-  
+
           const playlistsStore = usePlaylistsStore()
-          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError('Offset out of bounds')
+          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError(
+            'Offset out of bounds'
+          )
         })
         it('offset too low', async () => {
           const paginationStore = usePaginationStore()
           paginationStore.offset = -1
-  
+
           const playlistsStore = usePlaylistsStore()
-          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError('Offset out of bounds')
+          await expect(() => playlistsStore.FetchUsersPlayists()).rejects.toThrowError(
+            'Offset out of bounds'
+          )
         })
       })
     })
@@ -229,4 +237,3 @@ const spotifyPlaylistsResponse = {
     }
   ]
 }
-
