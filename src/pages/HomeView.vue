@@ -59,10 +59,10 @@ function SelectItem(id: string) {
 
 <template>
   <main>
-    <v-card class="ma-10 pa-3" min-width="400px">
+    <v-card class="ma-10 pa-3" min-width="400px" max-width="800">
       <v-text-field
         v-model="query"
-        label="Search Playlists & Albums"
+        label="Search playlists & albums"
         append-inner-icon="mdi-magnify"
         clear-icon="mdi-close-circle"
         clearable
@@ -73,9 +73,10 @@ function SelectItem(id: string) {
         @keydown.enter="Search"
       />
       <v-row>
-        <v-col cols="12" :md="getAlbums.length > 0 ? 6 : 12">
+        <v-col v-if="getPlaylists.length > 0" cols="12" :md="getAlbums.length > 0 ? 6 : 12">
           <v-list lines="two" density="compact">
-            <v-list-subheader>Playlists</v-list-subheader>
+            <v-list-subheader v-if="query ==''">Your Playlists</v-list-subheader>
+            <v-list-subheader v-else>Playlists</v-list-subheader>
             <v-list-item
               v-for="playlist in getPlaylists"
               :key="playlist.id"
@@ -92,7 +93,7 @@ function SelectItem(id: string) {
             </v-list-item>
           </v-list>
         </v-col>
-        <v-col v-if="getAlbums.length > 0" cols="12" md="6">
+        <v-col v-if="getAlbums.length > 0" cols="12" :md="getPlaylists.length > 0 ? 6 : 12">
           <v-list lines="two" density="compact">
             <v-list-subheader>Albums</v-list-subheader>
             <v-list-item
