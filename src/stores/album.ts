@@ -28,12 +28,12 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
           for (const index in album['artists']) {
             artists.push(album['artists'][index]['name'])
           }
-
+          const numImages = album['images'].length
           this.albums.push({
             name: album['name'],
             id: album['id'],
             artists: artists,
-            image: new URL(album['images'][0]['url'])
+            image: new URL(album['images'][numImages - 1]['url'])
           })
         }
       }

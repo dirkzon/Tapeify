@@ -48,11 +48,12 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     SetPlaylists(items: Array<any>) {
       for (const playlist of items) {
         if (playlist) {
+          const numImages = playlist['images'].length
           this.playlists.push({
             name: playlist['name'],
             id: playlist['id'],
             owner: playlist['owner']['display_name'],
-            image: new URL(playlist['images'][0]['url'])
+            image: new URL(playlist['images'][numImages - 1]['url'])
           })
         }
       }
