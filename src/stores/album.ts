@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { UseTracksStore } from './tracks'
+import { fetchWrapper } from '@/helpers/fetchWrapper'
 
 const STORE_NAME = 'albums'
 
@@ -40,6 +42,22 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     },
     ClearAlbums() {
       this.albums = []
+    },
+    async FetchAlbumTracks(albumId: string) {
+      const tracksStore = UseTracksStore()
+      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
+      const response = await fetchWrapper.get(url)
+      const numImages = response['images'].length
+      const albumImage = new URL(response['images'][numImages - 1]['url'])
+      for (const track of response['tracks']['items']) {
+        tracksStore.AddTrack({
+          name: track['name'],
+          id: track['id'],
+          image: albumImage,
+          explicit: track['explicit'],
+          duration_ms: Number(track['duration_ms'])
+        })
+      }
     }
   }
 })

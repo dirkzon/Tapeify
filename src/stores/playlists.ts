@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { UseTracksStore } from './tracks'
 
 const STORE_NAME = 'playlists'
 
@@ -60,6 +61,23 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     },
     ClearPlaylists() {
       this.playlists = []
+    },
+    async FetchPlaylistTracks(playlistId: string) {
+      console.log('im getting my tracks')
+      const tracksStore = UseTracksStore()
+      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
+      const response = await fetchWrapper.get(url)
+
+      for (const track of response['tracks']['items']) {
+        const numImages = track['track']['album']['images'].length
+        tracksStore.AddTrack({
+          name: track['track']['name'],
+          id: track['track']['id'],
+          image: new URL(track['track']['album']['images'][numImages - 1]['url']),
+          explicit: track['track']['explicit'],
+          duration_ms: Number(track['track']['duration_ms'])
+        })
+      }
     }
   }
 })
