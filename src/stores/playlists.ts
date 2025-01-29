@@ -63,7 +63,6 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       this.playlists = []
     },
     async FetchPlaylistTracks(playlistId: string) {
-      console.log('im getting my tracks')
       const tracksStore = UseTracksStore()
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
       const response = await fetchWrapper.get(url)
