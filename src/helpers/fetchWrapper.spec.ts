@@ -184,7 +184,7 @@ describe('Fetchwrapper Tests', () => {
         await fetchWrapper.get(mockUrl)
 
         const navigateSpy = vi.spyOn(router, 'push')
-        expect(navigateSpy).toHaveBeenCalledWith('/login')
+        expect(navigateSpy).toHaveBeenCalledWith({ name: '/LoginView' })
       })
     })
   })
