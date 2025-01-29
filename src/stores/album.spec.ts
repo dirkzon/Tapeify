@@ -35,7 +35,9 @@ describe('Albums Tests', () => {
           expect(albums[0].id).toBe(spotifyAlbumsResponse['albums'][0]['id'])
           expect(albums[0].name).toBe(spotifyAlbumsResponse['albums'][0]['name'])
           expect(albums[0].artists).toStrictEqual(['Daft Punk'])
-          expect(albums[0].image.href).toBe('https://i.scdn.co/image/ab67616d0000485126597c053b38c9cf93f8f3a9')
+          expect(albums[0].image.href).toBe(
+            'https://i.scdn.co/image/ab67616d0000485126597c053b38c9cf93f8f3a9'
+          )
         })
         it('setEmptyAlbums', () => {
           const albumsStore = useAlbumsStore()

@@ -35,13 +35,21 @@ describe('Playlist Tests', () => {
         expectTypeOf(playlists).toEqualTypeOf<Playlist[]>()
         expect(playlists[0].id).toEqual(spotifyPlaylistsResponse['items'][0]['id'])
         expect(playlists[0].name).toEqual(spotifyPlaylistsResponse['items'][0]['name'])
-        expect(playlists[0].owner).toEqual(spotifyPlaylistsResponse['items'][0]['owner']['display_name'])
-        expect(playlists[0].image.href).toEqual('https://mosaic.scdn.co/60/ab67616d00001e022910c6fc625b0d5ae2eed26aab67616d00001e023dc315e27e5cae6e5519823aab67616d00001e02d272c37389bd3d9c20564166ab67616d00001e02d5bb99cd52da195675b2f2cd')
+        expect(playlists[0].owner).toEqual(
+          spotifyPlaylistsResponse['items'][0]['owner']['display_name']
+        )
+        expect(playlists[0].image.href).toEqual(
+          'https://mosaic.scdn.co/60/ab67616d00001e022910c6fc625b0d5ae2eed26aab67616d00001e023dc315e27e5cae6e5519823aab67616d00001e02d272c37389bd3d9c20564166ab67616d00001e02d5bb99cd52da195675b2f2cd'
+        )
 
         expect(playlists[1].id).toEqual(spotifyPlaylistsResponse['items'][1]['id'])
         expect(playlists[1].name).toEqual(spotifyPlaylistsResponse['items'][1]['name'])
-        expect(playlists[1].owner).toEqual(spotifyPlaylistsResponse['items'][1]['owner']['display_name'])
-        expect(playlists[1].image.href).toEqual(spotifyPlaylistsResponse['items'][1]['images'][0]['url'])
+        expect(playlists[1].owner).toEqual(
+          spotifyPlaylistsResponse['items'][1]['owner']['display_name']
+        )
+        expect(playlists[1].image.href).toEqual(
+          spotifyPlaylistsResponse['items'][1]['images'][0]['url']
+        )
       })
       it('setEmptyAlbums', () => {
         const playlistsStore = usePlaylistsStore()
@@ -78,13 +86,21 @@ describe('Playlist Tests', () => {
         expectTypeOf(playlists).toEqualTypeOf<Playlist[]>()
         expect(playlists[0].id).toEqual(spotifyPlaylistsResponse['items'][0]['id'])
         expect(playlists[0].name).toEqual(spotifyPlaylistsResponse['items'][0]['name'])
-        expect(playlists[0].owner).toEqual(spotifyPlaylistsResponse['items'][0]['owner']['display_name'])
-        expect(playlists[0].image.href).toEqual('https://mosaic.scdn.co/60/ab67616d00001e022910c6fc625b0d5ae2eed26aab67616d00001e023dc315e27e5cae6e5519823aab67616d00001e02d272c37389bd3d9c20564166ab67616d00001e02d5bb99cd52da195675b2f2cd')
+        expect(playlists[0].owner).toEqual(
+          spotifyPlaylistsResponse['items'][0]['owner']['display_name']
+        )
+        expect(playlists[0].image.href).toEqual(
+          'https://mosaic.scdn.co/60/ab67616d00001e022910c6fc625b0d5ae2eed26aab67616d00001e023dc315e27e5cae6e5519823aab67616d00001e02d272c37389bd3d9c20564166ab67616d00001e02d5bb99cd52da195675b2f2cd'
+        )
 
         expect(playlists[1].id).toEqual(spotifyPlaylistsResponse['items'][1]['id'])
         expect(playlists[1].name).toEqual(spotifyPlaylistsResponse['items'][1]['name'])
-        expect(playlists[1].owner).toEqual(spotifyPlaylistsResponse['items'][1]['owner']['display_name'])
-        expect(playlists[1].image.href).toEqual(spotifyPlaylistsResponse['items'][1]['images'][0]['url'])
+        expect(playlists[1].owner).toEqual(
+          spotifyPlaylistsResponse['items'][1]['owner']['display_name']
+        )
+        expect(playlists[1].image.href).toEqual(
+          spotifyPlaylistsResponse['items'][1]['images'][0]['url']
+        )
 
         const paginationStore = usePaginationStore()
         expect(paginationStore.getNextPageAvailable).toBe(true)
