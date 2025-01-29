@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from '@/router'
 import { useAlbumsStore } from '@/stores/album'
 import { usePaginationStore } from '@/stores/pagination'
 import { usePlaylistsStore } from '@/stores/playlists'
@@ -52,8 +53,14 @@ function ClearSearchBar() {
   Search()
 }
 
-function SelectItem(id: string) {
-  alert(id)
+function SelectItem(id: string, type: string) {
+  router.push({
+    name: 'cassette',
+    query: {
+      id: id,
+      type: type
+    }
+  })
 }
 </script>
 
@@ -75,14 +82,14 @@ function SelectItem(id: string) {
       <v-row>
         <v-col v-if="getPlaylists.length > 0" cols="12" :md="getAlbums.length > 0 ? 6 : 12">
           <v-list lines="two" density="compact">
-            <v-list-subheader v-if="query ==''">Your Playlists</v-list-subheader>
+            <v-list-subheader v-if="query == ''">Your Playlists</v-list-subheader>
             <v-list-subheader v-else>Playlists</v-list-subheader>
             <v-list-item
               v-for="playlist in getPlaylists"
               :key="playlist.id"
               :title="playlist.name"
               :subtitle="playlist.owner"
-              @click="SelectItem(playlist.id)"
+              @click="SelectItem(playlist.id, 'playlist')"
             >
               <template #prepend>
                 <v-avatar tile>
@@ -101,7 +108,7 @@ function SelectItem(id: string) {
               :key="album.id"
               :title="album.name"
               :subtitle="album.artists.toString()"
-              @click="SelectItem(album.id)"
+              @click="SelectItem(album.id, 'album')"
             >
               <template #prepend>
                 <v-avatar tile>

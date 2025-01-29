@@ -9,6 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router/auto'
 import HomeView from '@/pages/HomeView.vue'
 import CallbackView from '@/pages/CallbackView.vue'
 import LoginView from '@/pages/LoginView.vue'
+import CassetteView from '@/pages/CassetteView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
+    },
+    {
+      path: '/cassette',
+      name: 'cassette',
+      component: CassetteView,
+      props: (route) => ({ id: route.query.id, type: route.query.type })
     }
   ]
 })

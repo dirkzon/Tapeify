@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { UseTracksStore } from './tracks'
+import { GetSmallestImage } from '@/helpers/imageFunctions'
 
 const STORE_NAME = 'playlists'
 
@@ -48,18 +50,32 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     SetPlaylists(items: Array<any>) {
       for (const playlist of items) {
         if (playlist) {
-          const numImages = playlist['images'].length
           this.playlists.push({
             name: playlist['name'],
             id: playlist['id'],
             owner: playlist['owner']['display_name'],
-            image: new URL(playlist['images'][numImages - 1]['url'])
+            image: GetSmallestImage(playlist['images'])
           })
         }
       }
     },
     ClearPlaylists() {
       this.playlists = []
+    },
+    async FetchPlaylistTracks(playlistId: string) {
+      const tracksStore = UseTracksStore()
+      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
+      const response = await fetchWrapper.get(url)
+
+      for (const track of response['tracks']['items']) {
+        tracksStore.AddTrack({
+          name: track['track']['name'],
+          id: track['track']['id'],
+          image: GetSmallestImage(track['track']['album']['images']),
+          explicit: track['track']['explicit'],
+          duration_ms: Number(track['track']['duration_ms'])
+        })
+      }
     }
   }
 })

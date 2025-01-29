@@ -1,10 +1,15 @@
-import { beforeEach, describe, expect, expectTypeOf, it } from 'vitest'
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAlbumsStore, type Album } from './album'
 
 describe('Albums Tests', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.mock('../router', () => ({
+      default: {
+        push: vi.fn()
+      }
+    }))
   })
 
   describe('getters', () => {
@@ -27,14 +32,10 @@ describe('Albums Tests', () => {
 
           expect(albums).toBeDefined()
           expectTypeOf(albums).toEqualTypeOf<Album[]>()
-          expect(albums).toEqual([
-            {
-              name: spotifyAlbumsResponse['albums'][0]['name'],
-              id: spotifyAlbumsResponse['albums'][0]['id'],
-              artists: ['Daft Punk'],
-              image: new URL(spotifyAlbumsResponse['albums'][0]['images'][0]['url'])
-            }
-          ])
+          expect(albums[0].id).toBe(spotifyAlbumsResponse['albums'][0]['id'])
+          expect(albums[0].name).toBe(spotifyAlbumsResponse['albums'][0]['name'])
+          expect(albums[0].artists).toStrictEqual(['Daft Punk'])
+          expect(albums[0].image.href).toBe('https://i.scdn.co/image/ab67616d0000485126597c053b38c9cf93f8f3a9')
         })
         it('setEmptyAlbums', () => {
           const albumsStore = useAlbumsStore()
