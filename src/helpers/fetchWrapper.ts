@@ -50,7 +50,7 @@ const handleResponse = async (
           body: body
         }).then(() => response.json())
       } else {
-        router.push('/login')
+        router.push({ name: '/LoginView' })
       }
     }
   }

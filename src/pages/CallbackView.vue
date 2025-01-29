@@ -18,7 +18,7 @@ onMounted(async () => {
   cookies.set('refresh_token', refresh_token, '1d')
 
   profileStore.getProfile()
-  router.push({ path: '/' })
+  router.push({ name: '/HomeView' })
 })
 </script>
 

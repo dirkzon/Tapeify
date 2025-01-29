@@ -55,7 +55,7 @@ function ClearSearchBar() {
 
 function SelectItem(id: string, type: string) {
   router.push({
-    name: 'cassette',
+    name: '/CassetteView',
     query: {
       id: id,
       type: type

@@ -16,22 +16,22 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: '/HomeView',
       component: HomeView
     },
     {
       path: '/callback',
-      name: 'callback',
+      name: '/CallbackView',
       component: CallbackView
     },
     {
       path: '/login',
-      name: 'login',
+      name: '/LoginView',
       component: LoginView
     },
     {
       path: '/cassette',
-      name: 'cassette',
+      name: '/CassetteView',
       component: CassetteView,
       props: (route) => ({ id: route.query.id, type: route.query.type })
     }
