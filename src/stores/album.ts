@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { GetSmallestImage } from '@/helpers/imageFunctions'
 
 const STORE_NAME = 'albums'
 
@@ -30,12 +31,11 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
           for (const index in album['artists']) {
             artists.push(album['artists'][index]['name'])
           }
-          const numImages = album['images'].length
           this.albums.push({
             name: album['name'],
             id: album['id'],
             artists: artists,
-            image: new URL(album['images'][numImages - 1]['url'])
+            image: GetSmallestImage(album['images'])
           })
         }
       }
@@ -47,8 +47,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const tracksStore = UseTracksStore()
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
       const response = await fetchWrapper.get(url)
-      const numImages = response['images'].length
-      const albumImage = new URL(response['images'][numImages - 1]['url'])
+      const albumImage = GetSmallestImage(response['images'])
       for (const track of response['tracks']['items']) {
         tracksStore.AddTrack({
           name: track['name'],
