@@ -3,6 +3,7 @@ import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { GetSmallestImage } from '@/helpers/imageFunctions'
 
 const STORE_NAME = 'search'
 
@@ -31,8 +32,31 @@ export const UseSearchStore = defineStore(STORE_NAME, {
 
       const result = await fetchWrapper.get(url)
 
-      playlistsStore.SetPlaylists(result['playlists']['items'])
-      albumsStore.SetAlbums(result['albums']['items'])
+      for (const playlist of result['playlists']['items']) {
+        if (playlist) {
+          playlistsStore.AddPlaylist({
+            name: playlist['name'],
+            id: playlist['id'],
+            owner: playlist['owner']['display_name'],
+            image: GetSmallestImage(playlist['images'])
+          })
+        }
+      }
+
+      for (const album of result['albums']['items']) {
+        if (album) {
+          const artists: string[] = []
+          for (const artist of album['artists']) {
+            artists.push(artist)
+          }
+          albumsStore.AddAlbum({
+            name: album['name'],
+            id: album['id'],
+            artists: artists,
+            image: GetSmallestImage(album['images'])
+          })
+        }
+      }
 
       const nextPageAvailable =
         result['albums']['next'] != null && result['playlists']['next'] != null

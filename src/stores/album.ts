@@ -23,27 +23,29 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     }
   },
   actions: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SetAlbums(items: Array<any>) {
-      for (const album of items) {
-        if (album) {
-          const artists: string[] = []
-          for (const index in album['artists']) {
-            artists.push(album['artists'][index]['name'])
-          }
-          this.albums.push({
-            name: album['name'],
-            id: album['id'],
-            artists: artists,
-            image: GetSmallestImage(album['images'])
-          })
-        }
-      }
+    // SetAlbums(items: Array<any>) {
+    //   for (const album of items) {
+    //     if (album) {
+    //       const artists: string[] = []
+    //       for (const index in album['artists']) {
+    //         artists.push(album['artists'][index]['name'])
+    //       }
+    //       this.albums.push({
+    //         name: album['name'],
+    //         id: album['id'],
+    //         artists: artists,
+    //         image: GetSmallestImage(album['images'])
+    //       })
+    //     }
+    //   }
+    // },
+    AddAlbum(album: Album) {
+      this.albums.push(album)
     },
     ClearAlbums() {
       this.albums = []
     },
-    async FetchAlbumTracks(albumId: string) {
+    async SetAlbumTracks(albumId: string) {
       const tracksStore = UseTracksStore()
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
       const response = await fetchWrapper.get(url)
