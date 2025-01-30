@@ -40,29 +40,26 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       url.searchParams.append('offset', String(offset))
 
       const result = await fetchWrapper.get(url)
-      this.SetPlaylists(result['items'])
+      for (const playlist of result['items']) {
+        this.AddPlaylist({
+          name: playlist['name'],
+          id: playlist['id'],
+          owner: playlist['owner']['display_name'],
+          image: GetSmallestImage(playlist['images'])
+        })
+      }
 
       const nextPageAvailable = result['next'] != null
       const previousPageAvailable = result['previous'] != null
       paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    SetPlaylists(items: Array<any>) {
-      for (const playlist of items) {
-        if (playlist) {
-          this.playlists.push({
-            name: playlist['name'],
-            id: playlist['id'],
-            owner: playlist['owner']['display_name'],
-            image: GetSmallestImage(playlist['images'])
-          })
-        }
-      }
+    AddPlaylist(playlist: Playlist) {
+      this.playlists.push(playlist)
     },
     ClearPlaylists() {
       this.playlists = []
     },
-    async FetchPlaylistTracks(playlistId: string) {
+    async SetPlaylistTracks(playlistId: string) {
       const tracksStore = UseTracksStore()
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
       const response = await fetchWrapper.get(url)
