@@ -18,7 +18,7 @@ onMounted(async () => {
   if (id) {
     switch (type) {
       case 'album':
-        await albumStore.FetchAlbumTracks(id)
+        await albumStore.SetAlbumTracks(id)
         break
       case 'playlist':
         await playlistsStore.SetPlaylistTracks(id)

@@ -23,37 +23,32 @@ describe('Albums Tests', () => {
       })
     })
     describe('actions', () => {
-      describe('setAlbums', () => {
-        it('setAlbums', () => {
-          const albumsStore = useAlbumsStore()
-          albumsStore.SetAlbums(spotifyAlbumsResponse['albums'])
+      it('setAlbums', () => {
+        const albumsStore = useAlbumsStore()
+        const albumToAdd: Album = {
+          name: 'test album',
+          id: '1234',
+          artists: ['John Doe'],
+          image: new URL('https://i.scdn.co/image/ab67616d0000b27326597c053b38c9cf93f8f3a9')
+        }
+        albumsStore.AddAlbum(albumToAdd)
 
-          const albums = albumsStore.getAlbums
+        const albums = albumsStore.getAlbums
 
-          expect(albums).toBeDefined()
-          expectTypeOf(albums).toEqualTypeOf<Album[]>()
-          expect(albums[0].id).toBe(spotifyAlbumsResponse['albums'][0]['id'])
-          expect(albums[0].name).toBe(spotifyAlbumsResponse['albums'][0]['name'])
-          expect(albums[0].artists).toStrictEqual(['Daft Punk'])
-          expect(albums[0].image.href).toBe(
-            'https://i.scdn.co/image/ab67616d0000485126597c053b38c9cf93f8f3a9'
-          )
-        })
-        it('setEmptyAlbums', () => {
-          const albumsStore = useAlbumsStore()
-          albumsStore.SetAlbums([])
-
-          const albums = albumsStore.getAlbums
-
-          expect(albums).toBeDefined()
-          expectTypeOf(albums).toEqualTypeOf<Album[]>()
-          expect(albums.length).toEqual(0)
-        })
+        expect(albums).toBeDefined()
+        expectTypeOf(albums).toEqualTypeOf<Album[]>()
+        expect(albums).toContainEqual(albumToAdd)
       })
     })
     it('clearAlbums', () => {
       const albumsStore = useAlbumsStore()
-      albumsStore.SetAlbums(spotifyAlbumsResponse['albums'])
+      const albumToAdd: Album = {
+        name: 'test album',
+        id: '1234',
+        artists: ['John Doe'],
+        image: new URL('https://i.scdn.co/image/ab67616d0000b27326597c053b38c9cf93f8f3a9')
+      }
+      albumsStore.AddAlbum(albumToAdd)
 
       albumsStore.ClearAlbums()
 
@@ -64,77 +59,3 @@ describe('Albums Tests', () => {
     })
   })
 })
-
-const spotifyAlbumsResponse = {
-  albums: [
-    {
-      album_type: 'album',
-      total_tracks: 15,
-      available_markets: [],
-      external_urls: {
-        spotify: 'https://open.spotify.com/album/382ObEPsp2rxGrnsizN5TX'
-      },
-      href: 'https://api.spotify.com/v1/albums/382ObEPsp2rxGrnsizN5TX?locale=en-US%2Cen%3Bq%3D0.5',
-      id: '382ObEPsp2rxGrnsizN5TX',
-      images: [
-        {
-          url: 'https://i.scdn.co/image/ab67616d0000b27326597c053b38c9cf93f8f3a9',
-          height: 640,
-          width: 640
-        },
-        {
-          url: 'https://i.scdn.co/image/ab67616d00001e0226597c053b38c9cf93f8f3a9',
-          height: 300,
-          width: 300
-        },
-        {
-          url: 'https://i.scdn.co/image/ab67616d0000485126597c053b38c9cf93f8f3a9',
-          height: 64,
-          width: 64
-        }
-      ],
-      name: 'TRON: Legacy Reconfigured',
-      release_date: '2011-01-01',
-      release_date_precision: 'day',
-      type: 'album',
-      uri: 'spotify:album:382ObEPsp2rxGrnsizN5TX',
-      artists: [
-        {
-          external_urls: {
-            spotify: 'https://open.spotify.com/artist/4tZwfgrHOc3mvqYlEYSvVi'
-          },
-          href: 'https://api.spotify.com/v1/artists/4tZwfgrHOc3mvqYlEYSvVi',
-          id: '4tZwfgrHOc3mvqYlEYSvVi',
-          name: 'Daft Punk',
-          type: 'artist',
-          uri: 'spotify:artist:4tZwfgrHOc3mvqYlEYSvVi'
-        }
-      ],
-      tracks: {
-        href: 'https://api.spotify.com/v1/albums/382ObEPsp2rxGrnsizN5TX/tracks?offset=0&limit=50&locale=en-US,en;q%3D0.5',
-        limit: 50,
-        next: null,
-        offset: 0,
-        previous: null,
-        total: 15,
-        items: []
-      },
-      copyrights: [
-        {
-          text: '© 2011 Disney',
-          type: 'C'
-        },
-        {
-          text: '℗ 2011 Walt Disney Records',
-          type: 'P'
-        }
-      ],
-      external_ids: {
-        upc: '00050087239633'
-      },
-      genres: [],
-      label: 'Walt Disney Records',
-      popularity: 43
-    }
-  ]
-}
