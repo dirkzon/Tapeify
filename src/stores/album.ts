@@ -23,22 +23,6 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     }
   },
   actions: {
-    // SetAlbums(items: Array<any>) {
-    //   for (const album of items) {
-    //     if (album) {
-    //       const artists: string[] = []
-    //       for (const index in album['artists']) {
-    //         artists.push(album['artists'][index]['name'])
-    //       }
-    //       this.albums.push({
-    //         name: album['name'],
-    //         id: album['id'],
-    //         artists: artists,
-    //         image: GetSmallestImage(album['images'])
-    //       })
-    //     }
-    //   }
-    // },
     AddAlbum(album: Album) {
       this.albums.push(album)
     },

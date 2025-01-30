@@ -47,7 +47,7 @@ export const UseSearchStore = defineStore(STORE_NAME, {
         if (album) {
           const artists: string[] = []
           for (const artist of album['artists']) {
-            artists.push(artist)
+            artists.push(artist['name'])
           }
           albumsStore.AddAlbum({
             name: album['name'],

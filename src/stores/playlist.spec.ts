@@ -36,7 +36,16 @@ describe('Playlist Tests', () => {
       }
 
       playlistsStore.AddPlaylist(playlistToAdd)
+
       const playlists = playlistsStore.getPlaylists
+      expect(playlists).toBeDefined()
+      expectTypeOf(playlists).toEqualTypeOf<Playlist[]>()
+      for (const playlist of playlists) {
+        expect(playlist.name).toBeTypeOf('string')
+        expect(playlist.id).toBeTypeOf('string')
+        expect(playlist.owner).toBeTypeOf('string')
+        expect(playlist.image.href).toBeTypeOf('string')
+      }
       expect(playlists).toContainEqual(playlistToAdd)
     })
 

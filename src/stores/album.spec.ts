@@ -37,6 +37,14 @@ describe('Albums Tests', () => {
 
         expect(albums).toBeDefined()
         expectTypeOf(albums).toEqualTypeOf<Album[]>()
+        for (const album of albums) {
+          expect(album.name).toBeTypeOf('string')
+          expect(album.id).toBeTypeOf('string')
+          for (const artist of album.artists) {
+            expect(artist).toBeTypeOf('string')
+          }
+          expect(album.image.href).toBeTypeOf('string')
+        }
         expect(albums).toContainEqual(albumToAdd)
       })
     })
