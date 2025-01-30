@@ -20,22 +20,41 @@ const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(pagin
 let query = ''
 
 onMounted(() => {
-  paginationStore.resetPagination()
+  const url = new URL(location.href)
+
+  if (url.searchParams.has('offset') && url.searchParams.has('limit')) {
+    const offset = Number(url.searchParams.get('offset'))
+    paginationStore.setOffset(offset)
+
+    const limit = Number(url.searchParams.get('limit'))
+    paginationStore.setLimit(limit)
+  } else {
+    paginationStore.setLimit(10)
+    paginationStore.resetPagination()
+  }
+
+  if (url.searchParams.has('q')) {
+    query = String(url.searchParams.get('q'))
+  }
+
   GetItems()
 })
 
 function Previous() {
   paginationStore.setOffset(offset.value - limit.value)
+  updateUrl()
   GetItems()
 }
 
 function Next() {
   paginationStore.setOffset(offset.value + limit.value)
+  updateUrl()
   GetItems()
 }
 
 function Search() {
   paginationStore.resetPagination()
+  updateUrl()
   GetItems()
 }
 
@@ -46,6 +65,17 @@ function GetItems() {
     albumStore.ClearAlbums()
     playlistsStore.FetchUsersPlayists()
   }
+}
+
+function updateUrl() {
+  router.push({
+    name: '/HomeView',
+    query: {
+      offset: offset.value,
+      limit: limit.value,
+      ...(query == '' ? {} : { q: query })
+    }
+  })
 }
 
 function ClearSearchBar() {
