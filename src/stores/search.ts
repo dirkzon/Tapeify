@@ -42,7 +42,21 @@ export const UseSearchStore = defineStore(STORE_NAME, {
           })
         }
       }
-      albumsStore.SetAlbums(result['albums']['items'])
+
+      for (const album of result['albums']['items']) {
+        if (album) {
+          const artists: string[] = []
+          for (const artist of album['artists']) {
+            artists.push(artist)
+          }
+          albumsStore.AddAlbum({
+            name: album['name'],
+            id: album['id'],
+            artists: artists,
+            image: GetSmallestImage(album['images'])
+          })
+        }
+      }
 
       const nextPageAvailable =
         result['albums']['next'] != null && result['playlists']['next'] != null
