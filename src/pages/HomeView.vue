@@ -123,7 +123,7 @@ function SelectItem(id: string, type: string) {
             >
               <template #prepend>
                 <v-avatar tile>
-                  <v-img :src="String(playlist.image)" />
+                  <v-img :src="playlist.image.href" />
                 </v-avatar>
               </template>
               <v-divider />
@@ -142,7 +142,7 @@ function SelectItem(id: string, type: string) {
             >
               <template #prepend>
                 <v-avatar tile>
-                  <v-img :src="String(album.image)" />
+                  <v-img :src="album.image.href" />
                 </v-avatar>
               </template>
               <v-divider />

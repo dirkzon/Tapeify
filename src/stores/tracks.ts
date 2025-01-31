@@ -8,6 +8,7 @@ export interface Track {
   image: URL
   explicit: boolean
   duration_ms: number
+  artists: string[]
 }
 
 export const UseTracksStore = defineStore(STORE_NAME, {
