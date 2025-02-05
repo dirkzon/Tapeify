@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async refreshAccessToken(refreshToken: string) {
       const searchParams = new URLSearchParams()
-      searchParams.append('grant_type', 'refresh_code')
+      searchParams.append('grant_type', 'refresh_token')
       searchParams.append('refresh_token', refreshToken)
       searchParams.append('client_id', import.meta.env.VITE_CLIENT_ID)
 

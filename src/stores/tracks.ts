@@ -5,9 +5,10 @@ const STORE_NAME = 'tracks'
 export interface Track {
   name: string
   id: string
-  image: URL
+  image?: URL
   explicit: boolean
   duration_ms: number
+  artists: string[]
 }
 
 export const UseTracksStore = defineStore(STORE_NAME, {

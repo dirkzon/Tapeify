@@ -65,12 +65,17 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       const response = await fetchWrapper.get(url)
 
       for (const track of response['tracks']['items']) {
+        const artists: string[] = []
+        for (const artist of track['track']['artists']) {
+          artists.push(artist['name'])
+        }
         tracksStore.AddTrack({
           name: track['track']['name'],
           id: track['track']['id'],
           image: GetSmallestImage(track['track']['album']['images']),
           explicit: track['track']['explicit'],
-          duration_ms: Number(track['track']['duration_ms'])
+          duration_ms: Number(track['track']['duration_ms']),
+          artists: artists
         })
       }
     }

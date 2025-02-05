@@ -35,12 +35,17 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const response = await fetchWrapper.get(url)
       const albumImage = GetSmallestImage(response['images'])
       for (const track of response['tracks']['items']) {
+        const artists: string[] = []
+        for (const artist of track['artists']) {
+          artists.push(artist['name'])
+        }
         tracksStore.AddTrack({
           name: track['name'],
           id: track['id'],
           image: albumImage,
           explicit: track['explicit'],
-          duration_ms: Number(track['duration_ms'])
+          duration_ms: Number(track['duration_ms']),
+          artists: artists
         })
       }
     }
