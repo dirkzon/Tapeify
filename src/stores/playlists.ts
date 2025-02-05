@@ -10,7 +10,7 @@ export interface Playlist {
   name: string
   id: string
   owner: string
-  image: URL
+  image?: URL
 }
 
 export const usePlaylistsStore = defineStore(STORE_NAME, {

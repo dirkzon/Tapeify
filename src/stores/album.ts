@@ -9,7 +9,7 @@ export interface Album {
   name: string
   id: string
   artists: string[]
-  image: URL
+  image?: URL
 }
 
 export const useAlbumsStore = defineStore(STORE_NAME, {
