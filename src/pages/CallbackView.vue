@@ -15,7 +15,7 @@ onMounted(async () => {
 
   const { access_token, refresh_token } = await authStore.requestAccessToken(String(code))
   cookies.set('access_token', access_token, 3600)
-  cookies.set('refresh_token', refresh_token, 3600 * 2)
+  cookies.set('refresh_token', refresh_token)
 
   profileStore.getProfile()
   router.push({ name: '/HomeView' })

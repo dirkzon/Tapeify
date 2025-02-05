@@ -4,7 +4,8 @@ interface SpotifyImage {
   width: number
 }
 
-export function GetSmallestImage(images: SpotifyImage[]): URL {
+export function GetSmallestImage(images: SpotifyImage[]): URL | undefined {
+  if (images.length == 0) return undefined
   let smallestHeight = images[0].height
   let smallesImageIndex = 0
   for (let i = 0; i < images.length; i++) {

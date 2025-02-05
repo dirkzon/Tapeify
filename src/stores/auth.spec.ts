@@ -62,7 +62,7 @@ describe('Auth Tests', () => {
       //url
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('grant_type')).toBe('refresh_code')
+      expect(fetchWrapperSpy.mock.calls[0][1]?.get('grant_type')).toBe('refresh_token')
       expect(fetchWrapperSpy.mock.calls[0][1]?.get('client_id')).toStrictEqual(expect.any(String))
       expect(fetchWrapperSpy.mock.calls[0][1]?.get('refresh_token')).toStrictEqual(
         expect.any(String)

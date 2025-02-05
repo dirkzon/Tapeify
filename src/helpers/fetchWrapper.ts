@@ -43,7 +43,7 @@ const handleResponse = async (
           cookies.get('refresh_token')
         )
         cookies.set('access_token', access_token, 3600)
-        cookies.set('refresh_token', refresh_token, 3600 * 2)
+        cookies.set('refresh_token', refresh_token)
         fetch(url, {
           method: method,
           headers: headers,

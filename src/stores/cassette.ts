@@ -8,7 +8,6 @@ export interface CassetteSide {
   tracks: Track[]
   duration_ms: number
   id: string
-  index: number
 }
 
 export const useCassetteStore = defineStore(STORE_NAME, {
@@ -17,13 +16,11 @@ export const useCassetteStore = defineStore(STORE_NAME, {
       {
         tracks: [],
         duration_ms: 0,
-        index: 0,
         id: v4()
       },
       {
         tracks: [],
         duration_ms: 0,
-        index: 1,
         id: v4()
       }
     ] as CassetteSide[]
@@ -41,8 +38,33 @@ export const useCassetteStore = defineStore(STORE_NAME, {
         side.duration_ms = 0
       }
     },
-    SetSides(newSides: CassetteSide[]) {
-      this.sides = newSides
+    SetSide(newSide: CassetteSide, index: number) {
+      this.sides[index] = newSide
+    },
+    AddSide() {
+      this.sides.push({
+        tracks: [],
+        duration_ms: 0,
+        id: v4()
+      })
+    },
+    DeleteSide(id: string) {
+      const index = this.sides.findIndex((side) => side.id === id)
+      this.sides.splice(index, 1)
+    },
+    ResetSides() {
+      this.sides = [
+        {
+          tracks: [],
+          duration_ms: 0,
+          id: v4()
+        },
+        {
+          tracks: [],
+          duration_ms: 0,
+          id: v4()
+        }
+      ] as CassetteSide[]
     }
   }
 })
