@@ -9,6 +9,8 @@ import { registerPlugins } from '@/plugins'
 
 // Components
 import App from './App.vue'
+import CassetteSide from './components/CassetteSide.vue'
+import { VueDraggableNext } from 'vue-draggable-next'
 
 // Composables
 import { createApp } from 'vue'
@@ -16,5 +18,8 @@ import { createApp } from 'vue'
 const app = createApp(App)
 
 registerPlugins(app)
+
+app.component('cassette-side', CassetteSide)
+app.component('draggable', VueDraggableNext)
 
 app.mount('#app')

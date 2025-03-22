@@ -1,6 +1,6 @@
 import type { CassetteSide } from '@/stores/cassette'
 import type { Track } from '@/stores/tracks'
-import { SortType, type TrackSorter } from './trackSortInterface'
+import { SortType, type TrackSorter } from './trackSorter'
 
 export class GreedySort implements TrackSorter {
   type: SortType = SortType.Greedy

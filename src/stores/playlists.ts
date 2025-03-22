@@ -75,7 +75,8 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
           image: GetSmallestImage(track['track']['album']['images']),
           explicit: track['track']['explicit'],
           duration_ms: Number(track['track']['duration_ms']),
-          artists: artists
+          artists: artists,
+          locked_index: -1
         })
       }
     }

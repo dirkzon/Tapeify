@@ -9,6 +9,7 @@ export interface Track {
   explicit: boolean
   duration_ms: number
   artists: string[]
+  locked_index: number
 }
 
 export const UseTracksStore = defineStore(STORE_NAME, {

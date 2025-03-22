@@ -45,7 +45,8 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
           image: albumImage,
           explicit: track['explicit'],
           duration_ms: Number(track['duration_ms']),
-          artists: artists
+          artists: artists,
+          locked_index: -1
         })
       }
     }

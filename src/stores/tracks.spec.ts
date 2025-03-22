@@ -32,7 +32,8 @@ describe('tracks test', () => {
           id: '1234',
           explicit: false,
           duration_ms: 1000,
-          artists: ['artist']
+          artists: ['artist'],
+          locked_index: -1
         }
         tracksStore.AddTrack(trackToAdd)
 
@@ -49,7 +50,8 @@ describe('tracks test', () => {
           id: '1234',
           explicit: false,
           duration_ms: 1000,
-          artists: ['artist']
+          artists: ['artist'],
+          locked_index: -1
         }
         tracksStore.AddTrack(trackToAdd)
 
