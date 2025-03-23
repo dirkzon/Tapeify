@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { CassetteSide } from '@/stores/cassette'
 import { useCassetteStore } from '@/stores/cassette'
 import { useSortingStore } from '@/stores/sorting'
+import { UseTracksStore } from '@/stores/tracks'
 
 const sortStore = useSortingStore()
 const cassetteStore = useCassetteStore()
+const trackStore = UseTracksStore()
 
 const { getSides } = toRefs(cassetteStore)
 
-const props = defineProps({
-  index: Number
-})
+const props = defineProps<{
+    index: number
+}>()
 
 const prettySideDuration = computed({
     get() {
@@ -28,19 +29,38 @@ const prettySideDuration = computed({
     set(_) {}
 })
 
+
 const tracks = computed({
   get() {
     return getSides.value[props.index].tracks
   },
-  set(val) {
-    console.log(val)
-  }
+  set() {}
 })
 
+function OnChange(changeEvent: any) {
+    const event = Object.keys(changeEvent)[0]
+    let trackIndex
+    let trackId
+
+    switch(event) {
+        case 'moved':
+            trackIndex = changeEvent.moved.newIndex
+            trackId = changeEvent.moved.element.id
+            break;
+        case 'added':
+            trackIndex = changeEvent.added.newIndex
+            trackId = changeEvent.added.element.id
+            break
+        case 'removed':
+            break
+    }
+    trackStore.SetAnchor(props.index, trackIndex, trackId)
+}
+
 function DeleteSide(id: string) {
-  cassetteStore.DeleteSide(id)
-  cassetteStore.clearSidesTracks()
-  sortStore.sortTracksInSides()
+//   cassetteStore.DeleteSide(id)
+//   cassetteStore.clearSidesTracks()
+//   sortStore.sortTracksInSides()
 }
 
 function getPrettyTrackDuration(ms: number): string {
@@ -65,7 +85,7 @@ function getPrettyTrackDuration(ms: number): string {
             variant="plain"
             density="comfortable"
             icon="mdi-playlist-minus"
-            @click="DeleteSide(getSides.id)"
+            @click="DeleteSide(getSides[props.index].id)"
         />
         </v-toolbar>
         <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
@@ -73,6 +93,7 @@ function getPrettyTrackDuration(ms: number): string {
         <draggable 
             group="sides" 
             v-model="tracks"
+            @change="OnChange"
             >
             <v-list-item
                 v-for="track in tracks"
@@ -80,6 +101,7 @@ function getPrettyTrackDuration(ms: number): string {
                 :title="track.name"
                 :subtitle="track.artists.join()"
                 >
+                <a v-if="track.anchor?.anchored">locked</a>
                 <template #prepend>
                     <v-avatar tile>
                         <v-img v-if="track.image" :src="track.image.href" />

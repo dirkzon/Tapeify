@@ -1,8 +1,8 @@
 import type { CassetteSide } from '@/stores/cassette'
 import type { Track } from '@/stores/tracks'
-import { SortType, type TrackSorter } from './trackSorter'
+import { SortType, TrackSorter } from './trackSorter'
 
-export class KeepTrackOrder implements TrackSorter {
+export class KeepTrackOrder extends TrackSorter {
   type: SortType = SortType.KeepOrder
   sortTracksInSides(sides: CassetteSide[], tracks: Track[]): CassetteSide[] {
     const totalTracksLength = tracks.map((a) => a.duration_ms).reduce((a, b) => a + b, 0)

@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 
 const STORE_NAME = 'tracks'
 
+interface Anchor {
+  anchored: boolean
+  side_index: number
+  track_index: number
+}
+
 export interface Track {
   name: string
   id: string
@@ -9,7 +15,7 @@ export interface Track {
   explicit: boolean
   duration_ms: number
   artists: string[]
-  locked_index: number
+  anchor?: Anchor
 }
 
 export const UseTracksStore = defineStore(STORE_NAME, {
@@ -27,6 +33,16 @@ export const UseTracksStore = defineStore(STORE_NAME, {
     },
     ClearTracks() {
       this.tracks = []
+    },
+    SetAnchor(sideIndex: number, trackIndex: number, id: string) {
+      const track = this.tracks.find(t => t.id == id)
+      if(track) {
+        track.anchor = {
+          anchored: true,
+          side_index: sideIndex,
+          track_index: trackIndex
+        }
+      }
     }
   }
 })

@@ -6,8 +6,16 @@ export enum SortType {
   KeepOrder = 'keep-order'
 }
 
-// The tracks parameter has the original order of album/playlist
-export interface TrackSorter {
-  type: SortType
-  sortTracksInSides(sides: CassetteSide[], tracks: Track[]): CassetteSide[]
+export abstract class TrackSorter {
+  abstract type: SortType
+
+  public PrePack(numBins: number, current: Track[][], updated: Track[][] ): void {
+    console.log(numBins)
+    console.log('current')
+    console.log(current)
+    console.log('updaeed')
+    console.log(updated)
+    console.log(updated == current)
+  }
+  abstract sortTracksInSides(sides: CassetteSide[], tracks: Track[]): CassetteSide[]
 }

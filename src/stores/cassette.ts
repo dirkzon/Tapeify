@@ -65,6 +65,6 @@ export const useCassetteStore = defineStore(STORE_NAME, {
           id: v4()
         }
       ] as CassetteSide[]
-    }
+    },
   }
 })

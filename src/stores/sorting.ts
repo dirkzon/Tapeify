@@ -4,6 +4,7 @@ import { SortType, type TrackSorter } from '@/helpers/sorting/trackSorter'
 import { GreedySort } from '@/helpers/sorting/greedySort'
 import { KeepTrackOrder } from '@/helpers/sorting/keepTrackOrder'
 import { useCassetteStore } from './cassette'
+import type { Track } from '@/stores/tracks'
 
 const STORE_NAME = 'sorting'
 
@@ -21,6 +22,7 @@ export const useSortingStore = defineStore(STORE_NAME, {
     }
   },
   actions: {
+    // Static/offline 1D anchored bin packing algorithm
     sortTracksInSides() {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassetteStore()

@@ -1,8 +1,8 @@
 import type { CassetteSide } from '@/stores/cassette'
 import type { Track } from '@/stores/tracks'
-import { SortType, type TrackSorter } from './trackSorter'
+import { SortType, TrackSorter } from './trackSorter'
 
-export class GreedySort implements TrackSorter {
+export class GreedySort extends TrackSorter {
   type: SortType = SortType.Greedy
   sortTracksInSides(sides: CassetteSide[], tracks: Track[]): CassetteSide[] {
     if (sides.length == 0) return []
