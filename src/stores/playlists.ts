@@ -76,6 +76,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
           explicit: track['track']['explicit'],
           duration_ms: Number(track['track']['duration_ms']),
           artists: artists,
+          anchored: false,
         })
       }
     }

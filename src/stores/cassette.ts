@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { type Track } from './tracks'
-import { v4 } from 'uuid'
 
 const STORE_NAME = 'cassette'
 
 export interface CassetteSide {
   tracks: Track[]
   duration_ms: number
-  id: string
 }
 
 export const useCassetteStore = defineStore(STORE_NAME, {
@@ -16,12 +14,10 @@ export const useCassetteStore = defineStore(STORE_NAME, {
       {
         tracks: [],
         duration_ms: 0,
-        id: v4()
       },
       {
         tracks: [],
         duration_ms: 0,
-        id: v4()
       }
     ] as CassetteSide[]
   }),
@@ -45,11 +41,9 @@ export const useCassetteStore = defineStore(STORE_NAME, {
       this.sides.push({
         tracks: [],
         duration_ms: 0,
-        id: v4()
       })
     },
-    DeleteSide(id: string) {
-      const index = this.sides.findIndex((side) => side.id === id)
+    DeleteSide(index: number) {
       this.sides.splice(index, 1)
     },
     ResetSides() {
@@ -57,14 +51,12 @@ export const useCassetteStore = defineStore(STORE_NAME, {
         {
           tracks: [],
           duration_ms: 0,
-          id: v4()
         },
         {
           tracks: [],
           duration_ms: 0,
-          id: v4()
         }
       ] as CassetteSide[]
-    },
+    }
   }
 })

@@ -29,7 +29,6 @@ const prettySideDuration = computed({
     set(_) {}
 })
 
-
 const tracks = computed({
   get() {
     return getSides.value[props.index].tracks
@@ -37,30 +36,41 @@ const tracks = computed({
   set() {}
 })
 
-function OnChange(changeEvent: any) {
-    const event = Object.keys(changeEvent)[0]
+function AnchorTrack(changeEvent: any) {
+    const eventType = Object.keys(changeEvent)[0]
     let trackIndex
     let trackId
 
-    switch(event) {
+    switch(eventType) {
         case 'moved':
             trackIndex = changeEvent.moved.newIndex
             trackId = changeEvent.moved.element.id
+            trackStore.AnchorTrack(props.index, trackIndex, trackId)
             break;
         case 'added':
             trackIndex = changeEvent.added.newIndex
             trackId = changeEvent.added.element.id
+            trackStore.AnchorTrack(props.index, trackIndex, trackId)
             break
         case 'removed':
             break
     }
-    trackStore.SetAnchor(props.index, trackIndex, trackId)
 }
 
-function DeleteSide(id: string) {
-//   cassetteStore.DeleteSide(id)
-//   cassetteStore.clearSidesTracks()
-//   sortStore.sortTracksInSides()
+function UnAnchorTrack(track_id: string) {
+    trackStore.UnAnchorTrack(track_id)
+    sortStore.sortTracksInSides()
+}
+
+function DeleteSide() {
+    for (var track of tracks.value) {
+        if (track.anchored) {
+            trackStore.UnAnchorTrack(track.id)
+        }
+    }
+
+    cassetteStore.DeleteSide(props.index)
+    sortStore.sortTracksInSides()
 }
 
 function getPrettyTrackDuration(ms: number): string {
@@ -85,7 +95,7 @@ function getPrettyTrackDuration(ms: number): string {
             variant="plain"
             density="comfortable"
             icon="mdi-playlist-minus"
-            @click="DeleteSide(getSides[props.index].id)"
+            @click="DeleteSide"
         />
         </v-toolbar>
         <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
@@ -93,7 +103,8 @@ function getPrettyTrackDuration(ms: number): string {
         <draggable 
             group="sides" 
             v-model="tracks"
-            @change="OnChange"
+            @change="AnchorTrack"
+            @end="sortStore.sortTracksInSides()"
             >
             <v-list-item
                 v-for="track in tracks"
@@ -101,7 +112,6 @@ function getPrettyTrackDuration(ms: number): string {
                 :title="track.name"
                 :subtitle="track.artists.join()"
                 >
-                <a v-if="track.anchor?.anchored">locked</a>
                 <template #prepend>
                     <v-avatar tile>
                         <v-img v-if="track.image" :src="track.image.href" />
@@ -109,12 +119,26 @@ function getPrettyTrackDuration(ms: number): string {
                     </v-avatar>
                 </template>
                 <template #append>
-                    <v-list-item-action class="flex-column align-end">
+                    <v-list>
+                        <v-list-item-action class="flex-column align-end">
                         <small class="text-high-emphasis opacity-60">{{
                             getPrettyTrackDuration(track.duration_ms)
                         }}</small>
-                        <v-icon v-if="track.explicit" icon="mdi-alpha-e-box" size="small" />
-                    </v-list-item-action>
+                        </v-list-item-action>
+                        <v-list-item-action>
+                            <v-icon v-if="track.explicit" icon="mdi-alpha-e-box" size="small" />
+
+                            <v-hover v-slot:default="{ isHovering, props }">
+                                <v-btn 
+                                 v-bind="props"
+                                    @click="UnAnchorTrack(track.id)" 
+                                    v-if="track.anchored" 
+                                    flat size="x-small">
+                                    <v-icon :icon="isHovering? 'mdi-lock-open-variant' : 'mdi-lock'" size="medium"></v-icon>
+                                </v-btn>
+                            </v-hover>
+                        </v-list-item-action>
+                    </v-list>
                 </template>
                 <v-divider />
             </v-list-item>

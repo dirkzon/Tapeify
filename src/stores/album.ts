@@ -46,6 +46,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
           explicit: track['explicit'],
           duration_ms: Number(track['duration_ms']),
           artists: artists,
+          anchored: false,
         })
       }
     }

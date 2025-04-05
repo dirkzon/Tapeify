@@ -22,19 +22,20 @@ export const useSortingStore = defineStore(STORE_NAME, {
     }
   },
   actions: {
-    // Static/offline 1D anchored bin packing algorithm
     sortTracksInSides() {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassetteStore()
 
+      cassetteStore.clearSidesTracks()
+      
       const trackSorter = this.sorters.find((sorter: { type: SortType }) => sorter.type === this.selectedSortType) || this.sorters[0]
 
-      const sides = trackSorter.sortTracksInSides(
-        [...cassetteStore.getSides],
-        [...tracksStore.getTracks]
-      )
-      for (let i = 0; i < sides.length; i++) {
-        cassetteStore.SetSide(sides[i], i)
+      trackSorter.PrePackAnchoredTracks([...cassetteStore.getSides], [...tracksStore.anchoredTracks])
+      trackSorter.sortUnanchoredTracks([...tracksStore.unanchoredTracks])
+      trackSorter.ClearEmptyValues()
+          
+      for (let i = 0; i < trackSorter.cassetteSides.length; i++) {
+        cassetteStore.SetSide(trackSorter.cassetteSides[i], i)
       }
     },
     setSelectedSortType(sortType: SortType) {
