@@ -70,7 +70,7 @@ function AddSide() {
     />
     <v-row>
       <v-col v-for="(_, index) in getSides" :key="index">
-        <cassette-side :index="index" :callback="sort"></cassette-side>
+        <cassette-side :index="index"></cassette-side>
       </v-col>
     </v-row>
     <v-btn append-icon="mdi-playlist-plus" @click="AddSide"> Add side </v-btn>

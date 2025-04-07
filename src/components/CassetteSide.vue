@@ -57,11 +57,6 @@ function AnchorTrack(changeEvent: any) {
     }
 }
 
-function UnAnchorTrack(track_id: string) {
-    trackStore.UnAnchorTrack(track_id)
-    sortStore.sortTracksInSides()
-}
-
 function DeleteSide() {
     for (var track of tracks.value) {
         if (track.anchored) {
@@ -72,19 +67,10 @@ function DeleteSide() {
     cassetteStore.DeleteSide(props.index)
     sortStore.sortTracksInSides()
 }
-
-function getPrettyTrackDuration(ms: number): string {
-  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
-
-  const pad = (num: number) => num.toString().padStart(2, '0')
-
-  return `${pad(minutes)}:${pad(seconds)}`
-}
 </script>
 
 <template>
-    <v-card flat class="mx-auto" max-width="700">
+    <v-card flat class="mx-auto" max-width="700"> 
         <v-toolbar flat>
         <v-toolbar-title class="text-grey">
             {{ String.fromCharCode(97 + props.index).toUpperCase() }}
@@ -99,51 +85,22 @@ function getPrettyTrackDuration(ms: number): string {
         />
         </v-toolbar>
         <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
-        <v-list lines="two" density="compact">
-        <draggable 
-            group="sides" 
-            v-model="tracks"
-            @change="AnchorTrack"
-            @end="sortStore.sortTracksInSides()"
-            >
-            <v-list-item
-                v-for="track in tracks"
-                :key="track.id"
-                :title="track.name"
-                :subtitle="track.artists.join()"
+        <v-list lines="two" density="compact"> 
+            <draggable 
+                group="sides" 
+                v-model="tracks"
+                @change="AnchorTrack"
+                @end="sortStore.sortTracksInSides()"
                 >
-                <template #prepend>
-                    <v-avatar tile>
-                        <v-img v-if="track.image" :src="track.image.href" />
-                        <v-icon v-else icon="mdi-music" />
-                    </v-avatar>
-                </template>
-                <template #append>
-                    <v-list>
-                        <v-list-item-action class="flex-column align-end">
-                        <small class="text-high-emphasis opacity-60">{{
-                            getPrettyTrackDuration(track.duration_ms)
-                        }}</small>
-                        </v-list-item-action>
-                        <v-list-item-action>
-                            <v-icon v-if="track.explicit" icon="mdi-alpha-e-box" size="small" />
-
-                            <v-hover v-slot:default="{ isHovering, props }">
-                                <v-btn 
-                                 v-bind="props"
-                                    @click="UnAnchorTrack(track.id)" 
-                                    v-if="track.anchored" 
-                                    flat size="x-small">
-                                    <v-icon :icon="isHovering? 'mdi-lock-open-variant' : 'mdi-lock'" size="medium"></v-icon>
-                                </v-btn>
-                            </v-hover>
-                        </v-list-item-action>
-                    </v-list>
-                </template>
-                <v-divider />
-            </v-list-item>
-        </draggable>
+                <track-item
+                    v-for="(track, index) in tracks"
+                    :key="track.id"
+                    :track="track"
+                    :side_index="props.index"
+                    :track_index="index"
+                    >
+                </track-item>
+            </draggable>
         </v-list>
-        <v-card />
     </v-card>
 </template>
