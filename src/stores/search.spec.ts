@@ -1,5 +1,5 @@
 import { UseSearchStore } from './search'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { setActivePinia, createPinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePaginationStore } from './pagination'

@@ -1,9 +1,9 @@
-import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { useAuthStore } from '@/stores/auth'
 import { setActivePinia, createPinia } from 'pinia'
 import { describe, expect, vi, it, beforeEach, afterAll } from 'vitest'
 import { useCookies } from 'vue3-cookies'
-import router from '../router'
+import router from '../../router'
 
 const { cookies } = useCookies()
 
@@ -39,7 +39,7 @@ describe('Fetchwrapper Tests', () => {
           return true
       }
     })
-    vi.mock('../router', () => ({
+    vi.mock('../../router', () => ({
       default: {
         push: vi.fn()
       }

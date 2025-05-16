@@ -1,4 +1,4 @@
-import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { defineStore } from 'pinia'
 
 const STORE_NAME = 'profile'

@@ -6,7 +6,7 @@ import { UseTracksStore } from '@/stores/tracks'
 import { useCassetteStore } from '@/stores/cassette'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { useSortingStore } from '@/stores/sorting'
-import { SortType } from '@/helpers/sorting/trackSorter'
+import { SortType } from '@/utils/sorting/trackSorter'
 import { computed } from 'vue';
 
 const playlistsStore = usePlaylistsStore()
@@ -23,7 +23,7 @@ const sortType = computed({
   },
   set(val: SortType) {
     sortStore.setSelectedSortType(val)
-    sort()
+    sortStore.sortTracksInSides()
   }
 })
 
@@ -45,17 +45,12 @@ onMounted(async () => {
         break
     }
   }
-  sort()
+  sortStore.sortTracksInSides()
 })
 
-function sort() {
-  cassetteStore.clearSidesTracks()
-  sortStore.sortTracksInSides()
-}
-
 function AddSide() {
-  cassetteStore.AddSide()
-  sort()
+  cassetteStore.AddEmptySide()
+  sortStore.sortTracksInSides()
 }
 </script>
 
@@ -70,7 +65,7 @@ function AddSide() {
     />
     <v-row>
       <v-col v-for="(_, index) in getSides" :key="index">
-        <cassette-side :index="index" :callback="sort"></cassette-side>
+        <cassette-side :index="index"></cassette-side>
       </v-col>
     </v-row>
     <v-btn append-icon="mdi-playlist-plus" @click="AddSide"> Add side </v-btn>

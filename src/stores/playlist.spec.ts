@@ -1,7 +1,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { usePlaylistsStore, type Playlist } from './playlists'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { usePaginationStore } from './pagination'
 
 describe('Playlist Tests', () => {

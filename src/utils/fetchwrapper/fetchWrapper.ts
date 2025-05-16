@@ -1,6 +1,6 @@
 import { useCookies } from 'vue3-cookies'
 import { useAuthStore } from '@/stores/auth'
-import router from '../router'
+import router from '../../router'
 
 const { cookies } = useCookies()
 

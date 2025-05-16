@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { CassetteSide } from '@/stores/cassette'
 import { useCassetteStore } from '@/stores/cassette'
 import { useSortingStore } from '@/stores/sorting'
+import { UseTracksStore } from '@/stores/tracks'
 
 const sortStore = useSortingStore()
 const cassetteStore = useCassetteStore()
+const trackStore = UseTracksStore()
 
 const { getSides } = toRefs(cassetteStore)
 
-const props = defineProps({
-  index: Number
-})
+const props = defineProps<{
+    index: number
+}>()
 
 const prettySideDuration = computed({
     get() {
@@ -32,29 +33,44 @@ const tracks = computed({
   get() {
     return getSides.value[props.index].tracks
   },
-  set(val) {
-    console.log(val)
-  }
+  set() {}
 })
 
-function DeleteSide(id: string) {
-  cassetteStore.DeleteSide(id)
-  cassetteStore.clearSidesTracks()
-  sortStore.sortTracksInSides()
+function AnchorTrack(changeEvent: any) {
+    const eventType = Object.keys(changeEvent)[0]
+    let trackIndex
+    let trackId
+
+    switch(eventType) {
+        case 'moved':
+            trackIndex = changeEvent.moved.newIndex
+            trackId = changeEvent.moved.element.id
+            trackStore.AnchorTrack(props.index, trackIndex, trackId)
+            break;
+        case 'added':
+            trackIndex = changeEvent.added.newIndex
+            trackId = changeEvent.added.element.id
+            trackStore.AnchorTrack(props.index, trackIndex, trackId)
+            break
+        case 'removed':
+            break
+    }
 }
 
-function getPrettyTrackDuration(ms: number): string {
-  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+function DeleteSide() {
+    for (var track of tracks.value) {
+        if (track.anchored) {
+            trackStore.UnAnchorTrack(track.id)
+        }
+    }
 
-  const pad = (num: number) => num.toString().padStart(2, '0')
-
-  return `${pad(minutes)}:${pad(seconds)}`
+    cassetteStore.DeleteSide(props.index)
+    sortStore.sortTracksInSides()
 }
 </script>
 
 <template>
-    <v-card flat class="mx-auto" max-width="700">
+    <v-card flat class="mx-auto" max-width="700"> 
         <v-toolbar flat>
         <v-toolbar-title class="text-grey">
             {{ String.fromCharCode(97 + props.index).toUpperCase() }}
@@ -65,39 +81,31 @@ function getPrettyTrackDuration(ms: number): string {
             variant="plain"
             density="comfortable"
             icon="mdi-playlist-minus"
-            @click="DeleteSide(getSides.id)"
+            @click="DeleteSide"
         />
         </v-toolbar>
         <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
-        <v-list lines="two" density="compact">
-        <draggable 
-            group="sides" 
-            v-model="tracks"
-            >
-            <v-list-item
-                v-for="track in tracks"
-                :key="track.id"
-                :title="track.name"
-                :subtitle="track.artists.join()"
+        <v-list lines="two" density="compact"> 
+            <draggable 
+                class="dragArea list-group w-full"
+                :list="tracks"
+                group="sides" 
+                @change="AnchorTrack"
+                @end="sortStore.sortTracksInSides()"
                 >
-                <template #prepend>
-                    <v-avatar tile>
-                        <v-img v-if="track.image" :src="track.image.href" />
-                        <v-icon v-else icon="mdi-music" />
-                    </v-avatar>
-                </template>
-                <template #append>
-                    <v-list-item-action class="flex-column align-end">
-                        <small class="text-high-emphasis opacity-60">{{
-                            getPrettyTrackDuration(track.duration_ms)
-                        }}</small>
-                        <v-icon v-if="track.explicit" icon="mdi-alpha-e-box" size="small" />
-                    </v-list-item-action>
-                </template>
-                <v-divider />
-            </v-list-item>
-        </draggable>
+                <div
+                    class="list-group-item"
+                    v-for="track in tracks"
+                    :key="track.id"
+                >
+                    <track-item
+                        :track="track"
+                        :side_index="props.index"
+                        :track_index="index"
+                        >
+                    </track-item>
+                </div>
+            </draggable>
         </v-list>
-        <v-card />
     </v-card>
 </template>

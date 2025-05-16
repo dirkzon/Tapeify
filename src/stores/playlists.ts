@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { UseTracksStore } from './tracks'
-import { GetSmallestImage } from '@/helpers/imageFunctions'
+import { GetSmallestImage } from '@/utils/images/imageFunctions'
 
 const STORE_NAME = 'playlists'
 
@@ -76,7 +76,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
           explicit: track['track']['explicit'],
           duration_ms: Number(track['track']['duration_ms']),
           artists: artists,
-          locked_index: -1
+          anchored: false,
         })
       }
     }

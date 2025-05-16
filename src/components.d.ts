@@ -10,6 +10,6 @@ declare module 'vue' {
     CassetteSide: typeof import('./components/CassetteSide.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Track: typeof import('./components/track.vue')['default']
+    TrackItem: typeof import('./components/TrackItem.vue')['default']
   }
 }

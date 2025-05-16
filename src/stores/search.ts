@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
-import { GetSmallestImage } from '@/helpers/imageFunctions'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
+import { GetSmallestImage } from '@/utils/images/imageFunctions'
 
 const STORE_NAME = 'search'
 
