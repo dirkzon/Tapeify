@@ -11,8 +11,8 @@ export const useSortingStore = defineStore(STORE_NAME, {
     selectedSortType: SortType.Greedy,
   }),
   getters: {
-    getSortingTypes(state): String[] {
-      return Object.keys(SortType)
+    getSortingTypes(): SortType[] {
+      return Object.values(SortType)
     },
     getSelectedSortType(state): SortType {
       return state.selectedSortType
@@ -35,8 +35,8 @@ export const useSortingStore = defineStore(STORE_NAME, {
         cassetteStore.PushNewSide(trackSorter.cassetteSides[i])
       }
     },
-    setSelectedSortType(type: String) {
-      this.selectedSortType = SortType[type as keyof typeof SortType]
+    setSelectedSortType(sortType: SortType) {
+      this.selectedSortType = sortType
     }
   }
 })

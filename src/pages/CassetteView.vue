@@ -21,7 +21,7 @@ const sortType = computed({
   get() { 
     return getSelectedSortType.value
   },
-  set(val: SortType) {
+  set(val) {
     sortStore.setSelectedSortType(val)
     sortStore.sortTracksInSides()
   }
