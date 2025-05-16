@@ -8,7 +8,7 @@ const sorterFactories: { [key in SortType]: (count: number) => TrackSorter } = {
 };
 
 export function CreateTrackSorter(type: SortType, sidesCount: number): TrackSorter {
-    if (type == undefined) sorterFactories[SortType.Greedy]
+    if (type == undefined) type = SortType.Greedy
     const factory = sorterFactories[type]
     if (!factory) throw new Error(`Invalid SortType: ${type}`);
     return factory(sidesCount)
