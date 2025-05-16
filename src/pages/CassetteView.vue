@@ -6,7 +6,7 @@ import { UseTracksStore } from '@/stores/tracks'
 import { useCassetteStore } from '@/stores/cassette'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { useSortingStore } from '@/stores/sorting'
-import { SortType } from '@/helpers/sorting/trackSorter'
+import { SortType } from '@/utils/sorting/trackSorter'
 import { computed } from 'vue';
 
 const playlistsStore = usePlaylistsStore()

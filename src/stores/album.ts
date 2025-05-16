@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
-import { fetchWrapper } from '@/helpers/fetchWrapper'
-import { GetSmallestImage } from '@/helpers/imageFunctions'
+import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
+import { GetSmallestImage } from '@/utils/images/imageFunctions'
 
 const STORE_NAME = 'albums'
 

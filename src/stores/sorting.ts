@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
-import { SortType } from '@/helpers/sorting/trackSorter'
+import { SortType } from '@/utils/sorting/trackSorter'
 import { useCassetteStore } from './cassette'
-import { CreateTrackSorter } from '@/helpers/sorting/trackSorterFactory'
+import { CreateTrackSorter } from '@/utils/sorting/trackSorterFactory'
 
 const STORE_NAME = 'sorting'
 

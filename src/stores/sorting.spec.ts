@@ -1,7 +1,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { useSortingStore } from './sorting'
-import { SortType } from '@/helpers/sorting/trackSorter'
+import { SortType } from '@/utils/sorting/trackSorter'
 
 describe('sorting store tests', () => {
   beforeEach(() => {
