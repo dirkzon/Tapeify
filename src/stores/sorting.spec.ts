@@ -20,7 +20,7 @@ describe('sorting store tests', () => {
 
       expect(sortingTypes).toBeDefined()
       for (const type of sortingTypes) {
-        expect(Object.values(SortType).includes(type)).toBeTruthy()
+        expect(Object.keys(SortType).includes(type.toString())).toBeTruthy()
       }
     })
   })
