@@ -39,7 +39,7 @@ describe('Fetchwrapper Tests', () => {
           return true
       }
     })
-    vi.mock('../router', () => ({
+    vi.mock('../../router', () => ({
       default: {
         push: vi.fn()
       }
