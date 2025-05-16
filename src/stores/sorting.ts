@@ -1,21 +1,18 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
-import { SortType, type TrackSorter } from '@/helpers/sorting/trackSorter'
-import { GreedySort } from '@/helpers/sorting/greedySort'
-import { KeepTrackOrder } from '@/helpers/sorting/keepTrackOrder'
+import { SortType } from '@/helpers/sorting/trackSorter'
 import { useCassetteStore } from './cassette'
-import type { Track } from '@/stores/tracks'
+import { CreateTrackSorter } from '@/helpers/sorting/trackSorterFactory'
 
 const STORE_NAME = 'sorting'
 
 export const useSortingStore = defineStore(STORE_NAME, {
   state: () => ({
-    sorters: [new GreedySort(), new KeepTrackOrder()] as TrackSorter[],
     selectedSortType: SortType.Greedy,
   }),
   getters: {
-    getSortingTypes(state): SortType[] {
-      return state.sorters.map((sorter) => sorter.type)
+    getSortingTypes(state): String[] {
+      return Object.keys(SortType)
     },
     getSelectedSortType(state): SortType {
       return state.selectedSortType
@@ -26,20 +23,20 @@ export const useSortingStore = defineStore(STORE_NAME, {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassetteStore()
 
-      cassetteStore.clearSidesTracks()
+      const sidesCount = cassetteStore.sides.length
+      cassetteStore.ClearCassette()
       
-      const trackSorter = this.sorters.find((sorter: { type: SortType }) => sorter.type === this.selectedSortType) || this.sorters[0]
-
-      trackSorter.PrePackAnchoredTracks([...cassetteStore.getSides], [...tracksStore.anchoredTracks])
+      const trackSorter = CreateTrackSorter(this.selectedSortType, sidesCount)
+      trackSorter.PrePackAnchoredTracks([...tracksStore.anchoredTracks])
       trackSorter.sortUnanchoredTracks([...tracksStore.unanchoredTracks])
       trackSorter.ClearEmptyValues()
           
       for (let i = 0; i < trackSorter.cassetteSides.length; i++) {
-        cassetteStore.SetSide(trackSorter.cassetteSides[i], i)
+        cassetteStore.PushNewSide(trackSorter.cassetteSides[i])
       }
     },
-    setSelectedSortType(sortType: SortType) {
-      this.selectedSortType = sortType
+    setSelectedSortType(type: String) {
+      this.selectedSortType = SortType[type as keyof typeof SortType]
     }
   }
 })

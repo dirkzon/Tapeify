@@ -10,15 +10,21 @@ export abstract class TrackSorter {
   public abstract type: SortType
   public cassetteSides: CassetteSide[] = []
 
-  public PrePackAnchoredTracks(sides: CassetteSide[], anchoredTracks: Track[]): void{
-    if (anchoredTracks.length <= 0) {
-      this.cassetteSides = sides
-      return
+  constructor(sidesCount: number) {
+    for (let i = 0; i < sidesCount; i++) {
+      this.cassetteSides.push({
+        tracks: [],
+        duration_ms: 0
+      })
     }
+  }
+
+  public PrePackAnchoredTracks(anchoredTracks: Track[]): void{
+    if (anchoredTracks.length <= 0) return
 
     for (var track of anchoredTracks) {
       if(track.anchored && track.anchor) {
-        const side = sides[track.anchor.side_index]
+        const side =  this.cassetteSides[track.anchor.side_index]
         const track_index = track.anchor.track_index
 
         side.tracks.length = Math.max(side.tracks.length, track_index + 1)
@@ -26,8 +32,6 @@ export abstract class TrackSorter {
         side.duration_ms += track.duration_ms
       }
     }
-
-    this.cassetteSides = sides
   }
 
   public ClearEmptyValues(): void {

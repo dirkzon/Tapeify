@@ -87,19 +87,24 @@ function DeleteSide() {
         <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
         <v-list lines="two" density="compact"> 
             <draggable 
+                class="dragArea list-group w-full"
+                :list="tracks"
                 group="sides" 
-                v-model="tracks"
                 @change="AnchorTrack"
                 @end="sortStore.sortTracksInSides()"
                 >
-                <track-item
-                    v-for="(track, index) in tracks"
+                <div
+                    class="list-group-item"
+                    v-for="track in tracks"
                     :key="track.id"
-                    :track="track"
-                    :side_index="props.index"
-                    :track_index="index"
-                    >
-                </track-item>
+                >
+                    <track-item
+                        :track="track"
+                        :side_index="props.index"
+                        :track_index="index"
+                        >
+                    </track-item>
+                </div>
             </draggable>
         </v-list>
     </v-card>

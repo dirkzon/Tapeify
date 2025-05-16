@@ -23,7 +23,7 @@ const sortType = computed({
   },
   set(val: SortType) {
     sortStore.setSelectedSortType(val)
-    sort()
+    sortStore.sortTracksInSides()
   }
 })
 
@@ -45,17 +45,12 @@ onMounted(async () => {
         break
     }
   }
-  sort()
+  sortStore.sortTracksInSides()
 })
 
-function sort() {
-  cassetteStore.clearSidesTracks()
-  sortStore.sortTracksInSides()
-}
-
 function AddSide() {
-  cassetteStore.AddSide()
-  sort()
+  cassetteStore.AddEmptySide()
+  sortStore.sortTracksInSides()
 }
 </script>
 

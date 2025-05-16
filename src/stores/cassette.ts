@@ -23,21 +23,17 @@ export const useCassetteStore = defineStore(STORE_NAME, {
   }),
   getters: {
     getSides(state): CassetteSide[] {
-      if (!state.sides) return []
-      else return state.sides
+      return state.sides
     }
   },
   actions: {
-    clearSidesTracks() {
-      for (const side of this.sides) {
-        side.tracks = []
-        side.duration_ms = 0
-      }
+    ClearCassette() {
+      this.sides = []
     },
-    SetSide(newSide: CassetteSide, index: number) {
-      this.sides[index] = newSide
+    PushNewSide(newSide: CassetteSide) {
+      this.sides.push(newSide)
     },
-    AddSide() {
+    AddEmptySide() {
       this.sides.push({
         tracks: [],
         duration_ms: 0,
