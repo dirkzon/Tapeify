@@ -33,6 +33,7 @@ describe('tracks test', () => {
           explicit: false,
           duration_ms: 1000,
           artists: ['artist'],
+          anchored: false
         }
         tracksStore.AddTrack(trackToAdd)
 
@@ -50,6 +51,7 @@ describe('tracks test', () => {
           explicit: false,
           duration_ms: 1000,
           artists: ['artist'],
+          anchored: false
         }
         tracksStore.AddTrack(trackToAdd)
 

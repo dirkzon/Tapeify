@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { type Track } from '@stores/tracks'
-import { UseTracksStore } from '@/stores/tracks'
+import { UseTracksStore, type Track } from '@/stores/tracks'
 import { useSortingStore } from '@/stores/sorting'
 
 const trackStore = UseTracksStore()
