@@ -66,13 +66,13 @@ function DeleteSide() {
                 >
                 <div
                     class="list-group-item"
-                    v-for="track in getSideTracksByIndex(props.index)"
+                    v-for="(track, trackIndex) in getSideTracksByIndex(props.index)"
                     :key="track.id"
                 >
                     <track-item
                         :track="track"
                         :side_index="props.index"
-                        :track_index="index"
+                        :track_index="trackIndex"
                         >
                     </track-item>
                 </div>
