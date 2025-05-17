@@ -10,6 +10,7 @@ interface Anchor {
 export interface Track {
   name: string
   id: string
+  uri: string,
   image?: URL
   explicit: boolean
   duration_ms: number
