@@ -7,41 +7,11 @@ const sortStore = useSortingStore()
 const cassetteStore = useCassetteStore()
 const trackStore = UseTracksStore()
 
-const { getSides } = toRefs(cassetteStore)
+const { getSidePrettyDurtionByIndex, getSideTracksByIndex, getSideNameByIndex } = toRefs(cassetteStore)
 
 const props = defineProps<{
     index: number
 }>()
-
-const prettySideDuration = computed({
-    get() {
-        const ms = getSides.value[props.index].duration_ms
-        const hours = Math.floor(ms / (1000 * 60 * 60))
-        const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
-        const seconds = Math.floor((ms % (1000 * 60)) / 1000)
-
-        if (hours >= 1) {
-            return `${hours} hr ${minutes} min`
-        } else {
-            return `${minutes} min ${seconds} sec`
-        }
-    },
-    set(_) {}
-})
-
-const tracks = computed({
-  get() {
-    return getSides.value[props.index].tracks
-  },
-  set() {}
-})
-
-const name = computed({
-    get() {
-        return getSides.value[props.index].name
-    },
-    set(){}
-})
 
 function AnchorTrack(changeEvent: any) {
     const eventType = Object.keys(changeEvent)[0]
@@ -65,12 +35,6 @@ function AnchorTrack(changeEvent: any) {
 }
 
 function DeleteSide() {
-    for (var track of tracks.value) {
-        if (track.anchored) {
-            trackStore.UnAnchorTrack(track.id)
-        }
-    }
-
     cassetteStore.DeleteSide(props.index)
     sortStore.sortTracksInSides()
 }
@@ -80,7 +44,7 @@ function DeleteSide() {
     <v-card flat class="mx-auto" max-width="700"> 
         <v-toolbar flat>
         <v-toolbar-title class="text-grey">
-            {{ name }}
+            {{ getSideNameByIndex(props.index) }}
         </v-toolbar-title>
         <v-spacer />
         <v-btn
@@ -91,18 +55,18 @@ function DeleteSide() {
             @click="DeleteSide"
         />
         </v-toolbar>
-        <v-card-subtitle>{{ prettySideDuration }}</v-card-subtitle>
+        <v-card-subtitle>{{ getSidePrettyDurtionByIndex(props.index) }}</v-card-subtitle>
         <v-list lines="two" density="compact"> 
             <draggable 
                 class="dragArea list-group w-full"
-                :list="tracks"
+                :list="getSideTracksByIndex(props.index)"
                 group="sides" 
                 @change="AnchorTrack"
                 @end="sortStore.sortTracksInSides()"
                 >
                 <div
                     class="list-group-item"
-                    v-for="track in tracks"
+                    v-for="track in getSideTracksByIndex(props.index)"
                     :key="track.id"
                 >
                     <track-item

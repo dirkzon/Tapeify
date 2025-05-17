@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { type Track } from './tracks'
+import { UseTracksStore, type Track } from './tracks'
 import { usePlaylistsStore } from './playlists'
+import CassetteSide from '@/components/CassetteSide.vue'
 
 const STORE_NAME = 'cassette'
 
@@ -29,6 +30,30 @@ export const useCassetteStore = defineStore(STORE_NAME, {
   getters: {
     getSides(state): CassetteSide[] {
       return state.sides
+    },
+    getSidePrettyDurtionByIndex: (state) => {
+      return (index: number) => {
+        const ms = state.sides[index].duration_ms
+        const hours = Math.floor(ms / (1000 * 60 * 60))
+        const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+        const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+
+        if (hours >= 1) {
+            return `${hours} hr ${minutes} min`
+        } else {
+            return `${minutes} min ${seconds} sec`
+        }
+      }
+    },
+    getSideTracksByIndex: (state) => {
+      return (index: number) => {
+        return state.sides[index].tracks
+      }
+    },
+    getSideNameByIndex: (state) => {
+      return (index: number) => {
+        return state.sides[index].name
+      }
     }
   },
   actions: {
@@ -47,6 +72,13 @@ export const useCassetteStore = defineStore(STORE_NAME, {
       })
     },
     DeleteSide(index: number) {
+      const trackStore = UseTracksStore()
+
+      for (var track of this.sides[index].tracks) {
+        if (track.anchored) {
+            trackStore.UnAnchorTrack(track.id)
+        }
+      }
       this.sides.splice(index, 1)
     },
     ResetSides() {
