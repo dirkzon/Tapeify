@@ -28,33 +28,39 @@ const request =
     }).then((response) => handleResponse(response, url, method, headers, body))
   }
 
-const handleResponse = async (
-  response: Response,
-  url: URL,
-  method: string,
-  headers: Headers,
-  body?: BodyInit
-) => {
-  if (!response.ok) {
-    if (response.status === 401) {
-      if (cookies.isKey('refresh_token')) {
-        const authStore = useAuthStore()
-        const { access_token, refresh_token } = await authStore.refreshAccessToken(
-          cookies.get('refresh_token')
-        )
-        cookies.set('access_token', access_token, 3600)
-        cookies.set('refresh_token', refresh_token)
-        fetch(url, {
-          method: method,
-          headers: headers,
-          body: body
-        }).then(() => response.json())
+  const handleResponse = async (
+    response: Response,
+    url: URL,
+    method: string,
+    headers: Headers,
+    body?: BodyInit
+  ) => {
+    if (!response.ok) {
+      if (response.status === 401) {
+        if (cookies.isKey('refresh_token')) {
+          const authStore = useAuthStore()
+          const { access_token, refresh_token } = await authStore.refreshAccessToken(
+            cookies.get('refresh_token')
+          );
+          cookies.set('access_token', access_token, 3600);
+          cookies.set('refresh_token', refresh_token);
+          
+          headers.set('Authorization', `Bearer ${access_token}`)
+          const newResponse = await fetch(url, {
+            method: method,
+            headers: headers,
+            body: body
+          });
+          if(newResponse.ok) {
+            return newResponse.json()
+          }
+        } else {
+          router.push({ name: '/LoginView' })
+        }
       } else {
-        router.push({ name: '/LoginView' })
+        throw new Error(response.statusText)
       }
-    } else {
-      throw Error(response.statusText)
     }
+    return response.json()
   }
-  return response.json()
-}
+  

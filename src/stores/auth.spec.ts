@@ -39,11 +39,12 @@ describe('Auth Tests', () => {
       //url
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('grant_type')).toBe('authorization_code')
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('code')).toStrictEqual(expect.any(String))
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('redirect_uri')).toStrictEqual(
-        expect.any(String)
-      )
+      if(fetchWrapperSpy.mock.calls[0][1]) {
+        const body = JSON.parse(fetchWrapperSpy.mock.calls[0][1].toString())
+        expect(body['grant_type']).toBe('authorization_code')
+        expect(body['code']).toStrictEqual(expect.any(String))
+        expect(body['redirect_uri']).toStrictEqual(expect.any(String))
+      }
       //headers
       expect(fetchWrapperSpy.mock.calls[0][2]?.get('content-type')).toBe(
         'application/x-www-form-urlencoded'
@@ -62,11 +63,12 @@ describe('Auth Tests', () => {
       //url
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('grant_type')).toBe('refresh_token')
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('client_id')).toStrictEqual(expect.any(String))
-      expect(fetchWrapperSpy.mock.calls[0][1]?.get('refresh_token')).toStrictEqual(
-        expect.any(String)
-      )
+      if(fetchWrapperSpy.mock.calls[0][1]) {
+        const body = JSON.parse(fetchWrapperSpy.mock.calls[0][1].toString())
+        expect(body['grant_type']).toBe('refresh_token')
+        expect(body['client_id']).toStrictEqual(expect.any(String))
+        expect(body['refresh_token']).toStrictEqual(expect.any(String))
+      }
       //headers
       expect(fetchWrapperSpy.mock.calls[0][2]?.get('content-type')).toBe(
         'application/x-www-form-urlencoded'

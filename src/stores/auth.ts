@@ -16,10 +16,10 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async requestAccessToken(code: string) {
-      const searchParams = new URLSearchParams()
-      searchParams.append('grant_type', 'authorization_code')
-      searchParams.append('code', code)
-      searchParams.append('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
+      const body = new Map<String, any>()
+      body.set('grant_type', 'authorization_code')
+      body.set('code', code)
+      body.set('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
 
       const headers = new Headers()
       headers.append('content-type', 'application/x-www-form-urlencoded')
@@ -30,20 +30,20 @@ export const useAuthStore = defineStore('auth', {
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
 
-      return await fetchWrapper.post(url, searchParams, headers)
+      return await fetchWrapper.post(url, JSON.stringify(Object.fromEntries(body)), headers)
     },
     async refreshAccessToken(refreshToken: string) {
-      const searchParams = new URLSearchParams()
-      searchParams.append('grant_type', 'refresh_token')
-      searchParams.append('refresh_token', refreshToken)
-      searchParams.append('client_id', import.meta.env.VITE_CLIENT_ID)
+      const body = new Map<String, any>()
+      body.set('grant_type', 'refresh_token')
+      body.set('refresh_token', refreshToken)
+      body.set('client_id', import.meta.env.VITE_CLIENT_ID)
 
       const headers = new Headers()
       headers.append('content-type', 'application/x-www-form-urlencoded')
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
 
-      return await fetchWrapper.post(url, searchParams, headers)
+      return await fetchWrapper.post(url, JSON.stringify(Object.fromEntries(body)), headers)
     }
   }
 })
