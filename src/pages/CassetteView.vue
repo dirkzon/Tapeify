@@ -4,7 +4,6 @@ import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { UseTracksStore } from '@/stores/tracks'
 import { useCassetteStore } from '@/stores/cassette'
-import { VueDraggableNext } from 'vue-draggable-next'
 import { useSortingStore } from '@/stores/sorting'
 import { SortType } from '@/utils/sorting/trackSorter'
 import { computed } from 'vue';
@@ -69,5 +68,6 @@ function AddSide() {
       </v-col>
     </v-row>
     <v-btn append-icon="mdi-playlist-plus" @click="AddSide"> Add side </v-btn>
+    <v-btn @click="cassetteStore.UploadCassette"> Save cassette </v-btn>
   </main>
 </template>

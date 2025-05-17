@@ -6,16 +6,16 @@ const { cookies } = useCookies()
 
 export const fetchWrapper = {
   get: (url: URL, headers?: Headers) => request('GET')(url, undefined, headers),
-  post: (url: URL, body?: URLSearchParams, headers?: Headers) =>
+  post: (url: URL, body?: BodyInit, headers?: Headers) =>
     request('POST')(url, body, headers),
-  put: (url: URL, body?: URLSearchParams, headers?: Headers) => request('PUT')(url, body, headers),
-  delete: (url: URL, body?: URLSearchParams, headers?: Headers) =>
+  put: (url: URL, body?: BodyInit, headers?: Headers) => request('PUT')(url, body, headers),
+  delete: (url: URL, body?: BodyInit, headers?: Headers) =>
     request('DELETE')(url, body, headers)
 }
 
 const request =
   (method: string) =>
-  async (url: URL, body?: URLSearchParams, headers: Headers = new Headers()) => {
+  async (url: URL, body?: BodyInit, headers: Headers = new Headers()) => {
     if (!headers.has('Authorization') && cookies.isKey('access_token')) {
       const accessToken = cookies.get('access_token')
       headers.append('Authorization', `Bearer ${accessToken}`)
@@ -33,7 +33,7 @@ const handleResponse = async (
   url: URL,
   method: string,
   headers: Headers,
-  body?: URLSearchParams
+  body?: BodyInit
 ) => {
   if (!response.ok) {
     if (response.status === 401) {
@@ -52,6 +52,8 @@ const handleResponse = async (
       } else {
         router.push({ name: '/LoginView' })
       }
+    } else {
+      throw Error(response.statusText)
     }
   }
   return response.json()

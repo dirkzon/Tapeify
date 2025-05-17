@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', {
       const searchParams = new URLSearchParams()
       searchParams.append('response_type', 'code')
       searchParams.append('client_id', import.meta.env.VITE_CLIENT_ID)
-      searchParams.append('scope', 'user-read-private user-read-email playlist-read-private')
+      searchParams.append('scope', 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private')
       searchParams.append('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
       url.search = searchParams.toString()
       return url

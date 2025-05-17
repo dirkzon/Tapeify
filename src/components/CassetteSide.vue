@@ -36,6 +36,13 @@ const tracks = computed({
   set() {}
 })
 
+const name = computed({
+    get() {
+        return getSides.value[props.index].name
+    },
+    set(){}
+})
+
 function AnchorTrack(changeEvent: any) {
     const eventType = Object.keys(changeEvent)[0]
     let trackIndex
@@ -73,7 +80,7 @@ function DeleteSide() {
     <v-card flat class="mx-auto" max-width="700"> 
         <v-toolbar flat>
         <v-toolbar-title class="text-grey">
-            {{ String.fromCharCode(97 + props.index).toUpperCase() }}
+            {{ name }}
         </v-toolbar-title>
         <v-spacer />
         <v-btn

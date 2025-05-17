@@ -14,7 +14,8 @@ export abstract class TrackSorter {
     for (let i = 0; i < sidesCount; i++) {
       this.cassetteSides.push({
         tracks: [],
-        duration_ms: 0
+        duration_ms: 0,
+        name: String.fromCharCode(97 + i).toUpperCase()
       })
     }
   }
