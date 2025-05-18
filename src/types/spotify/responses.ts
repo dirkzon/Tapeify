@@ -1,4 +1,4 @@
-import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO } from "./dto"
+import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, ImageDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO, ProfileDTO } from "./dto"
 
 export interface UsersPlaylistsResponse extends PlaylistPaginationDTO {}
 
@@ -18,3 +18,5 @@ export interface SearchResponse {
     albums: AlbumPaginationDTO
     playlists: PlaylistPaginationDTO
 }
+
+export interface GetProfileResponse extends ProfileDTO {}

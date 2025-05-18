@@ -87,3 +87,12 @@ export interface AlbumPaginationDTO extends PaginationDTO {
 export interface PlaylistPaginationDTO extends PaginationDTO {
     items: PlaylistDTO[]
 }
+
+export interface ProfileDTO {
+    type: string
+    images: ImageDTO[]
+    uri: string
+    id: string
+    display_name: string
+    country: string
+}

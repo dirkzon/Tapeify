@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { UseTracksStore, type Track } from './tracks'
+import { UseTracksStore } from './tracks'
 import { useProfileStore } from './profile'
 import { useCassetteStore } from './cassette'
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
@@ -96,7 +96,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
     async UploadNewPlaylist(name: string, description: string, is_public: boolean) {
       const profileStore = useProfileStore()
-      const userId = profileStore.id
+      const userId = profileStore.getProfile?.id
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
       const body = new URLSearchParams();

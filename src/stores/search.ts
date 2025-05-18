@@ -6,12 +6,15 @@ import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import type { SearchResponse } from '@/types/spotify/responses'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
+import { useProfileStore } from './profile'
 
 const STORE_NAME = 'search'
 
 export const UseSearchStore = defineStore(STORE_NAME, {
   actions: {
     async SearchPlaylistsAndAlbums(query: string): Promise<void> {
+      const profileStore = useProfileStore()
+    
       const playlistsStore = usePlaylistsStore()
       const albumsStore = useAlbumsStore()
       const paginationStore = usePaginationStore()
@@ -20,7 +23,8 @@ export const UseSearchStore = defineStore(STORE_NAME, {
       playlistsStore.ClearPlaylists()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/search')
-      url.searchParams.append('market', 'ES')
+      const country = profileStore.getProfile?.country || "ES";
+      url.searchParams.append('market', country)
       url.searchParams.append('type', ['album', 'playlist'].join(','))
       url.searchParams.append('q', query)
 
