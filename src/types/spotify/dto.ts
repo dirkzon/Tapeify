@@ -20,18 +20,21 @@ export interface PlaylistDTO {
 
 export interface PlaylistItemDTO {
     added_by: UserDTO
-    track: TrackDTO | EpisodeDTO
+    track: PlaylistTrackDTO | EpisodeDTO
+}
+
+export interface PlaylistTrackDTO extends TrackDTO {
+    album: AlbumDTO
 }
 
 export interface TrackDTO {
     type: string
+    artists: ArtistDTO[]
     duration_ms: number
     explicit: boolean
     id: string
     name: string
     uri: string
-    artists: ArtistDTO[]
-    album: AlbumDTO
 }
 
 export interface AlbumDTO {

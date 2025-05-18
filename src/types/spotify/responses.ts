@@ -14,3 +14,5 @@ export interface GetAlbumResponse extends AlbumDTO {
 }
 
 export interface GetPlaylistTracksResponse extends PlaylistTracksPaginationDTO {}
+
+export interface GetAlbumTracksResponse extends AlbumTracksPaginationDTO {}

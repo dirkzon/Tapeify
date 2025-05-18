@@ -6,8 +6,9 @@ import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useProfileStore } from './profile'
 import { useCassetteStore } from './cassette'
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
-import { GetEpisodeArtists, GetTrackArists } from '@/utils/artists/artistUtils'
-import type { EpisodeDTO, PlaylistItemDTO, TrackDTO } from '@/types/spotify/dto'
+import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
+import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
+import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 
 const STORE_NAME = 'playlists'
 
@@ -66,6 +67,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
     },
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassetteStore()
+      const tracksStore = UseTracksStore()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
       const playlist = await fetchWrapper.get<GetPlaylistsResponse>(url)
@@ -83,8 +85,12 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
         for (const item of tracks.items) {
           const track = item.track
-          if (track.type === 'track') this.SetPlaylistTrack(track as TrackDTO)
-          if (track.type === 'episode') this.SetPlaylistEpisode(track as EpisodeDTO)
+          if (track.type === 'track') {
+            tracksStore.AddTrack(ParsePlaylistTrackDTO(track as PlaylistTrackDTO))
+          }
+          if (track.type === 'episode') {
+            tracksStore.AddTrack(ParsePlaylistEpisodeDTO(track as EpisodeDTO))
+          }
         }
 
         offset += limit
@@ -92,53 +98,8 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
       cassetteStore.SetCassetteName(playlist.name)
     },
-    SetPlaylistTrack(track: TrackDTO) {
-      const tracksStore = UseTracksStore()
 
-      tracksStore.AddTrack({
-        ...track,
-        artists: GetTrackArists(track),
-        image: GetSmallestImage(track.album.images),
-        anchored: false
-      })
-    },
-    SetPlaylistEpisode(episode: EpisodeDTO) {
-      const tracksStore = UseTracksStore()
-
-      tracksStore.AddTrack({
-        ...episode,
-        artists: GetEpisodeArtists(episode),
-        image: GetSmallestImage(episode.album.images),
-        anchored: false
-      })
-    },
-    SetPlaylistTracks(items: PlaylistItemDTO[]) {
-      const tracksStore = UseTracksStore()
-    
-      for (const item of items) {
-        const track = item.track
-
-        let artists: string[] = []
-        let imagesUrl
-
-        if (track.type === 'track') {
-          artists = GetTrackArists(track as TrackDTO)
-          imagesUrl = GetSmallestImage((track as TrackDTO).album.images)
-        } 
-        if (track.type === 'episode') {
-          artists = GetEpisodeArtists(track as EpisodeDTO)
-          imagesUrl = GetSmallestImage((track as EpisodeDTO).album.images)
-        }
-
-        tracksStore.AddTrack({
-          ...track,
-          artists: artists,
-          image: imagesUrl,
-          anchored: false
-        })
-      }
-    },
-    async UploadNewPlaylist(name: string, description: string, is_public: Boolean) {
+    async UploadNewPlaylist(name: string, description: string, is_public: boolean) {
       const profileStore = useProfileStore()
       const userId = profileStore.id
 

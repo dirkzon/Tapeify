@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useCassetteStore } from './cassette'
-import type { GetAlbumResponse } from '@/types/spotify/responses'
-import { GetAlbumArtists } from '@/utils/artists/artistUtils'
+import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
+import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
 
 const STORE_NAME = 'albums'
 
@@ -21,7 +21,6 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
   }),
   getters: {
     getAlbums(state): Album[] {
-      if (!state.albums) return []
       return state.albums
     }
   },
@@ -39,17 +38,24 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
       const album = await fetchWrapper.get<GetAlbumResponse>(url)
 
-      for (const track of album.tracks.items) {
-        tracksStore.AddTrack({
-          name: track.name,
-          id: track.id,
-          image: GetSmallestImage(album.images),
-          explicit: track.explicit,
-          duration_ms: track.duration_ms,
-          artists: GetAlbumArtists(album),
-          anchored: false,
-          uri: track.uri
-        })
+      const limit = album.tracks.limit
+      const total = album.tracks.total
+      let offset = album.tracks.offset
+
+      const imageUrl = GetSmallestImage(album.images)
+
+      while (offset < total) {
+        const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId + '/tracks')
+        url.searchParams.append('limit', String(limit))
+        url.searchParams.append('offset', String(offset))
+
+        const tracks = await fetchWrapper.get<GetAlbumTracksResponse>(url)
+
+        for (const item of tracks.items) {
+          tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl))
+        }
+
+        offset += limit
       }
 
       cassetteStore.SetCassetteName(album.name)
