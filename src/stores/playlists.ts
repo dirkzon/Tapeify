@@ -2,13 +2,13 @@ import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { UseTracksStore, type Track } from './tracks'
-import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useProfileStore } from './profile'
 import { useCassetteStore } from './cassette'
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
+import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 
 const STORE_NAME = 'playlists'
 
@@ -47,12 +47,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
       const result = await fetchWrapper.get<UsersPlaylistsResponse>(url)
       for (const playlist of result.items) {
-        this.AddPlaylist({
-          name: playlist.name,
-          id: playlist.id,
-          owner: playlist.owner.display_name,
-          image: GetSmallestImage(playlist.images)
-        })
+        this.AddPlaylist(ParsePlaylistDTO(playlist))
       }
 
       const nextPageAvailable = result.next != null
