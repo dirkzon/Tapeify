@@ -80,8 +80,10 @@ export interface PaginationDTO {
     total: number
 }
 
-export interface ShowDTO {
-    name: string
-    publisher: string
-    id: string
+export interface AlbumPaginationDTO extends PaginationDTO {
+    items: AlbumDTO[]
+}
+
+export interface PlaylistPaginationDTO extends PaginationDTO {
+    items: PlaylistDTO[]
 }

@@ -1,11 +1,8 @@
-import type { AlbumDTO, AlbumTracksPaginationDTO, PaginationDTO, PlaylistDTO, PlaylistTracksPaginationDTO } from "./dto"
+import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO } from "./dto"
 
-export interface UsersPlaylistsResponse extends PaginationDTO {
-    items: PlaylistDTO[]
-    public: Boolean
-}
+export interface UsersPlaylistsResponse extends PlaylistPaginationDTO {}
 
-export interface GetPlaylistsResponse extends PlaylistDTO{
+export interface GetPlaylistsResponse extends PlaylistDTO {
     tracks: PlaylistTracksPaginationDTO 
 }
 
@@ -16,3 +13,8 @@ export interface GetAlbumResponse extends AlbumDTO {
 export interface GetPlaylistTracksResponse extends PlaylistTracksPaginationDTO {}
 
 export interface GetAlbumTracksResponse extends AlbumTracksPaginationDTO {}
+
+export interface SearchResponse {
+    albums: AlbumPaginationDTO
+    playlists: PlaylistPaginationDTO
+}

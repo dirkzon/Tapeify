@@ -3,7 +3,9 @@ import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { GetSmallestImage } from '@/utils/images/imageUtils'
+import type { SearchResponse } from '@/types/spotify/responses'
+import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
+import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
 
 const STORE_NAME = 'search'
 
@@ -30,38 +32,18 @@ export const UseSearchStore = defineStore(STORE_NAME, {
       if (offset < 0 || offset > 1000) throw new Error('Offset out of bounds')
       url.searchParams.append('offset', String(offset))
 
-      const result = await fetchWrapper.get(url)
+      const result = await fetchWrapper.get<SearchResponse>(url)
 
-      for (const playlist of result['playlists']['items']) {
-        if (playlist) {
-          playlistsStore.AddPlaylist({
-            name: playlist['name'],
-            id: playlist['id'],
-            owner: playlist['owner']['display_name'],
-            image: GetSmallestImage(playlist['images'])
-          })
-        }
+      for (const playlist of result.playlists.items) {
+        if (playlist) playlistsStore.AddPlaylist(ParsePlaylistDTO(playlist))
       }
 
-      for (const album of result['albums']['items']) {
-        if (album) {
-          const artists: string[] = []
-          for (const artist of album['artists']) {
-            artists.push(artist['name'])
-          }
-          albumsStore.AddAlbum({
-            name: album['name'],
-            id: album['id'],
-            artists: artists,
-            image: GetSmallestImage(album['images'])
-          })
-        }
+      for (const album of result.albums.items) {
+        if (album) albumsStore.AddAlbum(ParseAlbumDTO(album))
       }
 
-      const nextPageAvailable =
-        result['albums']['next'] != null && result['playlists']['next'] != null
-      const previousPageAvailable =
-        result['albums']['previous'] != null && result['playlists']['previous'] != null
+      const nextPageAvailable = !!(result.albums.next && result.playlists.next);
+      const previousPageAvailable = !!(result.albums.previous && result.playlists.previous);
       paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     }
   }
