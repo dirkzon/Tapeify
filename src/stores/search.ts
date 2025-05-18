@@ -3,7 +3,7 @@ import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
 import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { GetSmallestImage } from '@/utils/images/imageFunctions'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
 
 const STORE_NAME = 'search'
 

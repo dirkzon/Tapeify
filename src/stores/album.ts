@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { GetSmallestImage } from '@/utils/images/imageFunctions'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useCassetteStore } from './cassette'
+import type { GetAlbumResponse } from '@/types/spotify/responses'
+import { GetAlbumArtists } from '@/utils/artists/artistUtils'
 
 const STORE_NAME = 'albums'
 
@@ -30,31 +32,27 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     ClearAlbums() {
       this.albums = []
     },
-    async SetAlbumTracks(albumId: string) {
+    async FetchAlbumTracks(albumId: string) {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassetteStore()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
-      const response = await fetchWrapper.get(url)
-      const albumImage = GetSmallestImage(response['images'])
-      for (const track of response['tracks']['items']) {
-        const artists: string[] = []
-        for (const artist of track['artists']) {
-          artists.push(artist['name'])
-        }
+      const album = await fetchWrapper.get<GetAlbumResponse>(url)
+
+      for (const track of album.tracks.items) {
         tracksStore.AddTrack({
-          name: track['name'],
-          id: track['id'],
-          image: albumImage,
-          explicit: track['explicit'],
-          duration_ms: Number(track['duration_ms']),
-          artists: artists,
+          name: track.name,
+          id: track.id,
+          image: GetSmallestImage(album.images),
+          explicit: track.explicit,
+          duration_ms: track.duration_ms,
+          artists: GetAlbumArtists(album),
           anchored: false,
-          uri: track['uri']
+          uri: track.uri
         })
       }
 
-      cassetteStore.SetCassetteName(response['name'])
+      cassetteStore.SetCassetteName(album.name)
     }
   }
 })
