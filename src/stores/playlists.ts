@@ -99,31 +99,34 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       const userId = profileStore.getProfile?.id
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
-      const body = new URLSearchParams();
 
       if (name.length < 1 || name.length > 30) throw new Error('Name must be between 1 and 30 characters.')
-      body.append('name', name)
-
       if (description.length < 1 || description.length > 200) throw new Error('Description must be between 1 and 30 characters.')
-      body.append('description', description)
-
-      body.append('public', String(is_public))
 
       return await fetchWrapper.post(url, {
-        body: body
+        headers: {
+         'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          name, 
+          description, 
+          public: is_public 
+        })
       })
     },
     async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')
-      const body = new URLSearchParams();
   
       if (track_uris.length > 100) throw new Error('Cannot upload more than 100 tracks to a playlist at once.')
-      body.append('uris', track_uris.join(','))
-
-      body.append('position', '0')
 
       return await fetchWrapper.post(url, {
-        body: body
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uris: track_uris,
+          position: 0
+        })
       })
     }
   }
