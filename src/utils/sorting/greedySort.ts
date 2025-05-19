@@ -1,4 +1,4 @@
-import type { Track } from '@/stores/tracks'
+import type { Track } from '@/types/tapeify/models'
 import { SortType, TrackSorter } from './trackSorter'
 
 export class GreedySort extends TrackSorter {

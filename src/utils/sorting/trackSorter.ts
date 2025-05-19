@@ -1,5 +1,4 @@
-import type { CassetteSide } from '@/stores/cassette'
-import type { Track } from '@/stores/tracks'
+import type { CassetteSide, Track } from "@/types/tapeify/models"
 
 export enum SortType {
   Greedy = 'greedy',
