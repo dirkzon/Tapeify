@@ -20,3 +20,13 @@ export interface SearchResponse {
 }
 
 export interface GetProfileResponse extends ProfileDTO {}
+
+export interface TokenResponse {
+  access_token: string
+  token_type: string
+  scope: string
+  expires_in: string
+  refresh_token: string
+}
+
+export interface CreatePlaylistResponse extends PlaylistDTO {}

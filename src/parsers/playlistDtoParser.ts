@@ -1,5 +1,5 @@
-import type { Playlist } from "@/stores/playlists";
 import type { PlaylistDTO } from "@/types/spotify/dto";
+import type { Playlist } from "@/types/tapeify/models";
 import { GetSmallestImage } from "@/utils/images/imageUtils";
 
 export function ParsePlaylistDTO(playlist: PlaylistDTO): Playlist {

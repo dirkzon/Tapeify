@@ -1,23 +1,7 @@
+import type { Track } from '@/types/tapeify/models'
 import { defineStore } from 'pinia'
 
 const STORE_NAME = 'tracks'
-
-interface Anchor {
-  side_index: number
-  track_index: number
-}
-
-export interface Track {
-  name: string
-  id: string
-  uri: string,
-  image?: URL
-  explicit: boolean
-  duration_ms: number
-  artists: string[]
-  anchor?: Anchor
-  anchored: boolean
-}
 
 export const UseTracksStore = defineStore(STORE_NAME, {
   state: () => ({

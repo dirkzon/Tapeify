@@ -4,20 +4,14 @@ import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { UseTracksStore } from './tracks'
 import { useProfileStore } from './profile'
 import { useCassetteStore } from './cassette'
-import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
+import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
+import type { Playlist } from '@/types/tapeify/models'
 
 const STORE_NAME = 'playlists'
-
-export interface Playlist {
-  name: string
-  id: string
-  owner: string
-  image?: URL
-}
 
 export const usePlaylistsStore = defineStore(STORE_NAME, {
   state: () => ({
@@ -94,7 +88,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       cassetteStore.SetCassetteName(playlist.name)
     },
 
-    async UploadNewPlaylist(name: string, description: string, is_public: boolean) {
+    async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {
       const profileStore = useProfileStore()
       const userId = profileStore.getProfile?.id
 
@@ -103,7 +97,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       if (name.length < 1 || name.length > 30) throw new Error('Name must be between 1 and 30 characters.')
       if (description.length < 1 || description.length > 200) throw new Error('Description must be between 1 and 30 characters.')
 
-      return await fetchWrapper.post(url, {
+      const playlistDTO = await fetchWrapper.post<CreatePlaylistResponse>(url, {
         headers: {
          'Content-Type': 'application/json',
         },
@@ -113,6 +107,8 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
           public: is_public 
         })
       })
+
+      return ParsePlaylistDTO(playlistDTO)
     },
     async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')

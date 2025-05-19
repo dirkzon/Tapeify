@@ -1,19 +1,11 @@
 import { ParseProfileDTO } from '@/parsers/profileDtoParser'
 import type { GetProfileResponse } from '@/types/spotify/responses'
+import type { Profile } from '@/types/tapeify/models'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { defineStore } from 'pinia'
 
 const STORE_NAME = 'profile'
 const LOCAL_STORAGE_ITEM_NAME = 'profile'
-
-export interface Profile {
-  type: string
-  image?: URL
-  uri: string
-  id: string
-  display_name: string
-  country: string
-}
 
 export const useProfileStore = defineStore(STORE_NAME, {
   getters: {

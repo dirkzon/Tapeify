@@ -1,13 +1,6 @@
+import type { TokenResponse } from '@/types/spotify/responses'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { defineStore } from 'pinia'
-
-interface TokenResponse {
-  access_token: string
-  token_type: string
-  scope: string
-  expires_in: string
-  refresh_token: string
-}
 
 export const useAuthStore = defineStore('auth', {
   getters: {

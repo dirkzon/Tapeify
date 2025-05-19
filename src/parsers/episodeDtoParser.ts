@@ -1,5 +1,5 @@
-import type { Track } from "@/stores/tracks";
 import type { EpisodeDTO } from "@/types/spotify/dto";
+import type { Track } from "@/types/tapeify/models";
 import { GetSmallestImage } from "@/utils/images/imageUtils";
 
 export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO): Track {

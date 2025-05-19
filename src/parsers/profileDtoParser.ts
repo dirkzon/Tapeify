@@ -1,5 +1,5 @@
-import type { Profile } from "@/stores/profile";
 import type { ProfileDTO } from "@/types/spotify/dto";
+import type { Profile } from "@/types/tapeify/models";
 import { GetSmallestImage } from "@/utils/images/imageUtils";
 
 export function ParseProfileDTO(profile: ProfileDTO): Profile {

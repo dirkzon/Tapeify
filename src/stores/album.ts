@@ -5,15 +5,9 @@ import { useCassetteStore } from './cassette'
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
+import type { Album } from '@/types/tapeify/models'
 
 const STORE_NAME = 'albums'
-
-export interface Album {
-  name: string
-  id: string
-  artists: string[]
-  image?: URL
-}
 
 export const useAlbumsStore = defineStore(STORE_NAME, {
   state: () => ({

@@ -1,15 +1,9 @@
 import { defineStore } from 'pinia'
-import { UseTracksStore, type Track } from './tracks'
+import { UseTracksStore } from './tracks'
 import { usePlaylistsStore } from './playlists'
-import CassetteSide from '@/components/CassetteSide.vue'
+import type { CassetteSide } from '@/types/tapeify/models'
 
 const STORE_NAME = 'cassette'
-
-export interface CassetteSide {
-  tracks: Track[]
-  duration_ms: number
-  name: String
-}
 
 export const useCassetteStore = defineStore(STORE_NAME, {
   state: () => ({
@@ -107,7 +101,7 @@ export const useCassetteStore = defineStore(STORE_NAME, {
         if (side.duration_ms > 0) {
           const newPlaylist = await playlistStore.UploadNewPlaylist(`${this.name} | side ${side.name}`, description, false)
 
-          const trackUris: String[] = side.tracks.map(t => t.uri)
+          const trackUris: string[] = side.tracks.map(t => t.uri)
 
           const trackBatchSize = 50
           let offset = 0
