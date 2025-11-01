@@ -200,7 +200,7 @@ describe('FetchWrapper Tests', () => {
         const navigateSpy = vi.spyOn(router, 'push');
 
         await expect(fetchWrapper.get(mockUrl)).rejects.toThrow(); // should throw 401 error
-        expect(navigateSpy).not.toHaveBeenCalled(); // no redirect when no refresh token
+        expect(navigateSpy).toHaveBeenCalledWith({ name: '/LoginView' }); // redirect when no refresh token
       });
 
       it('should throw an error for other unsuccessful responses', async () => {
