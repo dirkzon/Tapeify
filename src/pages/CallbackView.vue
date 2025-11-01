@@ -17,7 +17,7 @@ onMounted(async () => {
   cookies.set('access_token', access_token, 3600)
   cookies.set('refresh_token', refresh_token)
 
-  profileStore.getProfile()
+  profileStore.FetchProfile()
   router.push({ name: '/HomeView' })
 })
 </script>

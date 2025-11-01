@@ -1,17 +1,13 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { GetSmallestImage } from '@/utils/images/imageFunctions'
 import { useCassetteStore } from './cassette'
+import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
+import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
+import type { Album } from '@/types/tapeify/models'
 
 const STORE_NAME = 'albums'
-
-export interface Album {
-  name: string
-  id: string
-  artists: string[]
-  image?: URL
-}
 
 export const useAlbumsStore = defineStore(STORE_NAME, {
   state: () => ({
@@ -19,7 +15,6 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
   }),
   getters: {
     getAlbums(state): Album[] {
-      if (!state.albums) return []
       return state.albums
     }
   },
@@ -30,31 +25,34 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     ClearAlbums() {
       this.albums = []
     },
-    async SetAlbumTracks(albumId: string) {
+    async FetchAlbumTracks(albumId: string) {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassetteStore()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
-      const response = await fetchWrapper.get(url)
-      const albumImage = GetSmallestImage(response['images'])
-      for (const track of response['tracks']['items']) {
-        const artists: string[] = []
-        for (const artist of track['artists']) {
-          artists.push(artist['name'])
+      const album = await fetchWrapper.get<GetAlbumResponse>(url)
+
+      const limit = album.tracks.limit
+      const total = album.tracks.total
+      let offset = album.tracks.offset
+
+      const imageUrl = GetSmallestImage(album.images)
+
+      while (offset < total) {
+        const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId + '/tracks')
+        url.searchParams.append('limit', String(limit))
+        url.searchParams.append('offset', String(offset))
+
+        const tracks = await fetchWrapper.get<GetAlbumTracksResponse>(url)
+
+        for (const item of tracks.items) {
+          tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl))
         }
-        tracksStore.AddTrack({
-          name: track['name'],
-          id: track['id'],
-          image: albumImage,
-          explicit: track['explicit'],
-          duration_ms: Number(track['duration_ms']),
-          artists: artists,
-          anchored: false,
-          uri: track['uri']
-        })
+
+        offset += limit
       }
 
-      cassetteStore.SetCassetteName(response['name'])
+      cassetteStore.SetCassetteName(album.name)
     }
   }
 })

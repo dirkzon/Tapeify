@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { UseSearchStore } from './search'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { setActivePinia, createPinia } from 'pinia'
@@ -5,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePaginationStore } from './pagination'
 import { usePlaylistsStore } from './playlists'
 import { useAlbumsStore } from './album'
+import type { Profile } from '@/types/tapeify/models'
 
 describe('Search tests', () => {
   beforeEach(() => {
@@ -21,6 +24,16 @@ describe('Search tests', () => {
   describe('actions', () => {
     describe('SearchPlaylistsAndAlbums', () => {
       it('correct search params', async () => {
+        const profile: Profile = {
+          id: 'user_id',
+          display_name: 'User Name',
+          type: 'user',
+          uri: 'spotify:user:user_id',
+          country: 'NL',
+        }
+
+        localStorage.setItem('profile', JSON.stringify(profile))
+
         const searchStore = UseSearchStore()
 
         await searchStore.SearchPlaylistsAndAlbums('query')

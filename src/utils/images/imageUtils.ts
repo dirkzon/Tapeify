@@ -1,10 +1,6 @@
-interface SpotifyImage {
-  height: number
-  url: string
-  width: number
-}
+import type { ImageDTO } from "@/types/spotify/dto"
 
-export function GetSmallestImage(images: SpotifyImage[]): URL | undefined {
+export function GetSmallestImage(images: ImageDTO[]): URL | undefined {
   if (images === null || images === undefined) return undefined
   if (images.length === 0) return undefined
   let smallestHeight = images[0].height

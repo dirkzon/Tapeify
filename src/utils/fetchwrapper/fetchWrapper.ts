@@ -1,66 +1,95 @@
-import { useCookies } from 'vue3-cookies'
-import { useAuthStore } from '@/stores/auth'
-import router from '../../router'
+import { useCookies } from 'vue3-cookies';
+import { useAuthStore } from '@/stores/auth';
+import router from '@/router';
 
-const { cookies } = useCookies()
+const { cookies } = useCookies();
 
-export const fetchWrapper = {
-  get: (url: URL, headers?: Headers) => request('GET')(url, undefined, headers),
-  post: (url: URL, body?: BodyInit, headers?: Headers) =>
-    request('POST')(url, body, headers),
-  put: (url: URL, body?: BodyInit, headers?: Headers) => request('PUT')(url, body, headers),
-  delete: (url: URL, body?: BodyInit, headers?: Headers) =>
-    request('DELETE')(url, body, headers)
+export interface FetchOptions extends RequestInit {
+  retry?: boolean;
 }
 
-const request =
-  (method: string) =>
-  async (url: URL, body?: BodyInit, headers: Headers = new Headers()) => {
-    if (!headers.has('Authorization') && cookies.isKey('access_token')) {
-      const accessToken = cookies.get('access_token')
-      headers.append('Authorization', `Bearer ${accessToken}`)
-    }
+export const fetchWrapper = {
+  get: <T>(url: URL, options?: FetchOptions) => request<T>('GET', url, options),
+  post: <T>(url: URL, options?: FetchOptions) => request<T>('POST', url, options),
+  put: <T>(url: URL, options?: FetchOptions) => request<T>('PUT', url, options),
+  delete: <T>(url: URL, options?: FetchOptions) => request<T>('DELETE', url, options),
+};
 
-    return fetch(url, {
-      method: method,
-      headers: headers,
-      body: body
-    }).then((response) => handleResponse(response, url, method, headers, body))
+async function request<T>(method: string, url: URL, options: FetchOptions = {}): Promise<T> {
+  const headers = new Headers(options.headers || {})
+  const retry = options.retry ?? true
+  let body = options.body
+
+  if ((method === 'GET' || method === 'HEAD') && body) {
+    console.warn(`Request with ${method} should not include a body. It will be ignored.`);
+    body = undefined;
   }
 
-  const handleResponse = async (
-    response: Response,
-    url: URL,
-    method: string,
-    headers: Headers,
-    body?: BodyInit
-  ) => {
+  if (!headers.has('Authorization') && cookies.isKey('access_token')) {
+    headers.set('Authorization', `Bearer ${cookies.get('access_token')}`);
+  }
+
+  const fetchOptions: FetchOptions = {
+    ...options,
+    method,
+    headers,
+    body,
+  };
+
+  try {
+    const response = await fetch(url, fetchOptions);
     if (!response.ok) {
-      if (response.status === 401) {
-        if (cookies.isKey('refresh_token')) {
-          const authStore = useAuthStore()
-          const { access_token, refresh_token } = await authStore.refreshAccessToken(
-            cookies.get('refresh_token')
-          );
-          cookies.set('access_token', access_token, 3600);
-          cookies.set('refresh_token', refresh_token);
-          
-          headers.set('Authorization', `Bearer ${access_token}`)
-          const newResponse = await fetch(url, {
-            method: method,
-            headers: headers,
-            body: body
-          });
-          if(newResponse.ok) {
-            return newResponse.json()
-          }
-        } else {
-          router.push({ name: '/LoginView' })
-        }
-      } else {
-        throw new Error(response.statusText)
-      }
+      return handleError<T>(response, method, url, fetchOptions, retry);
     }
-    return response.json()
+    return await parseResponse<T>(response);
+  } catch (err) {
+    throw new Error('Network error. Please try again later.');
   }
-  
+}
+
+async function parseResponse<T>(response: Response): Promise<T> {
+  const contentType = response.headers.get('Content-Type');
+  if (contentType && contentType.includes('application/json')) {
+    return response.json() as Promise<T>;
+  } else {
+    return response.text() as unknown as T;
+  }
+}
+
+async function handleError<T>(
+  response: Response,
+  method: string,
+  url: URL,
+  fetchOptions: FetchOptions,
+  retry: boolean
+): Promise<T> {
+  if (response.status === 401 && cookies.isKey('refresh_token') && retry) {
+    try {
+      const authStore = useAuthStore();
+      const { access_token, refresh_token } = await authStore.refreshAccessToken(
+        cookies.get('refresh_token')
+      );
+
+      cookies.set('access_token', access_token, 3600);
+      cookies.set('refresh_token', refresh_token);
+
+      const headers = new Headers(fetchOptions.headers || {});
+      headers.set('Authorization', `Bearer ${access_token}`);
+
+      const newOptions: FetchOptions = {
+        ...fetchOptions,
+        headers,
+        retry: false
+      };
+
+      return await request<T>(method, url, newOptions);
+    } catch (refreshError) {
+      console.warn('Token refresh failed', refreshError);
+      router.push({ name: '/LoginView' });
+    }
+  }
+
+  const errorBody = await response.json()
+  throw new Error(response.statusText);
+}
+
