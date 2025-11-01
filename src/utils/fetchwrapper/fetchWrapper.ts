@@ -89,7 +89,7 @@ async function handleError<T>(
     }
   }
 
-  const errorBody = await response.json()
-  throw new Error(response.statusText);
+  router.push({ name: '/LoginView' });
+  return Promise.reject(new Error(`Request failed with status ${response.status}`));
 }
 
