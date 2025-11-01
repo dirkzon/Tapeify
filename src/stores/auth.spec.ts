@@ -40,16 +40,17 @@ describe('Auth Tests', () => {
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
       if(fetchWrapperSpy.mock.calls[0][1]) {
-        const body = JSON.parse(fetchWrapperSpy.mock.calls[0][1].toString())
-        expect(body['grant_type']).toBe('authorization_code')
-        expect(body['code']).toStrictEqual(expect.any(String))
-        expect(body['redirect_uri']).toStrictEqual(expect.any(String))
+        const body = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.body)
+        expect(body.get('grant_type')).toBe('authorization_code')
+        expect(body.get('code')).toStrictEqual(expect.any(String))
+        expect(body.get('redirect_uri')).toStrictEqual(expect.any(String))
       }
       //headers
-      expect(fetchWrapperSpy.mock.calls[0][2]?.get('content-type')).toBe(
+      const headers = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.headers);
+      expect(headers.get('Content-Type')).toBe(
         'application/x-www-form-urlencoded'
       )
-      expect(fetchWrapperSpy.mock.calls[0][2]?.get('Authorization')).toStrictEqual(
+      expect(headers.get('Authorization')).toStrictEqual(
         expect.any(String)
       )
     })
@@ -64,13 +65,15 @@ describe('Auth Tests', () => {
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
       if(fetchWrapperSpy.mock.calls[0][1]) {
-        const body = JSON.parse(fetchWrapperSpy.mock.calls[0][1].toString())
-        expect(body['grant_type']).toBe('refresh_token')
-        expect(body['client_id']).toStrictEqual(expect.any(String))
-        expect(body['refresh_token']).toStrictEqual(expect.any(String))
+        const body = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.body)
+        console.log(body)
+        expect(body.get('grant_type')).toBe('refresh_token')
+        expect(body.get('client_id')).toStrictEqual(expect.any(String))
+        expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
       }
       //headers
-      expect(fetchWrapperSpy.mock.calls[0][2]?.get('content-type')).toBe(
+      const headers = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.headers);
+      expect(headers.get('Content-Type')).toBe(
         'application/x-www-form-urlencoded'
       )
     })
