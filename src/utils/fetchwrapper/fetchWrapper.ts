@@ -86,7 +86,6 @@ async function handleError<T>(
     } catch (refreshError) {
       console.warn('Token refresh failed', refreshError);
       router.push({ name: '/LoginView' });
-      throw new Error('Session expired. Please login again.');
     }
   }
 

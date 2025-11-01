@@ -1,9 +1,9 @@
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper';
-import { useAuthStore } from '@/stores/auth';
 import { setActivePinia, createPinia } from 'pinia';
 import { describe, expect, vi, it, beforeEach, afterEach } from 'vitest';
 import { useCookies } from 'vue3-cookies';
 import router from '../../router';
+import { useAuthStore } from '@/stores/auth';
 
 const { cookies } = useCookies();
 
@@ -13,14 +13,16 @@ describe('FetchWrapper Tests', () => {
   const mockRefreshToken = '9876543210';
 
   const successfulFetchResponse = {
-    status: 200,
     ok: true,
+    status: 200,
+    headers: new Headers({ 'Content-Type': 'application/json' }),
     json: async () => ({ message: 'hello world!' }),
   } as Response;
 
   const unauthorizedFetchResponse = {
-    status: 401,
     ok: false,
+    status: 401,
+    headers: new Headers({ 'Content-Type': 'application/json' }),
     json: async () => ({ message: 'unauthorized' }),
   } as Response;
 
@@ -71,6 +73,7 @@ describe('FetchWrapper Tests', () => {
   describe('API calls', () => {
     const expectedHeaders = new Headers();
     expectedHeaders.append('test', 'header');
+    expectedHeaders.append('Authorization', `Bearer ${mockAccessToken}`);
 
     const body = JSON.stringify({ test: 'body' });
 
@@ -78,7 +81,10 @@ describe('FetchWrapper Tests', () => {
       global.fetch = vi.fn().mockResolvedValue(successfulFetchResponse);
       const fetchSpy = vi.spyOn(global, 'fetch');
 
-      await fetchWrapper.post(mockUrl, body, expectedHeaders);
+      await fetchWrapper.post(mockUrl, {
+        headers: expectedHeaders,
+        body: body
+      });
 
       expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(mockUrl, {
         method: 'POST',
@@ -91,8 +97,10 @@ describe('FetchWrapper Tests', () => {
       global.fetch = vi.fn().mockResolvedValue(successfulFetchResponse);
       const fetchSpy = vi.spyOn(global, 'fetch');
 
-      await fetchWrapper.put(mockUrl, body, expectedHeaders);
-
+      await fetchWrapper.put(mockUrl, {
+        headers: expectedHeaders,
+        body: body
+      })
       expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(mockUrl, {
         method: 'PUT',
         headers: expectedHeaders,
@@ -104,7 +112,10 @@ describe('FetchWrapper Tests', () => {
       global.fetch = vi.fn().mockResolvedValue(successfulFetchResponse);
       const fetchSpy = vi.spyOn(global, 'fetch');
 
-      await fetchWrapper.delete(mockUrl, body, expectedHeaders);
+      await fetchWrapper.delete(mockUrl, {
+        headers: expectedHeaders,
+        body: body
+      });
 
       expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(mockUrl, {
         method: 'DELETE',
@@ -123,30 +134,73 @@ describe('FetchWrapper Tests', () => {
     });
 
     describe('Unsuccessful responses', () => {
-      // it('should handle 401 with refresh token', async () => {
-      //   global.fetch = vi.fn().mockResolvedValueOnce(unauthorizedFetchResponse);
-      //   const authStore = useAuthStore();
-      //   authStore.refreshAccessToken = vi.fn().mockResolvedValue({
-      //     access_token: 'new_access',
-      //     refresh_token: 'new_refresh',
-      //   });
+      it('should handle 401 with refresh token', async () => {
+        const unauthorizedFetchResponse = {
+          status: 401,
+          ok: false,
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          json: async () => ({ message: 'unauthorized' }),
+        } as Response;
 
-      //   await fetchWrapper.get(mockUrl);
+        const successfulFetchResponse = {
+          status: 200,
+          ok: true,
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          json: async () => ({ message: 'hello world!' }),
+        } as Response;
 
-      //   expect(cookies.set).toHaveBeenCalled
-      //   expect(cookies.set).toHaveBeenCalledWith('access_token', 'new_access', 3600);
-      //   expect(cookies.set).toHaveBeenCalledWith('refresh_token', 'new_refresh');
-      //   expect(global.fetch).toHaveBeenCalledTimes(2)
-      // });
+        global.fetch = vi
+          .fn()
+          .mockResolvedValueOnce(unauthorizedFetchResponse)
+          .mockResolvedValueOnce(successfulFetchResponse);
 
-      it('should handle 401 without refresh token', async () => {
-        cookies.isKey = vi.fn().mockReturnValue(false)
-        global.fetch = vi.fn().mockResolvedValueOnce(unauthorizedFetchResponse);
+        cookies.isKey = vi.fn().mockImplementation((keyName: string) => {
+          return keyName === 'access_token' || keyName === 'refresh_token';
+        });
+        cookies.get = vi.fn().mockImplementation((keyName: string) => {
+          switch (keyName) {
+            case 'access_token':
+              return 'old_access';
+            case 'refresh_token':
+              return 'old_refresh';
+            default:
+              return null;
+          }
+        });
+        cookies.set = vi.fn();
+
+        const authStore = useAuthStore();
+        authStore.refreshAccessToken = vi.fn().mockResolvedValue({
+          access_token: 'new_access',
+          refresh_token: 'new_refresh',
+        });
 
         await fetchWrapper.get(mockUrl);
 
+        expect(cookies.set).toHaveBeenCalledWith('access_token', 'new_access', 3600);
+        expect(cookies.set).toHaveBeenCalledWith('refresh_token', 'new_refresh');
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+      });
+
+      it('should throw when 401 without refresh token', async () => {
+        cookies.isKey = vi.fn().mockImplementation((keyName) => keyName === 'access_token');
+        cookies.get = vi.fn().mockImplementation((keyName) => {
+          if (keyName === 'access_token') return mockAccessToken;
+          return null;
+        });
+
+        const unauthorizedFetchResponse = {
+          status: 401,
+          ok: false,
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          json: async () => ({ message: 'unauthorized' }),
+        } as Response;
+
+        global.fetch = vi.fn().mockResolvedValueOnce(unauthorizedFetchResponse);
         const navigateSpy = vi.spyOn(router, 'push');
-        expect(navigateSpy).toHaveBeenCalledWith({ name: '/LoginView' });
+
+        await expect(fetchWrapper.get(mockUrl)).rejects.toThrow(); // should throw 401 error
+        expect(navigateSpy).not.toHaveBeenCalled(); // no redirect when no refresh token
       });
 
       it('should throw an error for other unsuccessful responses', async () => {
