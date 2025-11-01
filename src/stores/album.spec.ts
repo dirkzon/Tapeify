@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { useAlbumsStore, type Album } from './album'
+import { useAlbumsStore } from './album'
+import type { Album } from '@/types/tapeify/models'
 
 describe('Albums Tests', () => {
   beforeEach(() => {

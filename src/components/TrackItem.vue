@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { UseTracksStore, type Track } from '@/stores/tracks'
+import { UseTracksStore } from '@/stores/tracks'
+import type { Track } from '@/types/tapeify/models'
 import { useSortingStore } from '@/stores/sorting'
 
 const trackStore = UseTracksStore()

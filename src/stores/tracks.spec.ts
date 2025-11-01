@@ -1,6 +1,7 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { UseTracksStore, type Track } from './tracks'
+import { UseTracksStore } from './tracks'
+import type { Track } from '@/types/tapeify/models'
 
 describe('tracks test', () => {
   beforeEach(() => {

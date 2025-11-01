@@ -1,8 +1,9 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { usePlaylistsStore, type Playlist } from './playlists'
+import { usePlaylistsStore } from './playlists'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { usePaginationStore } from './pagination'
+import type { Playlist } from '@/types/tapeify/models'
 
 describe('Playlist Tests', () => {
   beforeEach(() => {

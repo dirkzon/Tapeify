@@ -36,17 +36,27 @@ describe('Auth Tests', () => {
       await authStore.requestAccessToken('code')
 
       expect(fetchWrapperSpy).toBeCalled()
+
+      const call = fetchWrapperSpy.mock.calls[0];
+
       //url
       expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
       //body
-      if(fetchWrapperSpy.mock.calls[0][1]) {
-        const body = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.body)
-        expect(body.get('grant_type')).toBe('authorization_code')
-        expect(body.get('code')).toStrictEqual(expect.any(String))
-        expect(body.get('redirect_uri')).toStrictEqual(expect.any(String))
+      const requestBody = call[1]!.body;
+      if (requestBody == null) {
+        throw new Error('request body is null or undefined')
       }
+      const body = new URLSearchParams(requestBody as any);
+      expect(body.get('grant_type')).toBe('authorization_code')
+      expect(body.get('code')).toStrictEqual(expect.any(String))
+      expect(body.get('redirect_uri')).toStrictEqual(expect.any(String))
+      
       //headers
-      const headers = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.headers);
+      const headerHeaders = call[1]!.headers;
+      if (headerHeaders == null) {
+        throw new Error('request body is null or undefined')
+      }
+      const headers = new URLSearchParams(headerHeaders as any);
       expect(headers.get('Content-Type')).toBe(
         'application/x-www-form-urlencoded'
       )
@@ -60,19 +70,28 @@ describe('Auth Tests', () => {
       const authStore = useAuthStore()
       await authStore.refreshAccessToken('refresh_token')
 
-      expect(fetchWrapperSpy).toBeCalled()
-      //url
-      expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
+      const call = fetchWrapperSpy.mock.calls[0];
+
       //body
-      if(fetchWrapperSpy.mock.calls[0][1]) {
-        const body = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.body)
-        console.log(body)
-        expect(body.get('grant_type')).toBe('refresh_token')
-        expect(body.get('client_id')).toStrictEqual(expect.any(String))
-        expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
+      const requestBody = call[1]!.body;
+      if (requestBody == null) {
+        throw new Error('request body is null or undefined')
       }
+      const body = new URLSearchParams(requestBody as any);
+      expect(body.get('grant_type')).toBe('refresh_token')
+      expect(body.get('client_id')).toStrictEqual(expect.any(String))
+      expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
+    
+      expect(body.get('client_id')).toStrictEqual(expect.any(String))
+      expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
+      
       //headers
-      const headers = new URLSearchParams(fetchWrapperSpy.mock.calls[0][1]!.headers);
+      const requestHeaders = call[1]!.headers;
+      if (requestHeaders == null) {
+        throw new Error('request body is null or undefined')
+      }
+      const headers = new URLSearchParams(requestHeaders as any);
+      
       expect(headers.get('Content-Type')).toBe(
         'application/x-www-form-urlencoded'
       )
