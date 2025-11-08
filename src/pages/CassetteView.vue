@@ -46,11 +46,6 @@ onMounted(async () => {
   }
   sortStore.sortTracksInSides()
 })
-
-function AddSide() {
-  cassetteStore.AddEmptySide()
-  sortStore.sortTracksInSides()
-}
 </script>
 
 <template>
@@ -67,7 +62,6 @@ function AddSide() {
         <cassette-side :index="index"></cassette-side>
       </v-col>
     </v-row>
-    <v-btn append-icon="mdi-playlist-plus" @click="AddSide"> Add side </v-btn>
     <v-btn @click="cassetteStore.UploadCassette"> Save cassette </v-btn>
   </main>
 </template>

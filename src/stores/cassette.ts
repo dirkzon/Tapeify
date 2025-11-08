@@ -48,6 +48,11 @@ export const useCassetteStore = defineStore(STORE_NAME, {
       return (index: number) => {
         return state.sides[index].name
       }
+    },
+    getLockedTracks: (state) => {
+        return (index: number) => {
+            return state.sides[index].tracks.filter(t => t.anchored)
+        }
     }
   },
   actions: {
