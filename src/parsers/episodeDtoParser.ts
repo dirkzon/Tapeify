@@ -8,9 +8,8 @@ export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO): Track {
         id: episodeDTO.id,
         uri: episodeDTO.uri,
         explicit: episodeDTO.explicit,
-        duration_ms: episodeDTO.duration_ms,
+        durationMs: episodeDTO.duration_ms,
         artists: episodeDTO.album.artists.map(a => a.type),
-        anchored: false,
         image: GetSmallestImage(episodeDTO.album.images)
     }
 }

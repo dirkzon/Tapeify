@@ -8,9 +8,8 @@ export function ParsePlaylistTrackDTO(track: PlaylistTrackDTO): Track {
         id: track.id,
         uri: track.uri,
         explicit: track.explicit,
-        duration_ms: track.duration_ms,
+        durationMs: track.duration_ms,
         artists: track.artists.map(a => a.name),
-        anchored: false,
         image: GetSmallestImage(track.album.images)
     }
 }
@@ -21,9 +20,8 @@ export function ParseAlbumTrackDTO(track: TrackDTO, albumImage: URL | undefined)
         id: track.id,
         uri: track.uri,
         explicit: track.explicit,
-        duration_ms: track.duration_ms,
+        durationMs: track.duration_ms,
         artists: track.artists.map(a => a.name),
-        anchored: false,
         image: albumImage
     }
 }  
