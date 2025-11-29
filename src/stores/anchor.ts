@@ -3,7 +3,15 @@ import type { Anchor } from '@/types/tapeify/models'
 
 export const useAnchorsStore = defineStore('anchors', {
   state: () => ({
-    anchors: [] as Anchor[],
+    anchors: [
+      {
+        cassetteId: 'cassette_2',
+        sideIndex: 0,
+        positionIndex: 3,
+        trackId: '5DnVR3FYEj7wcpPCWrFfYo',
+        locked: true
+      }
+    ] as Anchor[],
   }),
 
   getters: {

@@ -105,5 +105,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <cassette v-for="cassette in cassetteStore.cassettes" :key="cassette.id" :cassetteId="cassette.id" />
+  <v-col>
+    <cassette v-for="cassette in cassetteStore.cassettes" :key="cassette.id" :cassetteId="cassette.id" />
+  </v-col>
 </template>

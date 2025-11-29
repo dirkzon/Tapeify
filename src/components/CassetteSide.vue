@@ -119,22 +119,6 @@ const tracks = computed(() => {
 </script>
 
 <template>
-  <v-card class="mx-auto" max-width="500">
-    <v-toolbar color="pink">
-      <v-toolbar-title>{{ layout?.sideIndex}}</v-toolbar-title>
-      <!-- <v-btn
-          v-if="index != 0"
-          density="comfortable"
-          icon="mdi-playlist-minus"
-          @click="DeleteSide"
-      />
-    <v-btn
-          density="comfortable"
-          icon="mdi-playlist-plus"
-          @click="AddSide"
-      /> -->
-    </v-toolbar>
-    <v-card-subtitle>{{ layout?.durationMs / 60000 }} | {{ cassette?.totalDurationMs / 120000 }}</v-card-subtitle>
     <v-list 
       select-strategy="leaf"
     >
@@ -176,7 +160,6 @@ const tracks = computed(() => {
           </v-list-item>
         </draggable>
     </v-list>
-  </v-card>
 </template>
 
 <style scoped>
