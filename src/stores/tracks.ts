@@ -1,21 +1,11 @@
-import type { Anchor, Track } from '@/types/tapeify/models'
+import type { Track } from '@/types/tapeify/models'
 import { defineStore } from 'pinia'
 
-const STORE_NAME = 'tracks'
-
-export const UseTracksStore = defineStore(STORE_NAME, {
+export const UseTracksStore = defineStore('tracks', {
   state: () => ({
     tracks: [] as Track[],
   }),
   getters: {
-    getTracks(state): Track[] {
-      return state.tracks
-    },
-    getTrackById: (state) => {
-      return (id: string) => {
-        return state.tracks.find(t => t.id == id)
-      }
-    },
   },
   actions: {
     AddTrack(track: Track) {

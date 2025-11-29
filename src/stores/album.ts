@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { useCassetteStore } from './cassette'
+import { useCassetteStore } from './anchor'
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'

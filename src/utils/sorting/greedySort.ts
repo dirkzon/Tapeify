@@ -1,22 +1,29 @@
-import type { Track } from '@/types/tapeify/models'
-import { SortType, TrackSorter } from './trackSorter'
+import type { Track } from "@/types/tapeify/models";
+import type { TapeSideLayout } from "./tapeSideLayout";
+import { TrackSorter } from "./trackSorter";
 
 export class GreedySort extends TrackSorter {
-  type: SortType = SortType.Greedy
+  readonly metaData = {
+    type: "greedy",
+    name: "Greedy Sort",
+    description: "Place longest tracks into sides with most remaining time."
+  }
 
-  sortUnanchoredTracks(unanchoredTracks: Track[]): void {
-    const reversedTrackQueue = unanchoredTracks.sort((a, b) => (a.duration_ms < b.duration_ms ? -1 : 1))
+  public sortTracks(sides: TapeSideLayout[], unanchored_tracks: Track[]): void {
+    const sideCount = sides.length
+    if (sideCount === 0) return
 
-    let longestTrack = reversedTrackQueue.pop()
-    while (longestTrack) {
-      const shortestDurIndex = this.cassetteSides.reduce(
-        (minIndex, side, index, sides) =>
-          side.duration_ms < sides[minIndex].duration_ms ? index : minIndex,
-        0
-      )
-      this.PushTrackToSide(shortestDurIndex, longestTrack)
-      this.cassetteSides[shortestDurIndex].duration_ms += longestTrack.duration_ms
-      longestTrack = reversedTrackQueue.pop()
+    const sorted = unanchored_tracks.slice().sort((a, b) => b.durationMs - a.durationMs)
+
+    for (const track of sorted) {
+      let best = 0
+      let bestRem = sides[0].getRemainingMs()
+      for (let i = 1; i < sideCount; i++) {
+        const rem = sides[i].getRemainingMs()
+        if (rem > bestRem) { best = i; bestRem = rem }
+      }
+
+      sides[best].placeNext(track)
     }
   }
 }

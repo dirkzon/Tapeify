@@ -3,7 +3,7 @@ import { onMounted, toRefs } from 'vue'
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { UseTracksStore } from '@/stores/tracks'
-import { useCassetteStore } from '@/stores/cassette'
+import { useCassetteStore } from '@/stores/anchor'
 import { useSortingStore } from '@/stores/sorting'
 import { SortType } from '@/utils/sorting/trackSorter'
 import { computed } from 'vue';

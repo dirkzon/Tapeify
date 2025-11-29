@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCassetteStore } from '@/stores/cassette'
+import { useCassetteStore } from '@/stores/anchor'
 import { useSortingStore } from '@/stores/sorting'
 import { UseTracksStore } from '@/stores/tracks'
 
