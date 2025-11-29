@@ -14,5 +14,8 @@ export const UseTracksStore = defineStore('tracks', {
     ClearTracks() {
       this.tracks = []
     },
+    GetTrackById(trackId: string): Track | undefined {
+      return this.tracks.find(track => track.id === trackId)
+    }
   }
 })

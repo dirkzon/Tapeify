@@ -1,12 +1,15 @@
-import type { Cassette, Slot, Track } from "@/types/tapeify/models"
+import type { Cassette, Track } from "@/types/tapeify/models"
 
-export class TapeSideLayout {
+export class TapeSide {
     private tracksMap: Record<number, { trackId: string; durationMs: number }> = {}
     private anchoredIndices: Set<number> = new Set<number>()
     private maxIndex = -1
     private durationMs = 0
+    private capacityMs: number
 
-    constructor(private cassette: Cassette, private sideIndex: number) { }
+    constructor(private cassette: Cassette, private sideIndex: number) { 
+        this.capacityMs = cassette.totalDurationMs / 2
+    }
 
     public anchorTrack(track: Track, index: number) {
         if (this.anchoredIndices.has(index)) throw new Error("index already anchored")
@@ -41,15 +44,15 @@ export class TapeSideLayout {
         return idx
     }
 
-    public getCapacityMs(): number { return this.cassette.totalDurationMs }
+    public getCapacityMs(): number { return this.capacityMs }
     public getUsedMs(): number { return this.durationMs }
-    public getRemainingMs(): number { return Math.max(0, this.cassette.totalDurationMs - this.durationMs) }
+    public getRemainingMs(): number { return Math.max(0, this.capacityMs - this.durationMs) }
     public getCassetteId(): string { return this.cassette.id }
     public getSideIndex(): number { return this.sideIndex }
 
-    public toArray(): Array<Slot | null> {
+    public toArray(): Array<string | null> {
         return Array.from({ length: this.maxIndex + 1 }, (_, i) =>
-            this.tracksMap[i] ? { trackId: this.tracksMap[i].trackId } : null
+            this.tracksMap[i] ? this.tracksMap[i].trackId : null
         )
     }
 }

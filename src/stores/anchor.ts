@@ -3,7 +3,7 @@ import type { Anchor } from '@/types/tapeify/models'
 
 export const useAnchorsStore = defineStore('anchors', {
   state: () => ({
-    anchors: {} as Record<string, Anchor>,
+    anchors: [] as Anchor[],
   }),
 
   getters: {

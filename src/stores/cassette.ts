@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia'
-import type { Cassette, TapeSide } from '@/types/tapeify/models'
+import type { Cassette } from '@/types/tapeify/models'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
-    cassettes: {} as Record<string, Cassette>,
-    sidesByCassette: {} as Record<string, TapeSide>,
+    cassettes: [
+      {
+        id: 'cassette_1',
+        name: 'My First Cassette',
+        totalDurationMs: 3600000, // 60 minutes
+      },
+    ] as Cassette[],
   }),
   getters: {
 

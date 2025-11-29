@@ -1,5 +1,5 @@
 import type { Track } from "@/types/tapeify/models";
-import type { TapeSideLayout } from "./tapeSideLayout";
+import type { TapeSide } from "./tapeSideLayout";
 import { TrackSorter } from "./trackSorter";
 
 export class GreedySort extends TrackSorter {
@@ -9,7 +9,7 @@ export class GreedySort extends TrackSorter {
     description: "Place longest tracks into sides with most remaining time."
   }
 
-  public sortTracks(sides: TapeSideLayout[], unanchored_tracks: Track[]): void {
+  public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
     const sideCount = sides.length
     if (sideCount === 0) return
 
