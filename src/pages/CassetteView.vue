@@ -76,10 +76,14 @@ import { UseTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
 
+import Cassette from '@/components/Cassette.vue';
+import { useCassettesStore } from '@/stores/cassette';
+
 const sortStore = useSortingStore()
 const tracksStore = UseTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
+const cassetteStore = useCassettesStore()
 
 onMounted(async () => {
   tracksStore.ClearTracks()
@@ -101,8 +105,5 @@ onMounted(async () => {
 })
 </script>
 <template>
-
-  <a>hello</a>
-  <a>{{ sortStore.layout }}</a>
-  
+  <cassette v-for="cassette in cassetteStore.cassettes" :key="cassette.id" :cassetteId="cassette.id" />
 </template>

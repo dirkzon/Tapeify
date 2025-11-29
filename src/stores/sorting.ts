@@ -12,7 +12,16 @@ export const useSortingStore = defineStore('sorting', {
     selectedSortType: 'greedy',
   }),
   getters: {
-
+    getLayoutByCassetteId: (state) => {
+      return (cassetteId: string) => {
+        return state.layout.filter(side => side.cassetteId === cassetteId)
+      }
+    },
+    getLayoutbyCassetteAndSide: (state) => {
+      return (cassetteId: string, sideIndex: number) => {
+        return state.layout.find(side => side.cassetteId === cassetteId && side.sideIndex === sideIndex)
+      }
+    }
   },
   actions: {
     sortTracks() {
