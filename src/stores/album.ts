@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
-import { useCassetteStore } from './anchor'
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 import type { Album } from '@/types/tapeify/models'
+import { useCassettesStore } from './cassette'
 
 const STORE_NAME = 'albums'
 
@@ -27,7 +27,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
     },
     async FetchAlbumTracks(albumId: string) {
       const tracksStore = UseTracksStore()
-      const cassetteStore = useCassetteStore()
+      const cassetteStore = useCassettesStore()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
       const album = await fetchWrapper.get<GetAlbumResponse>(url)
@@ -52,7 +52,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
         offset += limit
       }
 
-      cassetteStore.SetCassetteName(album.name)
+      // cassetteStore.SetCassetteName(album.name)
     }
   }
 })

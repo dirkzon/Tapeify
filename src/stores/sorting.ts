@@ -38,6 +38,7 @@ export const useSortingStore = defineStore('sorting', {
         cassetteId: side.getCassetteId(),
         sideIndex: side.getSideIndex(),
         tracks: side.toArray(),
+        durationMs: side.getUsedMs(),
       }))
     },
   }

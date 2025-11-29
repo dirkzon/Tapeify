@@ -3,13 +3,13 @@ import { usePaginationStore } from './pagination'
 import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { UseTracksStore } from './tracks'
 import { useProfileStore } from './profile'
-import { useCassetteStore } from './anchor'
 import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { Playlist } from '@/types/tapeify/models'
+import { useCassettesStore } from './cassette'
 
 const STORE_NAME = 'playlists'
 
@@ -55,7 +55,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       this.playlists = []
     },
     async FetchPlaylistTracks(playlistId: string) {
-      const cassetteStore = useCassetteStore()
+      const cassetteStore = useCassettesStore()
       const tracksStore = UseTracksStore()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
@@ -85,7 +85,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
         offset += limit
       }
 
-      cassetteStore.SetCassetteName(playlist.name)
+      // cassetteStore.SetCassetteName(playlist.name)
     },
 
     async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {

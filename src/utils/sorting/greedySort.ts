@@ -22,7 +22,6 @@ export class GreedySort extends TrackSorter {
         const rem = sides[i].getRemainingMs()
         if (rem > bestRem) { best = i; bestRem = rem }
       }
-
       sides[best].placeNext(track)
     }
   }

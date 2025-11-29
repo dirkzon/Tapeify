@@ -1,10 +1,10 @@
-<script setup lang="ts">
-import { useCassetteStore } from '@/stores/anchor'
+<!-- <script setup lang="ts">
+import { useCassettesStore } from '@/stores/cassette'
 import { useSortingStore } from '@/stores/sorting'
 import { UseTracksStore } from '@/stores/tracks'
 
 const sortStore = useSortingStore()
-const cassetteStore = useCassetteStore()
+const cassetteStore = useCassettesStore()
 const trackStore = UseTracksStore()
 
 const { getSidePrettyDurtionByIndex, getSideTracksByIndex, getSideNameByIndex } = toRefs(cassetteStore)
@@ -79,4 +79,5 @@ function DeleteSide() {
             </draggable>
         </v-list>
     </v-card>
-</template>
+</template> -->
+<template></template>

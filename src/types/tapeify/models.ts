@@ -52,4 +52,5 @@ export interface TapeSideLayout {
   cassetteId: string
   sideIndex: number
   tracks: Array<string | null>
+  durationMs: number
 }
