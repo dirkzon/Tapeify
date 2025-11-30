@@ -3,6 +3,7 @@ import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
 import { UseTracksStore } from '@/stores/tracks';
+import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const tracksStore = UseTracksStore()
@@ -92,10 +93,25 @@ const tracks = computed(() => {
     }
     return output
 })
+
+const durationChipColor = computed(() => {
+  if (!layout.value || !cassette?.value) return 'grey'
+  return (layout.value.durationMs ?? 0) > (cassette.value.totalDurationMs / 2)? 'red' : 'grey'
+})
 </script>
 
 <template>
-    <v-list 
+    <v-card flat class="flex-grow-1">
+        <!-- Side name -->
+        <v-toolbar-title class="me-4">
+            Side {{ String.fromCharCode(65 + sideIndex) }}
+        </v-toolbar-title>
+
+        <!-- Duration: used / capacity -->
+        <v-chip small outlined :color="durationChipColor">
+            {{ formatDuration(layout?.durationMs) }} / {{ formatDuration(cassette?.totalDurationMs / 2) }}
+        </v-chip>
+         <v-list 
       select-strategy="leaf"
       v-model:selected="selectedTracks"
     >
@@ -129,15 +145,15 @@ const tracks = computed(() => {
             <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
             <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
             <template v-slot:append="{ isSelected }">
-              <v-list-item-action class="flex-column align-end">
-                  <v-spacer></v-spacer>
-                  <v-icon v-if="isSelected" size="x-small">mdi-lock</v-icon>
-                  <v-icon v-else class="opacity-30" size="x-small">mdi-lock-open-variant</v-icon>
-              </v-list-item-action>
+                <div class="track-meta d-flex align-center">
+                <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
+                <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
+                </div>
             </template>
           </v-list-item>
         </draggable>
     </v-list>
+    </v-card>
 </template>
 
 <style scoped>
@@ -164,5 +180,11 @@ const tracks = computed(() => {
 
 .item-content {
   flex: 1;
+}
+
+.track-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 </style>
