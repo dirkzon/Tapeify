@@ -1,93 +1,12 @@
-<!-- <script setup lang="ts">
-import { useCassettesStore } from '@/stores/cassette'
-import { useSortingStore } from '@/stores/sorting'
-import { UseTracksStore } from '@/stores/tracks'
-
-const sortStore = useSortingStore()
-const cassetteStore = useCassettesStore()
-const trackStore = UseTracksStore()
-
-const { getSidePrettyDurtionByIndex, getSideTracksByIndex, getSideNameByIndex } = toRefs(cassetteStore)
-
-const props = defineProps<{
-    index: number
-}>()
-
-function AnchorTrack(changeEvent: any) {
-    const eventType = Object.keys(changeEvent)[0]
-    let trackIndex
-    let trackId
-
-    switch(eventType) {
-        case 'moved':
-            trackIndex = changeEvent.moved.newIndex
-            trackId = changeEvent.moved.element.id
-            trackStore.AnchorTrack(props.index, trackIndex, trackId)
-            break;
-        case 'added':
-            trackIndex = changeEvent.added.newIndex
-            trackId = changeEvent.added.element.id
-            trackStore.AnchorTrack(props.index, trackIndex, trackId)
-            break
-        case 'removed':
-            break
-    }
-}
-
-function DeleteSide() {
-    cassetteStore.DeleteSide(props.index)
-    sortStore.sortTracksInSides()
-}
-</script>
-
-<template>
-    <v-card flat class="mx-auto" max-width="700"> 
-        <v-toolbar flat>
-        <v-toolbar-title class="text-grey">
-            {{ getSideNameByIndex(props.index) }}
-        </v-toolbar-title>
-        <v-spacer />
-        <v-btn
-            v-if="index != 0"
-            variant="plain"
-            density="comfortable"
-            icon="mdi-playlist-minus"
-            @click="DeleteSide"
-        />
-        </v-toolbar>
-        <v-card-subtitle>{{ getSidePrettyDurtionByIndex(props.index) }}</v-card-subtitle>
-        <v-list lines="two" density="compact"> 
-            <draggable 
-                class="dragArea list-group w-full"
-                :list="getSideTracksByIndex(props.index)"
-                group="sides" 
-                @change="AnchorTrack"
-                @end="sortStore.sortTracksInSides()"
-                >
-                <div
-                    class="list-group-item"
-                    v-for="(track, trackIndex) in getSideTracksByIndex(props.index)"
-                    :key="track.id"
-                >
-                    <track-item
-                        :track="track"
-                        :side_index="props.index"
-                        :track_index="trackIndex"
-                        >
-                    </track-item>
-                </div>
-            </draggable>
-        </v-list>
-    </v-card>
-</template> -->
-
 <script setup lang="ts">
+import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
 import { UseTracksStore } from '@/stores/tracks';
 
 const cassetteStore = useCassettesStore()
 const tracksStore = UseTracksStore()
+const anchorStore = useAnchorsStore()
 
 const props = defineProps<{
     cassetteId: string,
@@ -103,6 +22,32 @@ const layout = computed(() => {
 const cassette = computed(() => {
     return cassetteStore.getCassetteById(props.cassetteId)
 })
+
+function onChanged(changeEvent: any) {
+    const eventType = Object.keys(changeEvent)[0]
+    switch(eventType) {
+        case 'moved':
+            anchorStore.anchorTrack({
+                cassetteId: props.cassetteId,
+                trackId: changeEvent.moved.element,
+                sideIndex: props.sideIndex,
+                positionIndex: changeEvent.moved.newIndex
+            })
+            break;
+        case 'added':
+            anchorStore.anchorTrack({
+                cassetteId: props.cassetteId,
+                trackId: changeEvent.added.element,
+                sideIndex: props.sideIndex,
+                positionIndex: changeEvent.added.newIndex
+            })
+            break
+        case 'removed':
+            break
+    }
+
+    sortStore.sortTracks()
+}
 
 const tracks = computed(() => {
     const output = []
@@ -127,6 +72,7 @@ const tracks = computed(() => {
         group="tracks" 
         item-key="id" 
         animation="200"
+        @change="onChanged"
       >
           <v-list-item
               v-for="track in tracks"

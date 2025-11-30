@@ -30,7 +30,6 @@ export interface Cassette {
 }
 
 export interface Anchor {
-  id: string
   cassetteId: string
   trackId: string
   sideIndex: number
@@ -41,6 +40,7 @@ export interface Anchor {
 export interface Track {
   name: string
   id: string
+  spotifyId: string
   uri: string
   image?: URL
   explicit: boolean
