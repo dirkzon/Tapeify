@@ -7,13 +7,13 @@ export const useCassettesStore = defineStore('cassettes', {
       {
         id: 'cassette_1',
         name: 'My First Cassette',
-        totalDurationMs: 60000 * 30,
+        totalDurationMs: 60000 * 90,
       },
-      {
-        id: 'cassette_2',
-        name: 'My second Cassette',
-        totalDurationMs: 60000 * 60,
-      },
+      // {
+      //   id: 'cassette_2',
+      //   name: 'My second Cassette',
+      //   totalDurationMs: 60000 * 60,
+      // },
     ] as Cassette[],
   }),
   getters: {

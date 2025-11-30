@@ -101,7 +101,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-    <v-card flat>
+    <v-card flat class="flex-grow-1">
         <!-- Side name -->
         <v-toolbar-title class="me-4">
             Side {{ String.fromCharCode(65 + sideIndex) }}
