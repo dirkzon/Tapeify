@@ -96,7 +96,7 @@ const tracks = computed(() => {
 
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'grey'
-  return (layout.value.durationMs ?? 0) > cassette.value.totalDurationMs ? 'red' : 'grey'
+  return (layout.value.durationMs ?? 0) > (cassette.value.totalDurationMs / 2)? 'red' : 'grey'
 })
 </script>
 
