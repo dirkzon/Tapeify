@@ -4,12 +4,12 @@ import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
 import { UseTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
-import { CreateTrackSorter } from "@/utils/sorting/trackSorterFactory";
+import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
 
 export const useSortingStore = defineStore('sorting', {
   state: () => ({
     layout: [] as TapeSideLayout[],
-    selectedSortType: 'greedy',
+    selectedSortType: 'keep-order',
   }),
   getters: {
     getLayoutByCassetteId: (state) => {
@@ -21,7 +21,7 @@ export const useSortingStore = defineStore('sorting', {
       return (cassetteId: string, sideIndex: number) => {
         return state.layout.find(side => side.cassetteId === cassetteId && side.sideIndex === sideIndex)
       }
-    }
+    },
   },
   actions: {
     sortTracks() {
@@ -38,7 +38,7 @@ export const useSortingStore = defineStore('sorting', {
         }
       }
 
-      const trackSorter = CreateTrackSorter(this.selectedSortType, sides);
+      const trackSorter = trackSorterRegistry.create(this.selectedSortType, sides)
 
       const anchored_tracks = trackSorter.prepackAnchoredTracks(trackStore.tracks, anchorsStore.anchors)
       const unanchored_tracks = trackStore.tracks.filter(t => !anchored_tracks.includes(t))
@@ -51,5 +51,16 @@ export const useSortingStore = defineStore('sorting', {
         durationMs: side.getUsedMs(),
       }))
     },
+    setSortType(type: string) {
+      if (!trackSorterRegistry.list().some(s => s.type === type)) {
+        throw new Error(`Unknown sorter type: ${type}`);
+      }
+      this.selectedSortType = type;
+      this.sortTracks();
+    },
+
+    getAvailableSorters() {
+      return trackSorterRegistry.list();
+    }
   }
 })

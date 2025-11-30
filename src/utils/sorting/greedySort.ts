@@ -3,12 +3,6 @@ import type { TapeSide } from "./tapeSideLayout";
 import { TrackSorter } from "./trackSorter";
 
 export class GreedySort extends TrackSorter {
-  readonly metaData = {
-    type: "greedy",
-    name: "Greedy Sort",
-    description: "Place longest tracks into sides with most remaining time."
-  }
-
   public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
     const sideCount = sides.length
     if (sideCount === 0) return

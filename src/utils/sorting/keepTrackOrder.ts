@@ -3,12 +3,6 @@ import type { TapeSide } from './tapeSideLayout'
 import { TrackSorter } from './trackSorter'
 
 export class KeepTrackOrder extends TrackSorter {
-  readonly metaData = {
-    type: "keep-order",
-    name: "Keep Track Order",
-    description: "Preserve original track order."
-  }
-
   public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
     const numSides = sides.length
     if (numSides === 0) return

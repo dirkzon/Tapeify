@@ -1,15 +1,7 @@
 import type { Anchor, Track } from "@/types/tapeify/models"
 import type { TapeSide } from "./tapeSideLayout"
 
-interface TrackSorterMetaData {
-  type: string
-  name: string
-  description: string
-}
-
 export abstract class TrackSorter {
-  abstract readonly metaData: TrackSorterMetaData
-
   constructor(protected sides: TapeSide[]) { }
 
   abstract sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void
