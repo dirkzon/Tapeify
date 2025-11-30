@@ -1,11 +1,10 @@
 import type { TapeSideLayout } from "@/types/tapeify/models";
-import { GreedySort } from "@/utils/sorting/greedySort";
 import { TapeSide } from "@/utils/sorting/tapeSideLayout";
 import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
 import { UseTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
-import { KeepTrackOrder } from "@/utils/sorting/keepTrackOrder";
+import { CreateTrackSorter } from "@/utils/sorting/trackSorterFactory";
 
 export const useSortingStore = defineStore('sorting', {
   state: () => ({
@@ -39,7 +38,8 @@ export const useSortingStore = defineStore('sorting', {
         }
       }
 
-      const trackSorter = new KeepTrackOrder(sides)
+      const trackSorter = CreateTrackSorter(this.selectedSortType, sides);
+
       const anchored_tracks = trackSorter.prepackAnchoredTracks(trackStore.tracks, anchorsStore.anchors)
       const unanchored_tracks = trackStore.tracks.filter(t => !anchored_tracks.includes(t))
       trackSorter.sortTracks(sides, unanchored_tracks)
