@@ -1,29 +1,32 @@
 import type { Track } from '@/types/tapeify/models'
-import { SortType, TrackSorter } from './trackSorter'
+import type { TapeSide } from './tapeSideLayout'
+import { TrackSorter } from './trackSorter'
 
 export class KeepTrackOrder extends TrackSorter {
-  type: SortType = SortType.KeepOrder
+  public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
+    const numSides = sides.length
+    if (numSides === 0) return
 
-  sortUnanchoredTracks(unanchoredTracks: Track[]): void { 
-    const totalTracksLength = unanchoredTracks.map((a) => a.duration_ms).reduce((a, b) => a + b, 0)
-    const numSides = this.cassetteSides.length
-    const sideTargetDuration = totalTracksLength / numSides
+    let currentSideIndex = 0
 
-    let currentSide = 0
+    for (const track of unanchored_tracks) {
+      let placed = false
 
-    for (const track of unanchoredTracks) {
-      this.PushTrackToSide(currentSide, track)
-      this.cassetteSides[currentSide].duration_ms += track.duration_ms
+      // Try to place track in the current side or later sides
+      for (let attempt = currentSideIndex; attempt < numSides; attempt++) {
+        const side = sides[attempt]
+        if (side.getRemainingMs() >= track.durationMs) {
+          side.placeNext(track)
+          placed = true
+          currentSideIndex = attempt
+          break
+        }
+      }
 
-      const currentDeviation = Math.abs(this.cassetteSides[currentSide].duration_ms - sideTargetDuration)
-      const newDeviation = Math.abs(
-        this.cassetteSides[currentSide].duration_ms +
-          (unanchoredTracks[unanchoredTracks.indexOf(track) + 1]?.duration_ms || 0) -
-          sideTargetDuration
-      )
-
-      if (currentSide < numSides - 1 && newDeviation > currentDeviation) {
-        currentSide += 1
+      // If the track doesn't fit in any remaining side, force it into the last side
+      if (!placed) {
+        sides[numSides - 1].placeNext(track)
+        currentSideIndex = numSides - 1
       }
     }
   }
