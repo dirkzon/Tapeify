@@ -1,4 +1,4 @@
-import type { Track, Anchor } from '@/types/tapeify/models'
+import type { Track } from '@/types/tapeify/models'
 import type { TapeSide } from './tapeSideLayout'
 import { TrackSorter } from './trackSorter'
 
@@ -6,28 +6,33 @@ export class KeepTrackOrder extends TrackSorter {
   readonly metaData = {
     type: "keep-order",
     name: "Keep Track Order",
-    description: "Preserve the original track order while filling sides as evenly as possible."
+    description: "Preserve original track order."
   }
 
   public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
-    const totalDuration = unanchored_tracks.reduce((sum, t) => sum + t.durationMs, 0)
     const numSides = sides.length
     if (numSides === 0) return
 
-    const targetDurationPerSide = totalDuration / numSides
-    let currentSide = 0
+    let currentSideIndex = 0
 
-    for (let i = 0; i < unanchored_tracks.length; i++) {
-      const track = unanchored_tracks[i]
-      sides[currentSide].placeNext(track)
+    for (const track of unanchored_tracks) {
+      let placed = false
 
-      const currentSideDuration = sides[currentSide].getUsedMs()
-      const nextTrackDuration = unanchored_tracks[i + 1]?.durationMs ?? 0
-      const currentDeviation = Math.abs(currentSideDuration - targetDurationPerSide)
-      const newDeviation = Math.abs(currentSideDuration + nextTrackDuration - targetDurationPerSide)
+      // Try to place track in the current side or later sides
+      for (let attempt = currentSideIndex; attempt < numSides; attempt++) {
+        const side = sides[attempt]
+        if (side.getRemainingMs() >= track.durationMs) {
+          side.placeNext(track)
+          placed = true
+          currentSideIndex = attempt
+          break
+        }
+      }
 
-      if (currentSide < numSides - 1 && newDeviation > currentDeviation) {
-        currentSide += 1
+      // If the track doesn't fit in any remaining side, force it into the last side
+      if (!placed) {
+        sides[numSides - 1].placeNext(track)
+        currentSideIndex = numSides - 1
       }
     }
   }
