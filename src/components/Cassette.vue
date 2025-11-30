@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
+import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 
@@ -16,9 +17,8 @@ const cassette = computed(() => {
 <template>
     <v-card>
         <v-toolbar color="pink">
-            <v-toolbar-title>{{ layout?.sideIndex}}</v-toolbar-title>
             <v-card-title>{{ cassette?.name }}</v-card-title>
-            <v-card-subtitle>{{ cassette?.totalDurationMs }}</v-card-subtitle>
+            <v-card-subtitle>{{ formatDuration(cassette?.totalDurationMs) }}</v-card-subtitle>
         </v-toolbar>
         <v-row align="stretch" class="cassette-row" no-gutters>
         <v-col cols="5" class="d-flex">

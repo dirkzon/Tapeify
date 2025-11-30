@@ -93,10 +93,25 @@ const tracks = computed(() => {
     }
     return output
 })
+
+const durationChipColor = computed(() => {
+  if (!layout.value || !cassette?.value) return 'grey'
+  return (layout.value.durationMs ?? 0) > cassette.value.totalDurationMs ? 'red' : 'grey'
+})
 </script>
 
 <template>
-    <v-list 
+    <v-card flat>
+        <!-- Side name -->
+        <v-toolbar-title class="me-4">
+            Side {{ String.fromCharCode(65 + sideIndex) }}
+        </v-toolbar-title>
+
+        <!-- Duration: used / capacity -->
+        <v-chip small outlined :color="durationChipColor">
+            {{ formatDuration(layout?.durationMs) }} / {{ formatDuration(cassette?.totalDurationMs / 2) }}
+        </v-chip>
+         <v-list 
       select-strategy="leaf"
       v-model:selected="selectedTracks"
     >
@@ -139,6 +154,7 @@ const tracks = computed(() => {
           </v-list-item>
         </draggable>
     </v-list>
+    </v-card>
 </template>
 
 <style scoped>
