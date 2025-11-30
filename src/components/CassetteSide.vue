@@ -145,10 +145,9 @@ const durationChipColor = computed(() => {
             <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
             <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
             <template v-slot:append="{ isSelected }">
-                <div class="track-meta d-flex align-center gap-1">
-                    <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
-                    <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
-                    <v-icon v-else class="opacity-50" size="16">mdi-lock-open-variant</v-icon>
+                <div class="track-meta d-flex align-center">
+                <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
+                <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
                 </div>
             </template>
           </v-list-item>
@@ -186,8 +185,6 @@ const durationChipColor = computed(() => {
 .track-meta {
   display: flex;
   align-items: center;
-  gap: 15px;
-  min-width: 60px;
-  font-size: 12px;
+  gap: 10px;
 }
 </style>
