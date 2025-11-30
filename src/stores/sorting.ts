@@ -5,6 +5,7 @@ import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
 import { UseTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
+import { KeepTrackOrder } from "@/utils/sorting/keepTrackOrder";
 
 export const useSortingStore = defineStore('sorting', {
   state: () => ({
@@ -38,7 +39,7 @@ export const useSortingStore = defineStore('sorting', {
         }
       }
 
-      const trackSorter = new GreedySort(sides)
+      const trackSorter = new KeepTrackOrder(sides)
       const anchored_tracks = trackSorter.prepackAnchoredTracks(trackStore.tracks, anchorsStore.anchors)
       const unanchored_tracks = trackStore.tracks.filter(t => !anchored_tracks.includes(t))
       trackSorter.sortTracks(sides, unanchored_tracks)
