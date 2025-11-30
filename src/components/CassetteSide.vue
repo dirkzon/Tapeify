@@ -3,6 +3,7 @@ import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
 import { UseTracksStore } from '@/stores/tracks';
+import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const tracksStore = UseTracksStore()
@@ -129,11 +130,11 @@ const tracks = computed(() => {
             <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
             <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
             <template v-slot:append="{ isSelected }">
-              <v-list-item-action class="flex-column align-end">
-                  <v-spacer></v-spacer>
-                  <v-icon v-if="isSelected" size="x-small">mdi-lock</v-icon>
-                  <v-icon v-else class="opacity-30" size="x-small">mdi-lock-open-variant</v-icon>
-              </v-list-item-action>
+                <div class="track-meta d-flex align-center gap-1">
+                    <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
+                    <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
+                    <v-icon v-else class="opacity-50" size="16">mdi-lock-open-variant</v-icon>
+                </div>
             </template>
           </v-list-item>
         </draggable>
@@ -164,5 +165,13 @@ const tracks = computed(() => {
 
 .item-content {
   flex: 1;
+}
+
+.track-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 60px;
+  font-size: 12px;
 }
 </style>
