@@ -1,26 +1,30 @@
-import type { Track } from '@/types/tapeify/models'
-import { SortType, TrackSorter } from './trackSorter'
+import type { Track, Anchor } from '@/types/tapeify/models'
+import type { TapeSide } from './tapeSideLayout'
+import { TrackSorter } from './trackSorter'
 
 export class KeepTrackOrder extends TrackSorter {
-  type: SortType = SortType.KeepOrder
+  readonly metaData = {
+    type: "keep-order",
+    name: "Keep Track Order",
+    description: "Preserve the original track order while filling sides as evenly as possible."
+  }
 
-  sortUnanchoredTracks(unanchoredTracks: Track[]): void { 
-    const totalTracksLength = unanchoredTracks.map((a) => a.duration_ms).reduce((a, b) => a + b, 0)
-    const numSides = this.cassetteSides.length
-    const sideTargetDuration = totalTracksLength / numSides
+  public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
+    const totalDuration = unanchored_tracks.reduce((sum, t) => sum + t.durationMs, 0)
+    const numSides = sides.length
+    if (numSides === 0) return
 
+    const targetDurationPerSide = totalDuration / numSides
     let currentSide = 0
 
-    for (const track of unanchoredTracks) {
-      this.PushTrackToSide(currentSide, track)
-      this.cassetteSides[currentSide].duration_ms += track.duration_ms
+    for (let i = 0; i < unanchored_tracks.length; i++) {
+      const track = unanchored_tracks[i]
+      sides[currentSide].placeNext(track)
 
-      const currentDeviation = Math.abs(this.cassetteSides[currentSide].duration_ms - sideTargetDuration)
-      const newDeviation = Math.abs(
-        this.cassetteSides[currentSide].duration_ms +
-          (unanchoredTracks[unanchoredTracks.indexOf(track) + 1]?.duration_ms || 0) -
-          sideTargetDuration
-      )
+      const currentSideDuration = sides[currentSide].getUsedMs()
+      const nextTrackDuration = unanchored_tracks[i + 1]?.durationMs ?? 0
+      const currentDeviation = Math.abs(currentSideDuration - targetDurationPerSide)
+      const newDeviation = Math.abs(currentSideDuration + nextTrackDuration - targetDurationPerSide)
 
       if (currentSide < numSides - 1 && newDeviation > currentDeviation) {
         currentSide += 1
