@@ -1,82 +1,168 @@
 <script setup lang="ts">
-import { useCassetteStore } from '@/stores/cassette'
-import { useSortingStore } from '@/stores/sorting'
-import { UseTracksStore } from '@/stores/tracks'
+import { useAnchorsStore } from '@/stores/anchor';
+import { useCassettesStore } from '@/stores/cassette';
+import { useSortingStore } from '@/stores/sorting';
+import { UseTracksStore } from '@/stores/tracks';
 
-const sortStore = useSortingStore()
-const cassetteStore = useCassetteStore()
-const trackStore = UseTracksStore()
-
-const { getSidePrettyDurtionByIndex, getSideTracksByIndex, getSideNameByIndex } = toRefs(cassetteStore)
+const cassetteStore = useCassettesStore()
+const tracksStore = UseTracksStore()
+const anchorStore = useAnchorsStore()
 
 const props = defineProps<{
-    index: number
+    cassetteId: string,
+    sideIndex: number
 }>()
 
-function AnchorTrack(changeEvent: any) {
-    const eventType = Object.keys(changeEvent)[0]
-    let trackIndex
-    let trackId
+const sortStore = useSortingStore()
 
+const layout = computed(() => {
+    return sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex)
+})
+
+const cassette = computed(() => {
+    return cassetteStore.getCassetteById(props.cassetteId)
+})
+
+function onChanged(changeEvent: any) {
+    const eventType = Object.keys(changeEvent)[0]
     switch(eventType) {
         case 'moved':
-            trackIndex = changeEvent.moved.newIndex
-            trackId = changeEvent.moved.element.id
-            trackStore.AnchorTrack(props.index, trackIndex, trackId)
+            anchorStore.anchorTrack({
+                cassetteId: props.cassetteId,
+                trackId: changeEvent.moved.element,
+                sideIndex: props.sideIndex,
+                positionIndex: changeEvent.moved.newIndex
+            })
             break;
         case 'added':
-            trackIndex = changeEvent.added.newIndex
-            trackId = changeEvent.added.element.id
-            trackStore.AnchorTrack(props.index, trackIndex, trackId)
+            anchorStore.anchorTrack({
+                cassetteId: props.cassetteId,
+                trackId: changeEvent.added.element,
+                sideIndex: props.sideIndex,
+                positionIndex: changeEvent.added.newIndex
+            })
             break
         case 'removed':
             break
     }
+
+    sortStore.sortTracks()
 }
 
-function DeleteSide() {
-    cassetteStore.DeleteSide(props.index)
-    sortStore.sortTracksInSides()
+const selectedTracks = computed({
+  get: () => {
+    return anchorStore.anchors
+      .filter(a => a.cassetteId === props.cassetteId && a.sideIndex === props.sideIndex)
+      .map(a => a.trackId)
+  },
+  set: (_val: string[]) => {
+  }
+})
+
+function toggleAnchor(trackId: string) {
+  const existing = anchorStore.anchors.find(
+    a => a.cassetteId === props.cassetteId &&
+         a.sideIndex === props.sideIndex &&
+         a.trackId === trackId
+  )
+
+  if (existing) {
+    anchorStore.anchors = anchorStore.anchors.filter(a => a !== existing)
+  } else {
+    anchorStore.anchorTrack({
+      cassetteId: props.cassetteId,
+      trackId,
+      sideIndex: props.sideIndex,
+      positionIndex: layout.value?.tracks.indexOf(trackId) ?? 0
+    })
+  }
+
+  sortStore.sortTracks()
 }
+
+const tracks = computed(() => {
+    const output = []
+    for (const trackId of layout.value?.tracks || []) {
+        if (trackId) {
+            const track = tracksStore.GetTrackById(trackId)
+            if (track) {
+                output.push(track)
+            }
+        }
+    }
+    return output
+})
 </script>
 
 <template>
-    <v-card flat class="mx-auto" max-width="700"> 
-        <v-toolbar flat>
-        <v-toolbar-title class="text-grey">
-            {{ getSideNameByIndex(props.index) }}
-        </v-toolbar-title>
-        <v-spacer />
-        <v-btn
-            v-if="index != 0"
-            variant="plain"
-            density="comfortable"
-            icon="mdi-playlist-minus"
-            @click="DeleteSide"
-        />
-        </v-toolbar>
-        <v-card-subtitle>{{ getSidePrettyDurtionByIndex(props.index) }}</v-card-subtitle>
-        <v-list lines="two" density="compact"> 
-            <draggable 
-                class="dragArea list-group w-full"
-                :list="getSideTracksByIndex(props.index)"
-                group="sides" 
-                @change="AnchorTrack"
-                @end="sortStore.sortTracksInSides()"
-                >
-                <div
-                    class="list-group-item"
-                    v-for="(track, trackIndex) in getSideTracksByIndex(props.index)"
-                    :key="track.id"
-                >
-                    <track-item
-                        :track="track"
-                        :side_index="props.index"
-                        :track_index="trackIndex"
-                        >
-                    </track-item>
-                </div>
-            </draggable>
-        </v-list>
-    </v-card>
+    <v-list 
+      select-strategy="leaf"
+      v-model:selected="selectedTracks"
+    >
+      <draggable 
+        :list="layout?.tracks" 
+        group="tracks" 
+        item-key="id" 
+        animation="200"
+        @change="onChanged"
+      >
+          <v-list-item
+              v-for="track in tracks"
+              :key="track.id"
+              :value="track.id"
+              active-class="text-pink"
+              class="py-3"
+              handle=".drag-handle"
+              @click="toggleAnchor(track.id)"
+          >
+            <template v-slot:prepend>
+              <v-icon
+                class="drag-handle"
+                icon="mdi-drag-vertical" 
+                size="large">
+              </v-icon>
+              <v-avatar tile>
+                <v-img v-if="track.image" :src="track.image.href" />
+                <v-icon v-else icon="mdi-music" />
+              </v-avatar>
+            </template>
+            <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
+            <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
+            <template v-slot:append="{ isSelected }">
+              <v-list-item-action class="flex-column align-end">
+                  <v-spacer></v-spacer>
+                  <v-icon v-if="isSelected" size="x-small">mdi-lock</v-icon>
+                  <v-icon v-else class="opacity-30" size="x-small">mdi-lock-open-variant</v-icon>
+              </v-list-item-action>
+            </template>
+          </v-list-item>
+        </draggable>
+    </v-list>
 </template>
+
+<style scoped>
+.item-with-handle {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.drag-handle {
+  cursor: grab;
+  margin-right: 10px;
+  color: #999;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.item-content {
+  flex: 1;
+}
+</style>

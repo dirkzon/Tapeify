@@ -1,42 +1,54 @@
-import { defineStore } from 'pinia'
-import { UseTracksStore } from './tracks'
-import { SortType } from '@/utils/sorting/trackSorter'
-import { useCassetteStore } from './cassette'
-import { CreateTrackSorter } from '@/utils/sorting/trackSorterFactory'
+import type { TapeSideLayout } from "@/types/tapeify/models";
+import { GreedySort } from "@/utils/sorting/greedySort";
+import { TapeSide } from "@/utils/sorting/tapeSideLayout";
+import { defineStore } from "pinia";
+import { useCassettesStore } from "./cassette";
+import { UseTracksStore } from "./tracks";
+import { useAnchorsStore } from "./anchor";
 
-const STORE_NAME = 'sorting'
-
-export const useSortingStore = defineStore(STORE_NAME, {
+export const useSortingStore = defineStore('sorting', {
   state: () => ({
-    selectedSortType: SortType.Greedy,
+    layout: [] as TapeSideLayout[],
+    selectedSortType: 'greedy',
   }),
   getters: {
-    getSortingTypes(): SortType[] {
-      return Object.values(SortType)
+    getLayoutByCassetteId: (state) => {
+      return (cassetteId: string) => {
+        return state.layout.filter(side => side.cassetteId === cassetteId)
+      }
     },
-    getSelectedSortType(state): SortType {
-      return state.selectedSortType
+    getLayoutbyCassetteAndSide: (state) => {
+      return (cassetteId: string, sideIndex: number) => {
+        return state.layout.find(side => side.cassetteId === cassetteId && side.sideIndex === sideIndex)
+      }
     }
   },
   actions: {
-    sortTracksInSides() {
-      const tracksStore = UseTracksStore()
-      const cassetteStore = useCassetteStore()
+    sortTracks() {
+      const cassetteStore = useCassettesStore()
+      const trackStore = UseTracksStore()
+      const anchorsStore = useAnchorsStore()
 
-      const sidesCount = cassetteStore.sides.length
-      cassetteStore.ClearCassette()
-      
-      const trackSorter = CreateTrackSorter(this.selectedSortType, sidesCount)
-      trackSorter.PrePackAnchoredTracks([...tracksStore.anchoredTracks])
-      trackSorter.sortUnanchoredTracks([...tracksStore.unanchoredTracks])
-      trackSorter.ClearEmptyValues()
-          
-      for (let i = 0; i < trackSorter.cassetteSides.length; i++) {
-        cassetteStore.PushNewSide(trackSorter.cassetteSides[i])
+      const sides: TapeSide[] = []
+
+      for (const cassette of cassetteStore.cassettes) {
+        for (let sideIndex = 0; sideIndex < 2; sideIndex++) {
+          const side = new TapeSide(cassette, sideIndex)
+          sides.push(side)
+        }
       }
+
+      const trackSorter = new GreedySort(sides)
+      const anchored_tracks = trackSorter.prepackAnchoredTracks(trackStore.tracks, anchorsStore.anchors)
+      const unanchored_tracks = trackStore.tracks.filter(t => !anchored_tracks.includes(t))
+      trackSorter.sortTracks(sides, unanchored_tracks)
+
+      this.layout = sides.map(side => ({
+        cassetteId: side.getCassetteId(),
+        sideIndex: side.getSideIndex(),
+        tracks: side.toArray(),
+        durationMs: side.getUsedMs(),
+      }))
     },
-    setSelectedSortType(sortType: SortType) {
-      this.selectedSortType = sortType
-    }
   }
 })

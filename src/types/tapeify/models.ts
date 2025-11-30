@@ -5,12 +5,6 @@ export interface Album {
   image?: URL
 }
 
-export interface CassetteSide {
-  tracks: Track[]
-  duration_ms: number
-  name: String
-}
-
 export interface Playlist {
   name: string
   id: string
@@ -23,23 +17,40 @@ export interface Profile {
   image?: URL
   uri: string
   id: string
-  display_name: string
+  displayName: string
   country: string
 }
 
-interface Anchor {
-  side_index: number
-  track_index: number
+// ----------------------------------------
+
+export interface Cassette {
+  name: string
+  id: string
+  totalDurationMs: number
+}
+
+export interface Anchor {
+  cassetteId: string
+  trackId: string
+  sideIndex: number
+  positionIndex: number
+  locked?: boolean
 }
 
 export interface Track {
   name: string
   id: string
-  uri: string,
+  spotifyId: string
+  uri: string
   image?: URL
   explicit: boolean
-  duration_ms: number
+  durationMs: number
   artists: string[]
-  anchor?: Anchor
-  anchored: boolean
+}
+
+export interface TapeSideLayout {
+  cassetteId: string
+  sideIndex: number
+  tracks: Array<string | null>
+  durationMs: number
 }
