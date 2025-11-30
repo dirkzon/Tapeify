@@ -8,7 +8,7 @@ export function ParseProfileDTO(profile: ProfileDTO): Profile {
         image: GetSmallestImage(profile.images),
         uri: profile.uri,
         id: profile.id,
-        display_name: profile.display_name,
+        displayName: profile.display_name,
         country: profile.country
     }
 }

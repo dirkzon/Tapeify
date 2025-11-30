@@ -19,7 +19,7 @@ const cassette = computed(() => {
     <!-- Cassette Header -->
     <v-toolbar flat color="pink" class="cassette-header">
       <v-card-title class="cassette-title">{{ cassette?.name }}</v-card-title>
-      <v-card-subtitle class="cassette-duration">{{ formatDuration(cassette?.totalDurationMs) }}</v-card-subtitle>
+      <v-card-subtitle class="cassette-duration">{{ formatDuration(cassette?.totalDurationMs ?? 0) }}</v-card-subtitle>
     </v-toolbar>
 
     <v-row class="cassette-row" align="stretch" no-gutters>

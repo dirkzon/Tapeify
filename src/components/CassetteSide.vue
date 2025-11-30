@@ -109,7 +109,7 @@ const durationChipColor = computed(() => {
 
         <!-- Duration: used / capacity -->
         <v-chip small outlined :color="durationChipColor">
-            {{ formatDuration(layout?.durationMs) }} / {{ formatDuration(cassette?.totalDurationMs / 2) }}
+            {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.totalDurationMs ?? 0) / 2) }}
         </v-chip>
          <v-list 
       select-strategy="leaf"

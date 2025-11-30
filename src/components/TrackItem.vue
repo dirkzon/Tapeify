@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { UseTracksStore } from '@/stores/tracks'
-import type { Track } from '@/types/tapeify/models'
-import { useSortingStore } from '@/stores/sorting'
+// import { UseTracksStore } from '@/stores/tracks'
+// import type { Track } from '@/types/tapeify/models'
+// import { useSortingStore } from '@/stores/sorting'
 
-const trackStore = UseTracksStore()
-const sortStore = useSortingStore()
+// const trackStore = UseTracksStore()
+// const sortStore = useSortingStore()
 
-const props = defineProps<{
-    track: Track
-    side_index: number
-    track_index: number
-}>()
+// const props = defineProps<{
+//     track: Track
+//     side_index: number
+//     track_index: number
+// }>()
 
-function getPrettyTrackDuration(): string {
-  const ms = props.track.duration_ms
-  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+// function getPrettyTrackDuration(): string {
+//   const ms = props.track.duration_ms
+//   const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+//   const seconds = Math.floor((ms % (1000 * 60)) / 1000)
 
-  const pad = (num: number) => num.toString().padStart(2, '0')
+//   const pad = (num: number) => num.toString().padStart(2, '0')
 
-  return `${pad(minutes)}:${pad(seconds)}`
-}
+//   return `${pad(minutes)}:${pad(seconds)}`
+// }
 
-function SetAnchor() {
-    if (props.track.anchored) {       
-        trackStore.UnAnchorTrack(props.track.id)
-    } else {
-        trackStore.AnchorTrack(props.side_index, props.track_index, props.track.id)
-    }
-    sortStore.sortTracksInSides()
-}
+// function SetAnchor() {
+//     if (props.track.anchored) {       
+//         trackStore.UnAnchorTrack(props.track.id)
+//     } else {
+//         trackStore.AnchorTrack(props.side_index, props.track_index, props.track.id)
+//     }
+//     sortStore.sortTracksInSides()
+// }
 </script>
 
 <template>
-    <v-hover v-slot:default="{ isHovering: trackHovering, props: trackHoverProps }">
+    <!-- <v-hover v-slot:default="{ isHovering: trackHovering, props: trackHoverProps }">
         <v-list-item v-bind="trackHoverProps" :title="track.name" :subtitle="track.artists.join()">
             <template #prepend>
                 <v-avatar tile>
@@ -65,5 +65,5 @@ function SetAnchor() {
             </template>
             <v-divider />
         </v-list-item>
-    </v-hover>
+    </v-hover> -->
 </template>

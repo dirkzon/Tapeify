@@ -26,7 +26,7 @@ describe('Search tests', () => {
       it('correct search params', async () => {
         const profile: Profile = {
           id: 'user_id',
-          display_name: 'User Name',
+          displayName: 'User Name',
           type: 'user',
           uri: 'spotify:user:user_id',
           country: 'NL',
