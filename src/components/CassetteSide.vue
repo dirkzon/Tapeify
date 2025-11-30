@@ -49,6 +49,37 @@ function onChanged(changeEvent: any) {
     sortStore.sortTracks()
 }
 
+const selectedTracks = computed({
+  get: () => {
+    return anchorStore.anchors
+      .filter(a => a.cassetteId === props.cassetteId && a.sideIndex === props.sideIndex)
+      .map(a => a.trackId)
+  },
+  set: (_val: string[]) => {
+  }
+})
+
+function toggleAnchor(trackId: string) {
+  const existing = anchorStore.anchors.find(
+    a => a.cassetteId === props.cassetteId &&
+         a.sideIndex === props.sideIndex &&
+         a.trackId === trackId
+  )
+
+  if (existing) {
+    anchorStore.anchors = anchorStore.anchors.filter(a => a !== existing)
+  } else {
+    anchorStore.anchorTrack({
+      cassetteId: props.cassetteId,
+      trackId,
+      sideIndex: props.sideIndex,
+      positionIndex: layout.value?.tracks.indexOf(trackId) ?? 0
+    })
+  }
+
+  sortStore.sortTracks()
+}
+
 const tracks = computed(() => {
     const output = []
     for (const trackId of layout.value?.tracks || []) {
@@ -66,6 +97,7 @@ const tracks = computed(() => {
 <template>
     <v-list 
       select-strategy="leaf"
+      v-model:selected="selectedTracks"
     >
       <draggable 
         :list="layout?.tracks" 
@@ -81,24 +113,24 @@ const tracks = computed(() => {
               active-class="text-pink"
               class="py-3"
               handle=".drag-handle"
+              @click="toggleAnchor(track.id)"
           >
             <template v-slot:prepend>
               <v-icon
                 class="drag-handle"
                 icon="mdi-drag-vertical" 
                 size="large">
-            </v-icon>
-            <v-avatar tile>
+              </v-icon>
+              <v-avatar tile>
                 <v-img v-if="track.image" :src="track.image.href" />
                 <v-icon v-else icon="mdi-music" />
-            </v-avatar>
+              </v-avatar>
             </template>
             <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
             <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
             <template v-slot:append="{ isSelected }">
               <v-list-item-action class="flex-column align-end">
                   <v-spacer></v-spacer>
-
                   <v-icon v-if="isSelected" size="x-small">mdi-lock</v-icon>
                   <v-icon v-else class="opacity-30" size="x-small">mdi-lock-open-variant</v-icon>
               </v-list-item-action>
