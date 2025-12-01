@@ -2,28 +2,48 @@
 import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
 import { formatDuration } from '@/utils/duration/durationHelper';
+import { useSortingStore } from '@/stores/sorting';
 
 const cassetteStore = useCassettesStore()
+const sortingStore = useSortingStore();
 
 const props = defineProps<{
-    cassetteId: string
+  cassetteId: string
 }>()
 
 const cassette = computed(() => {
-    return cassetteStore.getCassetteById(props.cassetteId)
+  return cassetteStore.getCassetteById(props.cassetteId)
 })
+
+function addCassette() {
+  cassetteStore.addCassette()
+  sortingStore.sortTracks()
+}
+
+function removeCassette() {
+  cassetteStore.removeCassette(props.cassetteId)
+  sortingStore.sortTracks()
+}
 </script>
 
 <template>
   <v-card class="cassette-card">
-    <!-- Cassette Header -->
     <v-toolbar flat color="pink" class="cassette-header">
       <v-card-title class="cassette-title">{{ cassette?.name }}</v-card-title>
       <v-card-subtitle class="cassette-duration">{{ formatDuration(cassette?.capacityMs ?? 0) }}</v-card-subtitle>
+
+      <v-spacer />
+
+      <v-btn icon color="white" @click="addCassette" title="Add cassette">
+        <v-icon>mdi-playlist-plus</v-icon>
+      </v-btn>
+      <v-btn v-if="cassetteStore.cassettes.length > 1" icon color="white" @click="removeCassette"
+        title="Remove cassette">
+        <v-icon>mdi-playlist-minus</v-icon>
+      </v-btn>
     </v-toolbar>
 
     <v-row class="cassette-row" align="stretch" no-gutters>
-      <!-- Side A -->
       <v-col cols="5" class="d-flex">
         <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />
       </v-col>
@@ -46,16 +66,16 @@ const cassette = computed(() => {
   width: 100%;
   background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .cassette-row {
-    min-height: 200px;
-    margin: 16px;
+  min-height: 200px;
+  margin: 16px;
 }
 
 .cassette-header {
-  border-bottom: 1px solid rgba(0,0,0,0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .cassette-title {
@@ -65,7 +85,7 @@ const cassette = computed(() => {
 
 .cassette-duration {
   font-size: 0.875rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .cassette-row {
@@ -83,7 +103,7 @@ const cassette = computed(() => {
 }
 
 .full-height-divider {
-  background-color: rgba(0,0,0,0.12);
+  background-color: rgba(0, 0, 0, 0.12);
   margin: 0 8px;
 }
 </style>
