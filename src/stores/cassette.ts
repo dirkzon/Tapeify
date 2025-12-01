@@ -26,7 +26,7 @@ export const useCassettesStore = defineStore('cassettes', {
     removeCassette(cassetteId: string) {
       this.cassettes = this.cassettes.filter(cassette => cassette.id !== cassetteId)
     },
-    updateCassetteName(cassetteId: string, newName: string) {
+    updateName(cassetteId: string, newName: string) {
       const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
       if (cassette) {
         cassette.name = newName
