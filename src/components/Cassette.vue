@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
-import { formatDuration } from '@/utils/duration/durationHelper';
 import { useSortingStore } from '@/stores/sorting';
 
 const cassetteStore = useCassettesStore()
@@ -24,23 +23,48 @@ function removeCassette() {
   cassetteStore.removeCassette(props.cassetteId)
   sortingStore.sortTracks()
 }
+
+const capacityMinutes = computed<number>({
+  get() {
+    const ms = cassette.value?.capacityMs ?? 0
+    return Math.round(ms / 60000)
+  },
+  set(mins: number) {
+    if (!cassette.value) return
+    cassetteStore.updateCapacity(cassette.value.id, mins * 60000)
+  }
+})
+
+const name = computed<string>({
+  get() {
+    return cassette.value?.name ?? ''
+  },
+  set(val: string) {
+    if (!cassette.value) return
+    cassetteStore.updateName(cassette.value.id, val)
+  }
+})
 </script>
 
 <template>
   <v-card class="cassette-card">
-    <v-toolbar flat color="pink" class="cassette-header">
-      <v-card-title class="cassette-title">{{ cassette?.name }}</v-card-title>
-      <v-card-subtitle class="cassette-duration">{{ formatDuration(cassette?.capacityMs ?? 0) }}</v-card-subtitle>
-
-      <v-spacer />
-
-      <v-btn icon color="white" @click="addCassette" title="Add cassette">
-        <v-icon>mdi-playlist-plus</v-icon>
-      </v-btn>
-      <v-btn v-if="cassetteStore.cassettes.length > 1" icon color="white" @click="removeCassette"
-        title="Remove cassette">
-        <v-icon>mdi-playlist-minus</v-icon>
-      </v-btn>
+    <v-toolbar color="pink">
+      <template v-slot:prepend>
+        <v-select v-model="capacityMinutes" :items="[60, 90, 120]" dense hide-details class="ma-0"
+          style="min-width:140px" label="Capacity (min)" />
+      </template>
+      <template v-slot:title>
+        <v-text-field v-model="name" dense hide-details placeholder="Cassette name"
+          class="cassette-title-field" />
+      </template>
+      <template v-slot:append>
+        <v-btn icon @click="addCassette" title="Add cassette">
+          <v-icon>mdi-playlist-plus</v-icon>
+        </v-btn>
+        <v-btn v-if="cassetteStore.cassettes.length > 1" icon @click="removeCassette" title="Remove cassette">
+          <v-icon>mdi-playlist-minus</v-icon>
+        </v-btn>
+      </template>
     </v-toolbar>
 
     <v-row class="cassette-row" align="stretch" no-gutters>
