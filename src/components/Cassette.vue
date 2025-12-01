@@ -32,6 +32,7 @@ const capacityMinutes = computed<number>({
   set(mins: number) {
     if (!cassette.value) return
     cassetteStore.updateCapacity(cassette.value.id, mins * 60000)
+    sortingStore.sortTracks()
   }
 })
 
