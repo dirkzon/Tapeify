@@ -7,12 +7,12 @@ export const useCassettesStore = defineStore('cassettes', {
       {
         id: 'cassette_1',
         name: 'My First Cassette',
-        totalDurationMs: 60000 * 30,
+        capacityMs: 60000 * 30,
       },
       {
         id: 'cassette_2',
         name: 'My second Cassette',
-        totalDurationMs: 60000 * 60,
+        capacityMs: 60000 * 60,
       },
     ] as Cassette[],
   }),
@@ -24,6 +24,23 @@ export const useCassettesStore = defineStore('cassettes', {
     }
   },
   actions: {
-
+    addCassette(cassette: Cassette) {
+      this.cassettes.push(cassette)
+    },
+    removeCassette(cassetteId: string) {
+      this.cassettes = this.cassettes.filter(cassette => cassette.id !== cassetteId)
+    },
+    updateCassetteName(cassetteId: string, newName: string) {
+      const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
+      if (cassette) {
+        cassette.name = newName
+      }
+    },
+    updateCapacity(cassetteId: string, newCapacityMs: number) {
+      const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
+      if (cassette) {
+        cassette.capacityMs = newCapacityMs
+      }
+    },
   },
 })

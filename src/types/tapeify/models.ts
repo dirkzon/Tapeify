@@ -26,7 +26,7 @@ export interface Profile {
 export interface Cassette {
   name: string
   id: string
-  totalDurationMs: number
+  capacityMs: number
 }
 
 export interface Anchor {
