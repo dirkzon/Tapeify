@@ -10,44 +10,44 @@ const tracksStore = UseTracksStore()
 const anchorStore = useAnchorsStore()
 
 const props = defineProps<{
-    cassetteId: string,
-    sideIndex: number
+  cassetteId: string,
+  sideIndex: number
 }>()
 
 const sortStore = useSortingStore()
 
 const layout = computed(() => {
-    return sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex)
+  return sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex)
 })
 
 const cassette = computed(() => {
-    return cassetteStore.getCassetteById(props.cassetteId)
+  return cassetteStore.getCassetteById(props.cassetteId)
 })
 
 function onChanged(changeEvent: any) {
-    const eventType = Object.keys(changeEvent)[0]
-    switch(eventType) {
-        case 'moved':
-            anchorStore.anchorTrack({
-                cassetteId: props.cassetteId,
-                trackId: changeEvent.moved.element,
-                sideIndex: props.sideIndex,
-                positionIndex: changeEvent.moved.newIndex
-            })
-            break;
-        case 'added':
-            anchorStore.anchorTrack({
-                cassetteId: props.cassetteId,
-                trackId: changeEvent.added.element,
-                sideIndex: props.sideIndex,
-                positionIndex: changeEvent.added.newIndex
-            })
-            break
-        case 'removed':
-            break
-    }
+  const eventType = Object.keys(changeEvent)[0]
+  switch (eventType) {
+    case 'moved':
+      anchorStore.anchorTrack({
+        cassetteId: props.cassetteId,
+        trackId: changeEvent.moved.element,
+        sideIndex: props.sideIndex,
+        positionIndex: changeEvent.moved.newIndex
+      })
+      break;
+    case 'added':
+      anchorStore.anchorTrack({
+        cassetteId: props.cassetteId,
+        trackId: changeEvent.added.element,
+        sideIndex: props.sideIndex,
+        positionIndex: changeEvent.added.newIndex
+      })
+      break
+    case 'removed':
+      break
+  }
 
-    sortStore.sortTracks()
+  sortStore.sortTracks()
 }
 
 const selectedTracks = computed({
@@ -63,8 +63,8 @@ const selectedTracks = computed({
 function toggleAnchor(trackId: string) {
   const existing = anchorStore.anchors.find(
     a => a.cassetteId === props.cassetteId &&
-         a.sideIndex === props.sideIndex &&
-         a.trackId === trackId
+      a.sideIndex === props.sideIndex &&
+      a.trackId === trackId
   )
 
   if (existing) {
@@ -82,78 +82,54 @@ function toggleAnchor(trackId: string) {
 }
 
 const tracks = computed(() => {
-    const output = []
-    for (const trackId of layout.value?.tracks || []) {
-        if (trackId) {
-            const track = tracksStore.GetTrackById(trackId)
-            if (track) {
-                output.push(track)
-            }
-        }
+  const output = []
+  for (const trackId of layout.value?.tracks || []) {
+    if (trackId) {
+      const track = tracksStore.GetTrackById(trackId)
+      if (track) {
+        output.push(track)
+      }
     }
-    return output
+  }
+  return output
 })
 
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'grey'
-  return (layout.value.durationMs ?? 0) > (cassette.value.totalDurationMs / 2)? 'red' : 'grey'
+  return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'red' : 'grey'
 })
 </script>
 
 <template>
-    <v-card flat class="flex-grow-1">
-        <!-- Side name -->
-        <v-toolbar-title class="me-4">
-            Side {{ String.fromCharCode(65 + sideIndex) }}
-        </v-toolbar-title>
-
-        <!-- Duration: used / capacity -->
-        <v-chip small outlined :color="durationChipColor">
-            {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.totalDurationMs ?? 0) / 2) }}
-        </v-chip>
-         <v-list 
-      select-strategy="leaf"
-      v-model:selected="selectedTracks"
-    >
-      <draggable 
-        :list="layout?.tracks" 
-        group="tracks" 
-        item-key="id" 
-        animation="200"
-        @change="onChanged"
-      >
-          <v-list-item
-              v-for="track in tracks"
-              :key="track.id"
-              :value="track.id"
-              active-class="text-pink"
-              class="py-3"
-              handle=".drag-handle"
-              @click="toggleAnchor(track.id)"
-          >
-            <template v-slot:prepend>
-              <v-icon
-                class="drag-handle"
-                icon="mdi-drag-vertical" 
-                size="large">
-              </v-icon>
-              <v-avatar tile>
-                <v-img v-if="track.image" :src="track.image.href" />
-                <v-icon v-else icon="mdi-music" />
-              </v-avatar>
-            </template>
-            <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
-            <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
-            <template v-slot:append="{ isSelected }">
-                <div class="track-meta d-flex align-center">
-                <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
-                <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
-                </div>
-            </template>
-          </v-list-item>
-        </draggable>
-    </v-list>
-    </v-card>
+  <v-list select-strategy="leaf" v-model:selected="selectedTracks">
+    <v-chip small outlined :color="durationChipColor">
+      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
+    </v-chip>
+    <v-list-subheader>
+      Side {{ String.fromCharCode(65 + sideIndex) }}
+    </v-list-subheader>
+    <draggable :list="layout?.tracks" group="tracks" item-key="id" animation="200" @change="onChanged">
+      <v-list-item v-for="track in tracks" :key="track.id" :value="track.id" active-class="text-pink" class="py-3"
+        handle=".drag-handle" @click="toggleAnchor(track.id)">
+        <template v-slot:prepend>
+          <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large">
+          </v-icon>
+          <v-avatar tile>
+            <v-img v-if="track.image" :src="track.image.href" />
+            <v-icon v-else icon="mdi-music" />
+          </v-avatar>
+        </template>
+        <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
+        <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
+        <template v-slot:append="{ isSelected }">
+          <div class="track-meta d-flex align-center">
+            <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
+            <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
+          </div>
+        </template>
+      </v-list-item>
+    </draggable>
+  </v-list>
 </template>
 
 <style scoped>

@@ -8,7 +8,7 @@ export class TapeSide {
     private capacityMs: number
 
     constructor(private cassette: Cassette, private sideIndex: number) { 
-        this.capacityMs = cassette.totalDurationMs / 2
+        this.capacityMs = cassette.capacityMs / 2
     }
 
     public anchorTrack(track: Track, index: number) {
