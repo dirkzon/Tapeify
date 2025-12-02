@@ -3,6 +3,14 @@ import { defineStore } from 'pinia'
 import axios from "axios";
 import qs from "qs";
 
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_SPOTIFY_AUTH_URI,
+  timeout: 10_000,
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
+});
+
 export const useAuthStore = defineStore('auth', {
   getters: {
     userAuthorizationUrl(): URL {
@@ -26,12 +34,11 @@ export const useAuthStore = defineStore('auth', {
         redirect_uri: import.meta.env.VITE_REDIRECT_URI,
       });
 
-      const response = await axios.post<TokenResponse>(
+      const response = await apiClient.post<TokenResponse>(
         url,
         body,
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": `Basic ${btoa(
               `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
             )}`
@@ -51,12 +58,11 @@ export const useAuthStore = defineStore('auth', {
         client_id: import.meta.env.VITE_CLIENT_ID,
       });
 
-      const response = await axios.post<TokenResponse>(
+      const response = await apiClient.post<TokenResponse>(
         url,
         body,
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": `Basic ${btoa(
               `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
             )}`
