@@ -17,6 +17,15 @@ export const useAnchorsStore = defineStore('anchors', {
         return
       }
       this.anchors.push(anchor)
-    }
+    },
+    removeAnchor(trackId: string) {
+      this.anchors = this.anchors.filter(anchor => anchor.trackId !== trackId)
+    },
+    removeAnchoresByCassetteId(cassetteId: string) {
+      this.anchors = this.anchors.filter(anchor => anchor.cassetteId !== cassetteId)
+    },
+    removeAnchorsByTapeSide(cassetteId: string, sideIndex: number) {
+      this.anchors = this.anchors.filter(anchor => !(anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex))
+    },
   }
 })

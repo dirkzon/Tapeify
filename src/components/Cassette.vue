@@ -2,9 +2,11 @@
 import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
 import { useSortingStore } from '@/stores/sorting';
+import { useAnchorsStore } from '@/stores/anchor';
 
 const cassetteStore = useCassettesStore()
 const sortingStore = useSortingStore();
+const anchorsStore = useAnchorsStore();
 
 const props = defineProps<{
   cassetteId: string
@@ -21,6 +23,7 @@ function addCassette() {
 
 function removeCassette() {
   cassetteStore.removeCassette(props.cassetteId)
+  anchorsStore.removeAnchoresByCassetteId(props.cassetteId)
   sortingStore.sortTracks()
 }
 
@@ -81,6 +84,7 @@ const name = computed<string>({
         <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
       </v-col>
     </v-row>
+    {{ anchorsStore.anchors }}
   </v-card>
 </template>
 
