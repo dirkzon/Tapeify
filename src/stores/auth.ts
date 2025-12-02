@@ -1,5 +1,4 @@
 import type { TokenResponse } from '@/types/spotify/responses'
-import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { defineStore } from 'pinia'
 import axios from "axios";
 import qs from "qs";
@@ -42,20 +41,30 @@ export const useAuthStore = defineStore('auth', {
 
       return response.data;
     },
+
     async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
-      const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/api/token')
+      const url = `${import.meta.env.VITE_SPOTIFY_AUTH_URI}/api/token`;
 
-      const body = new URLSearchParams();
-      body.set('grant_type', 'refresh_token');
-      body.set('refresh_token', refreshToken);
-      body.set('client_id', import.meta.env.VITE_CLIENT_ID);
+      const body = qs.stringify({
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+        client_id: import.meta.env.VITE_CLIENT_ID,
+      });
 
-      return await fetchWrapper.post<TokenResponse>(url, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body
-      })
+      const response = await axios.post<TokenResponse>(
+        url,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Basic ${btoa(
+              `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
+            )}`
+          }
+        }
+      );
+
+      return response.data;
     }
   }
 })
