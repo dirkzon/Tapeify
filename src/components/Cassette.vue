@@ -84,7 +84,6 @@ const name = computed<string>({
         <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
       </v-col>
     </v-row>
-    {{ anchorsStore.anchors }}
   </v-card>
 </template>
 
