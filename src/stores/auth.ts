@@ -1,17 +1,14 @@
 import type { TokenResponse } from '@/types/spotify/responses'
+import { authApiClient } from '@/utils/api/clients';
 import { defineStore } from 'pinia'
-import axios from "axios";
 import qs from "qs";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_SPOTIFY_AUTH_URI,
-  timeout: 10_000,
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  }
-});
-
 export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    accessToken: '',
+    refreshToken: '',
+    expiresIn: 0,
+  }),
   getters: {
     userAuthorizationUrl(): URL {
       const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/authorize')
@@ -25,14 +22,14 @@ export const useAuthStore = defineStore('auth', {
     }
   },
   actions: {
-    async requestAccessToken(code: string): Promise<TokenResponse> {
+    async requestAccessToken(code: string): Promise<void> {
       const body = qs.stringify({
         grant_type: "authorization_code",
         code,
         redirect_uri: import.meta.env.VITE_REDIRECT_URI,
       });
 
-      const response = await apiClient.post<TokenResponse>(
+      const response = await authApiClient.post<TokenResponse>(
         "/api/token",
         body,
         {
@@ -44,7 +41,9 @@ export const useAuthStore = defineStore('auth', {
         }
       );
 
-      return response.data;
+      this.accessToken = response.data.access_token;
+      this.refreshToken = response.data.refresh_token;
+      this.expiresIn = response.data.expires_in;
     },
 
     async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
@@ -54,7 +53,7 @@ export const useAuthStore = defineStore('auth', {
         client_id: import.meta.env.VITE_CLIENT_ID,
       });
 
-      const response = await apiClient.post<TokenResponse>(
+      const response = await authApiClient.post<TokenResponse>(
         "/api/token",
         body,
         {

@@ -13,9 +13,7 @@ const router = useRouter()
 onMounted(async () => {
   const code = new URL(location.href).searchParams.get('code')
 
-  const { access_token, refresh_token } = await authStore.requestAccessToken(String(code))
-  cookies.set('access_token', access_token, 3600)
-  cookies.set('refresh_token', refresh_token)
+  await authStore.requestAccessToken(String(code))
 
   profileStore.FetchProfile()
   router.push({ name: '/HomeView' })
