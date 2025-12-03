@@ -29,10 +29,10 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       const paginationStore = usePaginationStore();
       this.ClearPlaylists();
 
-      const limit = paginationStore.getLimit;
+      const limit = paginationStore.limit;
       if (limit < 1 || limit > 50) throw new Error("Limit out of bounds");
 
-      const offset = paginationStore.getOffset;
+      const offset = paginationStore.offset;
       if (offset < 0 || offset > 10000) throw new Error("Offset out of bounds");
 
       const response = await apiClient.get<UsersPlaylistsResponse>(

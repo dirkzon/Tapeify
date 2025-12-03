@@ -9,20 +9,7 @@ export const usePaginationStore = defineStore(STORE_NAME, {
     limit: 10,
     offset: 0
   }),
-  getters: {
-    getOffset(state): number {
-      return state.offset
-    },
-    getLimit(state): number {
-      return state.limit
-    },
-    getNextPageAvailable(state): boolean {
-      return state.nextPageAvailable
-    },
-    getPreviousPageAvailable(state): boolean {
-      return state.previousPageAvailable
-    }
-  },
+  getters: {},
   actions: {
     setAvailability(previous: boolean, next: boolean) {
       this.nextPageAvailable = next

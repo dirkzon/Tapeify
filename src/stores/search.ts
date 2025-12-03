@@ -25,8 +25,8 @@ export const UseSearchStore = defineStore('search', {
           q: query,
           type: 'album,playlist',
           market: profileStore.country,
-          limit: paginationStore.getLimit,
-          offset: paginationStore.getOffset,
+          limit: paginationStore.limit,
+          offset: paginationStore.offset,
         },
       })
 
