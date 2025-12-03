@@ -10,7 +10,6 @@ const playlistsStore = usePlaylistsStore()
 const { getPlaylists } = toRefs(playlistsStore)
 
 const albumStore = useAlbumsStore()
-const { getAlbums } = toRefs(albumStore)
 
 const searchStore = UseSearchStore()
 
@@ -39,6 +38,8 @@ onMounted(() => {
 
   GetItems()
 })
+
+const albums = computed(() => albumStore.albums)
 
 function Previous() {
   paginationStore.setOffset(offset.value - limit.value)
@@ -104,13 +105,13 @@ function SelectItem(id: string, type: string) {
         clear-icon="mdi-close-circle"
         clearable
         type="text"
-        :loading="getAlbums.length == 0 && getPlaylists.length == 0"
+        :loading="albums.length == 0 && getPlaylists.length == 0"
         @click:clear="ClearSearchBar"
         @click:append-inner="Search"
         @keydown.enter="Search"
       />
       <v-row>
-        <v-col v-if="getPlaylists.length > 0" cols="12" :md="getAlbums.length > 0 ? 6 : 12">
+        <v-col v-if="getPlaylists.length > 0" cols="12" :md="albums.length > 0 ? 6 : 12">
           <v-list lines="two" density="compact">
             <v-list-subheader v-if="query == ''"> Your Playlists </v-list-subheader>
             <v-list-subheader v-else> Playlists </v-list-subheader>
@@ -131,11 +132,11 @@ function SelectItem(id: string, type: string) {
             </v-list-item>
           </v-list>
         </v-col>
-        <v-col v-if="getAlbums.length > 0" cols="12" :md="getPlaylists.length > 0 ? 6 : 12">
+        <v-col v-if="albums.length > 0" cols="12" :md="getPlaylists.length > 0 ? 6 : 12">
           <v-list lines="two" density="compact">
             <v-list-subheader>Albums</v-list-subheader>
             <v-list-item
-              v-for="album in getAlbums"
+              v-for="album in albums"
               :key="album.id"
               :title="album.name"
               :subtitle="album.artists.toString()"

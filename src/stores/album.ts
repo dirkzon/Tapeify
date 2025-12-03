@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
-import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 import type { Album } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
+import { apiClient } from '@/utils/api/clients'
 
 const STORE_NAME = 'albums'
 
@@ -13,11 +13,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
   state: () => ({
     albums: [] as Album[]
   }),
-  getters: {
-    getAlbums(state): Album[] {
-      return state.albums
-    }
-  },
+  getters: {},
   actions: {
     AddAlbum(album: Album) {
       this.albums.push(album)
@@ -29,8 +25,7 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassettesStore()
 
-      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId)
-      const album = await fetchWrapper.get<GetAlbumResponse>(url)
+      const album = (await apiClient.get<GetAlbumResponse>('/albums/' + albumId)).data
 
       const limit = album.tracks.limit
       const total = album.tracks.total
@@ -39,20 +34,22 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const imageUrl = GetSmallestImage(album.images)
 
       while (offset < total) {
-        const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/albums/' + albumId + '/tracks')
-        url.searchParams.append('limit', String(limit))
-        url.searchParams.append('offset', String(offset))
 
-        const tracks = await fetchWrapper.get<GetAlbumTracksResponse>(url)
+        const tracksResponse = await apiClient.get<GetAlbumTracksResponse>('/albums/' + albumId + '/tracks', {
+          params: {
+            limit,
+            offset,
+          },
+        })
 
-        for (const item of tracks.items) {
+        for (const item of tracksResponse.data.items) {
           tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl))
         }
 
         offset += limit
       }
 
-      // cassetteStore.SetCassetteName(album.name)
+      cassetteStore.updateName('cassette-1', album.name)
     }
   }
 })
