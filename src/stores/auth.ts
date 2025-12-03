@@ -1,13 +1,14 @@
 import type { TokenResponse } from '@/types/spotify/responses'
 import { authApiClient } from '@/utils/api/clients';
+import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import qs from "qs";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    accessToken: '',
-    refreshToken: '',
-    expiresIn: 0,
+    accessToken: useStorage<string | null>('access_token', null),
+    refreshToken: useStorage<string | null>('refresh_token', null),
+    expiresIn: useStorage<number | null>('expires_in', null),
   }),
   getters: {
     userAuthorizationUrl(): URL {
