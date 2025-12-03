@@ -7,9 +7,7 @@ import type { Album } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/utils/api/clients'
 
-const STORE_NAME = 'albums'
-
-export const useAlbumsStore = defineStore(STORE_NAME, {
+export const useAlbumsStore = defineStore('albums', {
   state: () => ({
     albums: [] as Album[]
   }),
@@ -25,7 +23,8 @@ export const useAlbumsStore = defineStore(STORE_NAME, {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassettesStore()
 
-      const album = (await apiClient.get<GetAlbumResponse>('/albums/' + albumId)).data
+      const response = await apiClient.get<GetAlbumResponse>('/albums/' + albumId)
+      const album = response.data
 
       const limit = album.tracks.limit
       const total = album.tracks.total
