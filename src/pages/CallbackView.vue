@@ -7,7 +7,6 @@ import { useProfileStore } from '@/stores/profile'
 
 const authStore = useAuthStore()
 const profileStore = useProfileStore()
-const { cookies } = useCookies()
 const router = useRouter()
 
 onMounted(async () => {
