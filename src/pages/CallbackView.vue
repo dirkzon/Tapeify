@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { useCookies } from 'vue3-cookies'
 import { useRouter } from 'vue-router'
 import { useProfileStore } from '@/stores/profile'
 
