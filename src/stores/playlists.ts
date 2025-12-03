@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia'
 import { usePaginationStore } from './pagination'
-import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
 import { UseTracksStore } from './tracks'
-import { useProfileStore } from './profile'
-import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
+import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
@@ -12,9 +10,7 @@ import type { Playlist } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/utils/api/clients'
 
-const STORE_NAME = 'playlists'
-
-export const usePlaylistsStore = defineStore(STORE_NAME, {
+export const usePlaylistsStore = defineStore('playlists', {
   state: () => ({
     playlists: [] as Playlist[]
   }),
@@ -64,19 +60,23 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
       const cassetteStore = useCassettesStore()
       const tracksStore = UseTracksStore()
 
-      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId)
-      const playlist = await fetchWrapper.get<GetPlaylistsResponse>(url)
+      const playlistResponse = await apiClient.get<GetPlaylistsResponse>('/playlists/' + playlistId)
+      const playlist = playlistResponse.data
+      cassetteStore.updateName('cassette-1', playlist.name)
 
       const limit = playlist.tracks.limit
       const total = playlist.tracks.total
       let offset = playlist.tracks.offset
 
       while(offset < total) {
-        const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlistId + '/tracks')
-        url.searchParams.append('limit', String(limit))
-        url.searchParams.append('offset', String(offset))
+        const trackResponse = await apiClient.get<GetPlaylistTracksResponse>('/playlists/' + playlistId + '/tracks', {
+          params: {
+            limit,
+            offset,
+          },
+        })
         
-        const tracks = await fetchWrapper.get<GetPlaylistTracksResponse>(url)
+        const tracks = trackResponse.data
 
         for (const item of tracks.items) {
           const track = item.track
@@ -90,46 +90,44 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
         offset += limit
       }
-
-      // cassetteStore.SetCassetteName(playlist.name)
     },
 
-    async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {
-      const profileStore = useProfileStore()
-      const userId = profileStore.id
+    // async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {
+    //   const profileStore = useProfileStore()
+    //   const userId = profileStore.id
 
-      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
+    //   const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
 
-      if (name.length < 1 || name.length > 30) throw new Error('Name must be between 1 and 30 characters.')
-      if (description.length < 1 || description.length > 200) throw new Error('Description must be between 1 and 30 characters.')
+    //   if (name.length < 1 || name.length > 30) throw new Error('Name must be between 1 and 30 characters.')
+    //   if (description.length < 1 || description.length > 200) throw new Error('Description must be between 1 and 30 characters.')
 
-      const playlistDTO = await fetchWrapper.post<CreatePlaylistResponse>(url, {
-        headers: {
-         'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          name, 
-          description, 
-          public: is_public 
-        })
-      })
+    //   const playlistDTO = await fetchWrapper.post<CreatePlaylistResponse>(url, {
+    //     headers: {
+    //      'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ 
+    //       name, 
+    //       description, 
+    //       public: is_public 
+    //     })
+    //   })
 
-      return ParsePlaylistDTO(playlistDTO)
-    },
-    async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
-      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')
+    //   return ParsePlaylistDTO(playlistDTO)
+    // },
+    // async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
+    //   const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')
   
-      if (track_uris.length > 100) throw new Error('Cannot upload more than 100 tracks to a playlist at once.')
+    //   if (track_uris.length > 100) throw new Error('Cannot upload more than 100 tracks to a playlist at once.')
 
-      return await fetchWrapper.post(url, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uris: track_uris,
-          position: 0
-        })
-      })
-    }
+    //   return await fetchWrapper.post(url, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       uris: track_uris,
+    //       position: 0
+    //     })
+    //   })
+    // }
   }
 })
