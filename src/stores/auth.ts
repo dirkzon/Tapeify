@@ -6,9 +6,9 @@ import qs from "qs";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    accessToken: useStorage<string | null>('access_token', null),
-    refreshToken: useStorage<string | null>('refresh_token', null),
-    expiresIn: useStorage<number | null>('expires_in', null),
+    accessToken: useStorage<string | undefined>('access_token', undefined),
+    refreshToken: useStorage<string | undefined>('refresh_token', undefined),
+    expiresAt: useStorage<number | undefined>('expires_in', undefined),
   }),
   getters: {
     userAuthorizationUrl(): URL {
@@ -20,6 +20,10 @@ export const useAuthStore = defineStore('auth', {
       searchParams.append('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
       url.search = searchParams.toString()
       return url
+    },
+    accessTokenExpired(): boolean {
+      if (!this.expiresAt) return true
+      return Date.now() >= this.expiresAt
     }
   },
   actions: {
@@ -44,13 +48,12 @@ export const useAuthStore = defineStore('auth', {
 
       this.accessToken = response.data.access_token;
       this.refreshToken = response.data.refresh_token;
-      this.expiresIn = response.data.expires_in;
+      this.expiresAt = Date.now() + response.data.expires_in * 1000
     },
-
-    async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
+    async refreshAccessToken(): Promise<void> {
       const body = qs.stringify({
         grant_type: "refresh_token",
-        refresh_token: refreshToken,
+        refresh_token: this.refreshToken,
         client_id: import.meta.env.VITE_CLIENT_ID,
       });
 
@@ -66,7 +69,9 @@ export const useAuthStore = defineStore('auth', {
         }
       );
 
-      return response.data;
+      this.accessToken = response.data.access_token;
+      this.refreshToken = response.data.refresh_token;
+      this.expiresAt = Date.now() + response.data.expires_in * 1000
     }
   }
 })

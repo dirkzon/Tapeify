@@ -23,7 +23,7 @@ export const UseSearchStore = defineStore(STORE_NAME, {
       playlistsStore.ClearPlaylists()
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/search')
-      const country = profileStore.getProfile?.country || "ES";
+      const country = profileStore.country || "ES";
       url.searchParams.append('market', country)
       url.searchParams.append('type', ['album', 'playlist'].join(','))
       url.searchParams.append('q', query)

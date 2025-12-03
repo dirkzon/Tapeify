@@ -29,3 +29,21 @@ apiClient.interceptors.request.use(
     },
     (error) => Promise.reject(error)
 );
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const authStore = useAuthStore();
+    if (error.response?.status === 401 || authStore.accessTokenExpired) {
+        if (authStore.refreshToken) {
+        await authStore.refreshAccessToken();
+
+        error.config.headers.Authorization =
+            `Bearer ${authStore.accessToken}`;
+        
+        return apiClient.request(error.config);
+        }
+    }
+    return Promise.reject(error);
+  }
+);

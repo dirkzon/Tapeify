@@ -1,26 +1,29 @@
-import { ParseProfileDTO } from '@/parsers/profileDtoParser'
 import type { GetProfileResponse } from '@/types/spotify/responses'
-import type { Profile } from '@/types/tapeify/models'
-import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
+import { apiClient } from '@/utils/api/clients'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
+import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
-const STORE_NAME = 'profile'
-const LOCAL_STORAGE_ITEM_NAME = 'profile'
-
-export const useProfileStore = defineStore(STORE_NAME, {
-  getters: {
-    getProfile(): Profile | undefined {
-      const profile = localStorage.getItem(LOCAL_STORAGE_ITEM_NAME)
-      if (!profile) return undefined
-      return JSON.parse(profile) as Profile
-    }
-  },
+export const useProfileStore = defineStore('profile', {
+  state: () => ({
+    type: useStorage<string | undefined>('profile_type', undefined),
+    id: useStorage<string | undefined>('profile_id', undefined),
+    displayName: useStorage<string | undefined>('profile_display_name', undefined),
+    image: useStorage<URL | undefined>('profile_image', undefined),
+    uri: useStorage<string | undefined>('profile_uri', undefined),
+    country: useStorage<string | undefined>('profile_country', undefined),
+  }),
+  getters: {},
   actions: {
     async FetchProfile() {
-      const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/me')
-      const profileDTO = await fetchWrapper.get<GetProfileResponse>(url)
-      const profile = ParseProfileDTO(profileDTO)
-      localStorage.setItem(LOCAL_STORAGE_ITEM_NAME, JSON.stringify(profile))
+      const resposnse = await apiClient.get<GetProfileResponse>('/me')
+
+      this.type = resposnse.data.type
+      this.id = resposnse.data.id
+      this.displayName = resposnse.data.display_name
+      this.image = GetSmallestImage(resposnse.data.images)
+      this.uri = resposnse.data.uri
+      this.country = resposnse.data.country
     },
   }
 })

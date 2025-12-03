@@ -96,7 +96,7 @@ export const usePlaylistsStore = defineStore(STORE_NAME, {
 
     async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {
       const profileStore = useProfileStore()
-      const userId = profileStore.getProfile?.id
+      const userId = profileStore.id
 
       const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
 
