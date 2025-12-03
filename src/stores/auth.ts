@@ -26,8 +26,6 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async requestAccessToken(code: string): Promise<TokenResponse> {
-      const url = `${import.meta.env.VITE_SPOTIFY_AUTH_URI}/api/token`;
-
       const body = qs.stringify({
         grant_type: "authorization_code",
         code,
@@ -35,7 +33,7 @@ export const useAuthStore = defineStore('auth', {
       });
 
       const response = await apiClient.post<TokenResponse>(
-        url,
+        "/api/token",
         body,
         {
           headers: {
@@ -50,8 +48,6 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async refreshAccessToken(refreshToken: string): Promise<TokenResponse> {
-      const url = `${import.meta.env.VITE_SPOTIFY_AUTH_URI}/api/token`;
-
       const body = qs.stringify({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
@@ -59,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
       });
 
       const response = await apiClient.post<TokenResponse>(
-        url,
+        "/api/token",
         body,
         {
           headers: {
