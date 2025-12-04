@@ -8,7 +8,7 @@ import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { Playlist } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
-import { apiClient } from '@/utils/api/clients'
+import { apiClient } from '@/api/clients'
 
 export const usePlaylistsStore = defineStore('playlists', {
   state: () => ({

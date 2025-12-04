@@ -5,7 +5,7 @@ import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 import type { Album } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
-import { apiClient } from '@/utils/api/clients'
+import { apiClient } from '@/api/clients'
 
 export const useAlbumsStore = defineStore('albums', {
   state: () => ({

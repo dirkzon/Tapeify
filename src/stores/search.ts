@@ -6,7 +6,7 @@ import type { SearchResponse } from '@/types/spotify/responses'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
 import { useProfileStore } from './profile'
-import { apiClient } from '@/utils/api/clients'
+import { apiClient } from '@/api/clients'
 
 export const UseSearchStore = defineStore('search', {
   actions: {

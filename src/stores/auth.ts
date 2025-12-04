@@ -1,5 +1,5 @@
+import { authApiClient } from '@/api/clients';
 import type { TokenResponse } from '@/types/spotify/responses'
-import { authApiClient } from '@/utils/api/clients';
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import qs from "qs";
