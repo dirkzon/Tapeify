@@ -115,4 +115,30 @@ describe('Auth store', () => {
       expect(authStore.accessTokenExpired).toBe(false);
     });
   });
+describe('userAuthorizationUrl', () => {
+  it('builds a correct Spotify authorize URL when expiresAt is undefined', () => {
+    const authStore = useAuthStore();
+
+    const url = new URL(authStore.userAuthorizationUrl.toString());
+
+    expect(url.origin + url.pathname).toBe('https://accounts.spotify.com/authorize');
+
+    const params = url.searchParams;
+    expect(params.get('response_type')).toBe('code');
+    expect(params.get('client_id')).toBe('0123456789');
+    expect(params.get('redirect_uri')).toBe('http://127.0.0.1:5173/Tapeify/callback');
+
+    const scope = params.get('scope') || '';
+    const scopes = scope.split(/\s+/).filter(Boolean);
+    expect(scopes).toEqual(expect.arrayContaining([
+      'user-read-private',
+      'user-read-email',
+      'playlist-read-private',
+      'playlist-modify-public',
+      'playlist-modify-private'
+    ]));
+
+    expect(params.has('expires_at')).toBe(false);
+  });
+});
 });
