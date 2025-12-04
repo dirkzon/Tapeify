@@ -52,7 +52,7 @@ describe('Auth store', () => {
         'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback',
         {
           headers: {
-            Authorization: 'Basic MDEyMzQ1Njc4OTo3NGJkNDY2NTE1MDQ0M2QyYmY0MzhhNGM0YTViYmNiNw=='
+            Authorization: `Basic ${btoa('0123456789:9876543210')}`
           }
         }
       );
@@ -81,7 +81,7 @@ describe('Auth store', () => {
         'grant_type=refresh_token&refresh_token=9876543210&client_id=0123456789',
         {
           headers: {
-            Authorization: 'Basic MDEyMzQ1Njc4OTo3NGJkNDY2NTE1MDQ0M2QyYmY0MzhhNGM0YTViYmNiNw=='
+            Authorization: `Basic ${btoa('0123456789:9876543210')}`
           }
         }
       );
