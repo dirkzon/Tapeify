@@ -1,16 +1,13 @@
 import { authApiClient } from '@/api/clients';
 import type { TokenResponse } from '@/types/spotify/responses';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from './auth';
 import { createPinia, setActivePinia } from 'pinia';
 
-vi.mock("../api/clients");
+vi.mock('@/api/clients');
 vi.mock('../router', () => ({
-  default: {
-    push: vi.fn()
-  }
-}))
-setActivePinia(createPinia());
+  default: { push: vi.fn() }
+}));
 
 describe('Auth store', () => {
   const tokenResponseMock: TokenResponse = {
@@ -21,29 +18,49 @@ describe('Auth store', () => {
     refresh_token: '9876543210'
   };
 
+  const mockTime = new Date('2025-12-04T00:00:00Z');
+  const postSpy = vi.spyOn(authApiClient, 'post');
+
   beforeEach(() => {
-    vi.mocked(authApiClient.post).mockResolvedValueOnce({ data: tokenResponseMock });
+    setActivePinia(createPinia());
+
+    vi.useFakeTimers();
+    vi.setSystemTime(mockTime);
+
+    vi.mocked(authApiClient.post).mockResolvedValue({ data: tokenResponseMock });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   describe('requestAccessToken', () => {
-    it('successfully requests access token', async () => {
-      const mockTime = new Date('2025-12-04T00:00:00Z');
-      vi.setSystemTime(mockTime);
-
+    it('successfully requests access token and calls API with correct args', async () => {
       const authStore = useAuthStore();
-      const code = "secretcode";
+      const code = 'secretcode';
+
+      expect(authStore.accessToken).not.toBeDefined();
+      expect(authStore.refreshToken).not.toBeDefined();
+      expect(authStore.expiresAt).not.toBeDefined();
 
       await authStore.requestAccessToken(code);
 
-      expect(authStore.accessToken).toBeDefined();
-      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token)
-      
-      expect(authStore.refreshToken).toBeDefined();
-      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token)
+      expect(postSpy).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledWith(
+        '/api/token',
+        'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback',
+        {
+          headers: {
+            Authorization: 'Basic MDEyMzQ1Njc4OTo3NGJkNDY2NTE1MDQ0M2QyYmY0MzhhNGM0YTViYmNiNw=='
+          }
+        }
+      );
 
-      expect(authStore.expiresAt).toBeDefined();
-      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000
-      expect(authStore.expiresAt).toEqual(expectedTime)
+      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token);
+      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token);
+      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000;
+      expect(authStore.expiresAt).toEqual(expectedTime);
     });
   });
 });
