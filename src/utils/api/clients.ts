@@ -37,13 +37,12 @@ apiClient.interceptors.response.use(
     const authStore = useAuthStore();
 
     if (error.response?.status === 401) {
-        if (authStore.refreshToken) {
-        await authStore.refreshAccessToken();
+        if (authStore.accessTokenExpired) {
+            await authStore.refreshAccessToken();
 
-        error.config.headers.Authorization =
-            `Bearer ${authStore.accessToken}`;
-        
-        return apiClient.request(error.config);
+            error.config.headers.Authorization = `Bearer ${authStore.accessToken}`;
+            
+            return apiClient.request(error.config);
         }
         router.push({ name: '/LoginView' })
     }
