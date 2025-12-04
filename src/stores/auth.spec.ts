@@ -92,4 +92,27 @@ describe('Auth store', () => {
       expect(authStore.expiresAt).toEqual(expectedTime);
     });
   });
+  describe('accessTokenExpired', () => {
+    it('undefined expires at state', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = undefined;
+
+      expect(authStore.expiresAt).not.toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(true);
+    });
+    it('is expired', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = mockTime.getTime() - 1000;
+
+      expect(authStore.expiresAt).toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(true);
+    });
+    it('not expired', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = mockTime.getTime() + 1000;
+
+      expect(authStore.expiresAt).toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(false);
+    });
+  });
 });
