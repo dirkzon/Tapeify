@@ -1,3 +1,4 @@
+import router from "@/router";
 import { useAuthStore } from "@/stores/auth";
 import axios from "axios";
 
@@ -34,7 +35,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const authStore = useAuthStore();
-    if (error.response?.status === 401 || authStore.accessTokenExpired) {
+
+    if (error.response?.status === 401) {
         if (authStore.refreshToken) {
         await authStore.refreshAccessToken();
 
@@ -43,6 +45,7 @@ apiClient.interceptors.response.use(
         
         return apiClient.request(error.config);
         }
+        router.push({ name: '/LoginView' })
     }
     return Promise.reject(error);
   }
