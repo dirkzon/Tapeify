@@ -9,7 +9,7 @@
       <div class="d-flex h-100 align-end justify-center">
         <v-btn class="me-2 text-none" prepend-icon="mdi-github" density="comfortable" variant="plain"
           href="https://github.com/dirkzon/Tapeify" target="_blank">
-          <span class="mt-auto">GitHub</span>
+          <span class="mt-auto">github</span>
         </v-btn>
       </div>
     </v-footer>
