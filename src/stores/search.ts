@@ -28,6 +28,8 @@ export const UseSearchStore = defineStore('search', {
       return {
         albums: albums || [],
         playlists: playlists || [],
+        next: !!response.data.albums?.next || !!response.data.playlists?.next,
+        previous: !!response.data.albums?.previous || !!response.data.playlists?.previous,
       }
     }
   }

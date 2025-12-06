@@ -10,19 +10,24 @@ const playlistsStore = usePlaylistsStore()
 const searchStore = UseSearchStore()
 
 let query = ref('')
-let offset = 0
-let limit = 10
-
+let offset = ref(0)
+let limit = ref(10)
 const loading = ref(false)
-
 const playlists: Ref<Playlist[]> = ref([])
 const albums: Ref<Album[]> = ref([])
+const nextPageAvailable = ref(false)
+const previousPageAvailable = ref(false)
 
 onMounted(async () => {
   const url = new URL(location.href)
 
-  offset = Number(url.searchParams.get('offset')) ?? 0
-  limit = Number(url.searchParams.get('limit')) ?? 10
+  if (url.searchParams.get('limit')) {
+    limit.value = Number(url.searchParams.get('limit'))
+  }
+  if (url.searchParams.get('offset')) {
+    offset.value = Number(url.searchParams.get('offset'))
+  }
+
   query.value = url.searchParams.get('query') ?? ''
 
   Search()
@@ -37,41 +42,56 @@ async function Search() {
   if (query.value.trim() !== '') {
     const searchResults = await searchStore.SearchPlaylistsAndAlbums(
       query.value,
-      limit,
-      offset
+      limit.value,
+      offset.value
     )
     playlists.value = searchResults.playlists
     albums.value = searchResults.albums
+    nextPageAvailable.value = searchResults.next
+    previousPageAvailable.value = searchResults.previous
     updateUrl()
   } else {
-    playlists.value = await playlistsStore.FetchUsersPlayists(limit, offset)
+    const usersPlaylists = await playlistsStore.FetchUsersPlayists(limit.value, offset.value)
+    playlists.value = usersPlaylists.playlists
+    nextPageAvailable.value = usersPlaylists.next
+    previousPageAvailable.value = usersPlaylists.previous
+    updateUrl()
   }
 
   loading.value = false
 }
 
-
-function Previous() {
-
+function Next() {
+  offset.value += limit.value
+  Search()
 }
 
-function Next() {
+function Previous() {
+  offset.value -= limit.value
+  Search()
+}
 
+function resetPaginationAndSearch() {
+  offset.value = 0
+  limit.value = 10
+  Search()
 }
 
 function updateUrl() {
   router.push({
     name: '/HomeView',
     query: {
-      offset: offset,
-      limit: limit,
-      query: query.value
+      offset: offset.value,
+      limit: limit.value,
+      ...(query.value.trim() !== '' ? { query: query.value } : {})
     }
   })
 }
 
 function ClearSearchBar() {
   query = ref<string>('')
+  offset.value = 0
+  limit.value = 10
   Search()
 }
 </script>
@@ -79,39 +99,29 @@ function ClearSearchBar() {
 <template>
   <main>
     <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="80px">
-        <v-toolbar color="pink">
+      <v-toolbar color="pink">
         <v-text-field v-model="query" label="Search playlists & albums" append-inner-icon="mdi-magnify"
-          :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense hide-details
-          @click:append-inner="Search" @keydown.enter="Search" />
-        </v-toolbar>
-        <v-row>
-          <v-col v-if="playlists.length > 0">
-            <PlaylistList :playlists="playlists" />
-          </v-col>
-          <v-col v-if="albums.length > 0">
-            <AlbumList :albums="albums" />
-          </v-col>
-        </v-row>
-        <!-- <v-row class="ma-1" align="center" justify="center">
-        <v-btn
-          variant="plain"
-          density="comfortable"
-          icon="mdi-chevron-left"
-          :disabled="!previousPageAvailable"
-          @click="Previous"
-        />
+          :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
+          hide-details @click:append-inner="resetPaginationAndSearch" @keydown.enter="resetPaginationAndSearch" />
+      </v-toolbar>
+      <v-row>
+        <v-col v-if="playlists.length > 0">
+          <PlaylistList :playlists="playlists" />
+        </v-col>
+        <v-col v-if="albums.length > 0">
+          <AlbumList :albums="albums" />
+        </v-col>
+      </v-row>
+      <v-row class="ma-1" align="center" justify="center">
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-left" :disabled="!previousPageAvailable"
+          @click="Previous" />
         <div class="button">
           {{ offset / limit + 1 }}
         </div>
-        <v-btn
-          variant="plain"
-          density="comfortable"
-          icon="mdi-chevron-right"
-          :disabled="!nextPageAvailable"
-          @click="Next"
-        />
-      </v-row> -->
-      </v-card>
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-right" :disabled="!nextPageAvailable"
+          @click="Next" />
+      </v-row>
+    </v-card>
   </main>
 </template>
 

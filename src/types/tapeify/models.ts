@@ -15,6 +15,8 @@ export interface Playlist {
 export interface SearchResult {
   albums: Album[]
   playlists: Playlist[]
+  next: boolean
+  previous: boolean
 }
 
 export interface Profile {

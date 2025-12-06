@@ -8,6 +8,7 @@ import type { Playlist } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
+import type { SearchResult } from '@/types/tapeify/models'
 
 export const usePlaylistsStore = defineStore('playlists', {
   state: () => ({
@@ -15,7 +16,7 @@ export const usePlaylistsStore = defineStore('playlists', {
   }),
   getters: {},
   actions: {
-    async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<Playlist[]> {
+    async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<SearchResult> {
       const response = await apiClient.get<UsersPlaylistsResponse>(
         "/me/playlists",
         {
@@ -25,7 +26,14 @@ export const usePlaylistsStore = defineStore('playlists', {
           },
         }
       );
-      return response.data.items.map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
+      const playlists = response.data.items.map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
+
+      return {
+        albums: [],
+        playlists: playlists,
+        next: !!response.data.next,
+        previous:!!response.data.previous,
+      }
     },
     AddPlaylist(playlist: Playlist) {
       this.playlists.push(playlist)
