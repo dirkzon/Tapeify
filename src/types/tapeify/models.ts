@@ -12,6 +12,11 @@ export interface Playlist {
   image?: URL
 }
 
+export interface SearchResult {
+  albums: Album[]
+  playlists: Playlist[]
+}
+
 export interface Profile {
   type: string
   image?: URL

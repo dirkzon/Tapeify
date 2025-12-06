@@ -3,22 +3,11 @@ import { UseTracksStore } from './tracks'
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
-import type { Album } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 
 export const useAlbumsStore = defineStore('albums', {
-  state: () => ({
-    albums: [] as Album[]
-  }),
-  getters: {},
   actions: {
-    AddAlbum(album: Album) {
-      this.albums.push(album)
-    },
-    ClearAlbums() {
-      this.albums = []
-    },
     async FetchAlbumTracks(albumId: string) {
       const tracksStore = UseTracksStore()
       const cassetteStore = useCassettesStore()
