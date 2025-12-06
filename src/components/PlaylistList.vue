@@ -20,8 +20,8 @@ function SelectItem(id: string) {
 <template>
     <v-list lines="two" density="compact">
         <v-list-subheader> Playlists </v-list-subheader>
-        <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name"
-            :subtitle="playlist.owner" @click="SelectItem(playlist.id)">
+        <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name" :subtitle="playlist.owner"
+            @click="SelectItem(playlist.id)">
             <template #prepend>
                 <v-avatar tile>
                     <v-img v-if="playlist.image" :src="playlist.image.toString()" />

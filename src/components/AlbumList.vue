@@ -19,9 +19,9 @@ function SelectItem(id: string) {
 
 <template>
     <v-list lines="two" density="compact">
-        <v-list-subheader>Albums</v-list-subheader>
-        <v-list-item v-for="album in albums" :key="album.id" :title="album.name"
-            :subtitle="album.artists.toString()" @click="SelectItem(album.id)">
+        <v-list-subheader> Albums </v-list-subheader>
+        <v-list-item v-for="album in albums" :key="album.id" :title="album.name" :subtitle="album.artists.toString()"
+            @click="SelectItem(album.id)">
             <template #prepend>
                 <v-avatar tile>
                     <v-img v-if="album.image" :src="album.image.toString()" />
