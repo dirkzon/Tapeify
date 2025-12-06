@@ -1,100 +1,144 @@
-import { setActivePinia, createPinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useAuthStore } from './auth'
-import { fetchWrapper } from '@/utils/fetchwrapper/fetchWrapper'
+import { authApiClient } from '@/api/clients';
+import type { TokenResponse } from '@/types/spotify/responses';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { useAuthStore } from './auth';
+import { createPinia, setActivePinia } from 'pinia';
 
-describe('Auth Tests', () => {
+vi.mock('@/api/clients');
+vi.mock('../router', () => ({
+  default: { push: vi.fn() }
+}));
+
+describe('Auth store', () => {
+  const tokenResponseMock: TokenResponse = {
+    access_token: '0123456789',
+    token_type: 'access_token',
+    scope: 'user-read-private user-read-email',
+    expires_in: 3600,
+    refresh_token: '9876543210'
+  };
+
+  const mockTime = new Date('2025-12-04T00:00:00Z');
+  const postSpy = vi.spyOn(authApiClient, 'post');
+
   beforeEach(() => {
-    setActivePinia(createPinia())
-    vi.mock('../router', () => ({
-      default: {
-        push: vi.fn()
-      }
-    }))
-    fetchWrapper.post = vi.fn().mockReturnThis()
-  })
+    setActivePinia(createPinia());
 
-  describe('gettters', () => {
-    it('userAuthorizationUrl', () => {
-      const authStore = useAuthStore()
-      const authorizationUrl = authStore.userAuthorizationUrl
-      const searchParams = authorizationUrl.searchParams
+    vi.useFakeTimers();
+    vi.setSystemTime(mockTime);
 
-      expect(searchParams.has('response_type')).toBeTruthy()
-      expect(searchParams.get('response_type')).toBe('code')
-      expect(searchParams.has('client_id')).toBeTruthy()
-      expect(searchParams.has('scope')).toBeTruthy()
-      expect(searchParams.has('redirect_uri')).toBeTruthy()
-    })
-  })
+    vi.mocked(authApiClient.post).mockResolvedValue({ data: tokenResponseMock });
+  });
 
-  describe('actions', () => {
-    it('requestAccessToken', async () => {
-      const fetchWrapperSpy = vi.spyOn(fetchWrapper, 'post')
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
+  });
 
-      const authStore = useAuthStore()
-      await authStore.requestAccessToken('code')
+  describe('requestAccessToken', () => {
+    it('successfully requests access token and calls API with correct args', async () => {
+      const authStore = useAuthStore();
+      const code = 'secretcode';
 
-      expect(fetchWrapperSpy).toBeCalled()
+      expect(authStore.accessToken).not.toBeDefined();
+      expect(authStore.refreshToken).not.toBeDefined();
+      expect(authStore.expiresAt).not.toBeDefined();
 
-      const call = fetchWrapperSpy.mock.calls[0];
+      await authStore.requestAccessToken(code);
 
-      //url
-      expect(fetchWrapperSpy.mock.calls[0][0].href).toBe('https://accounts.spotify.com/api/token')
-      //body
-      const requestBody = call[1]!.body;
-      if (requestBody == null) {
-        throw new Error('request body is null or undefined')
-      }
-      const body = new URLSearchParams(requestBody as any);
-      expect(body.get('grant_type')).toBe('authorization_code')
-      expect(body.get('code')).toStrictEqual(expect.any(String))
-      expect(body.get('redirect_uri')).toStrictEqual(expect.any(String))
-      
-      //headers
-      const headerHeaders = call[1]!.headers;
-      if (headerHeaders == null) {
-        throw new Error('request body is null or undefined')
-      }
-      const headers = new URLSearchParams(headerHeaders as any);
-      expect(headers.get('Content-Type')).toBe(
-        'application/x-www-form-urlencoded'
-      )
-      expect(headers.get('Authorization')).toStrictEqual(
-        expect.any(String)
-      )
-    })
-    it('refreshAccessToken', async () => {
-      const fetchWrapperSpy = vi.spyOn(fetchWrapper, 'post')
+      expect(postSpy).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledWith(
+        '/api/token',
+        'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback',
+        {
+          headers: {
+            Authorization: `Basic ${btoa('0123456789:9876543210')}`
+          }
+        }
+      );
 
-      const authStore = useAuthStore()
-      await authStore.refreshAccessToken('refresh_token')
+      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token);
+      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token);
+      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000;
+      expect(authStore.expiresAt).toEqual(expectedTime);
+    });
+  });
+  describe('refreshAccessToken', () => {
+    it('successfully refresh access token and calls API with correct args', async () => {
+      const authStore = useAuthStore();
 
-      const call = fetchWrapperSpy.mock.calls[0];
+      authStore.refreshToken = '9876543210';
 
-      //body
-      const requestBody = call[1]!.body;
-      if (requestBody == null) {
-        throw new Error('request body is null or undefined')
-      }
-      const body = new URLSearchParams(requestBody as any);
-      expect(body.get('grant_type')).toBe('refresh_token')
-      expect(body.get('client_id')).toStrictEqual(expect.any(String))
-      expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
-    
-      expect(body.get('client_id')).toStrictEqual(expect.any(String))
-      expect(body.get('refresh_token')).toStrictEqual(expect.any(String))
-      
-      //headers
-      const requestHeaders = call[1]!.headers;
-      if (requestHeaders == null) {
-        throw new Error('request body is null or undefined')
-      }
-      const headers = new URLSearchParams(requestHeaders as any);
-      
-      expect(headers.get('Content-Type')).toBe(
-        'application/x-www-form-urlencoded'
-      )
-    })
-  })
-})
+      expect(authStore.accessToken).not.toBeDefined();
+      expect(authStore.refreshToken).toBeDefined();
+      expect(authStore.expiresAt).not.toBeDefined();
+
+      await authStore.refreshAccessToken();
+
+      expect(postSpy).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledWith(
+        '/api/token',
+        'grant_type=refresh_token&refresh_token=9876543210&client_id=0123456789',
+        {
+          headers: {
+            Authorization: `Basic ${btoa('0123456789:9876543210')}`
+          }
+        }
+      );
+
+      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token);
+      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token);
+      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000;
+      expect(authStore.expiresAt).toEqual(expectedTime);
+    });
+  });
+  describe('accessTokenExpired', () => {
+    it('undefined expires at state', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = undefined;
+
+      expect(authStore.expiresAt).not.toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(true);
+    });
+    it('is expired', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = mockTime.getTime() - 1000;
+
+      expect(authStore.expiresAt).toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(true);
+    });
+    it('not expired', async () => {
+      const authStore = useAuthStore();
+      authStore.expiresAt = mockTime.getTime() + 1000;
+
+      expect(authStore.expiresAt).toBeDefined();
+      expect(authStore.accessTokenExpired).toBe(false);
+    });
+  });
+describe('userAuthorizationUrl', () => {
+  it('builds a correct Spotify authorize URL when expiresAt is undefined', () => {
+    const authStore = useAuthStore();
+
+    const url = new URL(authStore.userAuthorizationUrl.toString());
+
+    expect(url.origin + url.pathname).toBe('https://accounts.spotify.com/authorize');
+
+    const params = url.searchParams;
+    expect(params.get('response_type')).toBe('code');
+    expect(params.get('client_id')).toBe('0123456789');
+    expect(params.get('redirect_uri')).toBe('http://127.0.0.1:5173/Tapeify/callback');
+
+    const scope = params.get('scope') || '';
+    const scopes = scope.split(/\s+/).filter(Boolean);
+    expect(scopes).toEqual(expect.arrayContaining([
+      'user-read-private',
+      'user-read-email',
+      'playlist-read-private',
+      'playlist-modify-public',
+      'playlist-modify-private'
+    ]));
+
+    expect(params.has('expires_at')).toBe(false);
+  });
+});
+});
