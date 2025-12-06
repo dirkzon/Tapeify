@@ -1,9 +1,8 @@
 name: Deploy static content to Pages
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+  release:
+    types: [published]
   workflow_dispatch:
 
 env:
@@ -28,11 +27,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Get release tag
+        run: echo "VITE_RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -44,10 +47,12 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          VITE_RELEASE_TAG: ${{ env.VITE_RELEASE_TAG }}
         run: npm run build
 
       - name: Post-build (Copy index.html to 404.html)
-        run: cp dist/index.html dist/404.html
+        run: cp -f dist/index.html dist/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
