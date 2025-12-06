@@ -4,8 +4,8 @@
  * ESLint configuration file.
  */
 
-import pluginVue from 'eslint-plugin-vue'
-import vueTsEslintConfig from '@vue/eslint-config-typescript'
+import vue from 'eslint-plugin-vue'
+import vuetify from 'eslint-plugin-vuetify'
 
 export default [
   {
@@ -18,8 +18,8 @@ export default [
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
 
-  ...pluginVue.configs['flat/recommended'],
-  ...vueTsEslintConfig(),
+  ...vue.configs['flat/base'],
+  ...vuetify.configs['flat/base'],
 
   {
     rules: {
