@@ -32,20 +32,26 @@ apiClient.interceptors.request.use(
 );
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const authStore = useAuthStore();
+    (response) => response,
+    async (error) => {
+        const authStore = useAuthStore();
 
-    if (error.response?.status === 401) {
-        if (authStore.accessTokenExpired) {
-            await authStore.refreshAccessToken();
+        if (error.response?.status === 401) {
+            if (!authStore.refreshToken && !authStore.accessToken){
+                router.push({ name: '/LoginView' })
+                return Promise.reject(error);
+            }
+            if (authStore.accessTokenExpired) {
+                await authStore.refreshAccessToken();
 
-            error.config.headers.Authorization = `Bearer ${authStore.accessToken}`;
-            
-            return apiClient.request(error.config);
+                error.config.headers.Authorization = `Bearer ${authStore.accessToken}`;
+
+                return apiClient.request(error.config);
+            }
+            router.push({ name: '/LoginView' })
+            return Promise.reject(error);
         }
-        router.push({ name: '/LoginView' })
+
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
