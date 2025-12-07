@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { apiClient } from '@/api/clients';
 import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses';
