@@ -73,8 +73,8 @@ export interface AlbumTracksPaginationDTO extends PaginationDTO {
 }
 
 export interface PaginationDTO {
-    next: number
-    previous: number
+    next: string
+    previous: string
     limit: number
     offset: number
     total: number
