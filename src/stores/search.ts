@@ -1,48 +1,36 @@
 import { defineStore } from 'pinia'
-import { usePlaylistsStore } from './playlists'
-import { useAlbumsStore } from './album'
-import { usePaginationStore } from './pagination'
 import type { SearchResponse } from '@/types/spotify/responses'
-import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
-import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
 import { useProfileStore } from './profile'
 import { apiClient } from '@/api/clients'
+import type { SearchResult } from '@/types/tapeify/models'
+import type { AlbumDTO, PlaylistDTO } from '@/types/spotify/dto'
+import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
+import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 
 export const UseSearchStore = defineStore('search', {
   actions: {
-    async SearchPlaylistsAndAlbums(query: string): Promise<void> {
+    async SearchPlaylistsAndAlbums(query: string, limit: number = 10, offset: number = 0): Promise<SearchResult> {
       const profileStore = useProfileStore()
-    
-      const playlistsStore = usePlaylistsStore()
-      const albumsStore = useAlbumsStore()
-      const paginationStore = usePaginationStore()
-
-      albumsStore.ClearAlbums()
-      playlistsStore.ClearPlaylists()
 
       const response = await apiClient.get<SearchResponse>('/search', {
         params: {
           q: query,
           type: 'album,playlist',
           market: profileStore.country,
-          limit: paginationStore.limit,
-          offset: paginationStore.offset,
+          limit: limit,
+          offset: offset,
         },
       })
 
-      const data = response.data
+      const albums = response.data.albums?.items.filter((album: AlbumDTO) => album).map((album: AlbumDTO) => { return ParseAlbumDTO(album) })
+      const playlists = response.data.playlists?.items.filter((playlist: PlaylistDTO) => playlist).map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
 
-      for (const playlist of data.playlists.items) {
-        if (playlist) playlistsStore.AddPlaylist(ParsePlaylistDTO(playlist))
+      return {
+        albums: albums || [],
+        playlists: playlists || [],
+        next: !!response.data.albums?.next || !!response.data.playlists?.next,
+        previous: !!response.data.albums?.previous || !!response.data.playlists?.previous,
       }
-
-      for (const album of data.albums.items) {
-        if (album) albumsStore.AddAlbum(ParseAlbumDTO(album))
-      }
-
-      const nextPageAvailable = !!(data.albums.next && data.playlists.next);
-      const previousPageAvailable = !!(data.albums.previous && data.playlists.previous);
-      paginationStore.setAvailability(previousPageAvailable, nextPageAvailable)
     }
   }
 })

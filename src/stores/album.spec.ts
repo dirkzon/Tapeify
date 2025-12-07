@@ -1,58 +1,107 @@
-import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { apiClient } from '@/api/clients';
+import type { GetAlbumResponse, GetAlbumTracksResponse } from '@/types/spotify/responses';
 import { useAlbumsStore } from './album';
-import type { Album } from '@/types/tapeify/models';
 
-vi.mock('../router', () => ({ default: { push: vi.fn() } }));
+const mockGetAlbumResponse: GetAlbumResponse = {
+  tracks: {
+    items: [],
+    next: '',
+    previous: '',
+    limit: 10,
+    offset: 0,
+    total: 18
+  },
+  type: 'album',
+  album_type: 'album',
+  total_tracks: 0,
+  id: '2up3OPMp9Tb4dAKM2erWXQ',
+  images: [
+    {
+      url: 'https://i.scdn.co/image/ab67616d0000b2732c5b24ecfa39523a75c993c4',
+      height: 640,
+      width: 640
+    }
+  ],
+  name: 'Global Warming',
+  uri: 'spotify:album:4aawyAB9vmqN3uQ7FjRGTy',
+  artists: [
+    {
+      type: 'artist',
+      id: '0TnOYISbd1XYRBk9myaseg',
+      name: 'Pitbull'
+    }
+  ]
+}
 
-const makeAlbum = (overrides?: Partial<Album>): Album => ({
-  name: 'test album',
-  id: '1234',
-  artists: ['John Doe'],
-  image: new URL('https://i.scdn.co/image/ab67616d0000b27326597c053b38c9cf93f8f3a9'),
-  ...overrides,
-});
+const mockGetAlbumTracksResponse: GetAlbumTracksResponse = {
+  items: [
+    {
+      type: 'track',
+      id: '6habFhsOp2NvshLv26DqMb',
+      name: 'Global Warming (feat. Sensato del Patio)',
+      uri: 'spotify:track:6habFhsOp2NvshLv26DqMb',
+      artists: [
+        {
+          type: 'artist',
+          id: '0TnOYISbd1XYRBk9myaseg',
+          name: 'Pitbull'
+        }
+      ],
+      duration_ms: 231733,
+      explicit: false
+    }
+  ],
+  next: '',
+  previous: '',
+  limit: 0,
+  offset: 0,
+  total: 0
+}
+
+vi.mock('@/api/clients');
+vi.mock('../router', () => ({
+  default: { push: vi.fn() }
+}));
 
 describe('Albums store', () => {
+  const getSpy = vi.spyOn(apiClient, 'get');
+
   beforeEach(() => {
     setActivePinia(createPinia());
+
+    vi.mocked(apiClient.get).mockImplementation((url: string, config?) => {
+      console.log(url)
+      if (url === '/albums/2up3OPMp9Tb4dAKM2erWXQ') {
+        return Promise.resolve({ data: mockGetAlbumResponse });
+      }
+      if (url === '/albums/2up3OPMp9Tb4dAKM2erWXQ/tracks') {
+        return Promise.resolve({ data: mockGetAlbumTracksResponse });
+      }
+      return Promise.reject('Failed to match mock implementation');
+    })
   });
 
-  describe('state & types', () => {
-    it('initializes with an empty albums array of correct type', () => {
-      const store = useAlbumsStore();
-      expect(store.albums).toBeDefined();
-      expectTypeOf(store.albums).toEqualTypeOf<Album[]>();
-      expect(store.albums).toHaveLength(0);
-    });
-  });
+  describe('FetchAlbumTracks', () => {
+    it('fetches the album', async () => {
+      const albumsStore = useAlbumsStore();
 
-  describe('actions', () => {
-    it('adds an album (AddAlbum) and stores correct values', () => {
-      const store = useAlbumsStore();
-      const album = makeAlbum();
-      store.AddAlbum(album);
+      await albumsStore.FetchAlbumTracks('2up3OPMp9Tb4dAKM2erWXQ');
 
-      expect(store.albums).toHaveLength(1);
-      expect(store.albums).toContainEqual(album);
-
-      const stored = store.albums[0];
-      expect(stored.name).toBeTypeOf('string');
-      expect(stored.id).toBeTypeOf('string');
-      expect(stored.artists).toBeInstanceOf(Array);
-      expect(stored.artists).toEqual(expect.arrayContaining(['John Doe']));
-      expect(stored.image).toBeInstanceOf(URL);
-      expect(stored.image).toBeDefined();
-      expect(stored.image!.href).toBeTypeOf('string');
-    });
-
-    it('clears albums (ClearAlbums) and results in an empty array', () => {
-      const store = useAlbumsStore();
-      store.AddAlbum(makeAlbum());
-      expect(store.albums.length).toBeGreaterThan(0);
-
-      store.ClearAlbums();
-      expect(store.albums).toHaveLength(0);
+      expect(getSpy).toHaveBeenCalledWith('/albums/2up3OPMp9Tb4dAKM2erWXQ');
+      expect(getSpy).toHaveBeenCalledWith('/albums/2up3OPMp9Tb4dAKM2erWXQ/tracks', {
+        params: {
+          limit: 10,
+          offset: 0,
+        },
+      });
+      expect(getSpy).toHaveBeenCalledWith('/albums/2up3OPMp9Tb4dAKM2erWXQ/tracks', {
+        params: {
+          limit: 10,
+          offset: 10,
+        },
+      });
     });
   });
 });

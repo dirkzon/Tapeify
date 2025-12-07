@@ -1,71 +1,75 @@
 <script setup lang="ts">
 import router from '@/router'
-import { useAlbumsStore } from '@/stores/album'
-import { usePaginationStore } from '@/stores/pagination'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { UseSearchStore } from '@/stores/search'
-import { onMounted, toRefs } from 'vue'
+import type { SearchResult } from '@/types/tapeify/models'
+import { onMounted } from 'vue'
+import { ref } from 'vue'
 
 const playlistsStore = usePlaylistsStore()
-const { getPlaylists } = toRefs(playlistsStore)
-
-const albumStore = useAlbumsStore()
-
 const searchStore = UseSearchStore()
 
-const paginationStore = usePaginationStore()
-const { nextPageAvailable, previousPageAvailable, limit, offset } = toRefs(paginationStore)
+let query = ref('')
+let offset = ref(0)
+let limit = ref(10)
+const loading = ref(false)
 
-let query = ''
-
-onMounted(() => {
-  const url = new URL(location.href)
-
-  if (url.searchParams.has('offset') && url.searchParams.has('limit')) {
-    const offset = Number(url.searchParams.get('offset'))
-    paginationStore.setOffset(offset)
-
-    const limit = Number(url.searchParams.get('limit'))
-    paginationStore.setLimit(limit)
-  } else {
-    paginationStore.setLimit(10)
-    paginationStore.resetPagination()
-  }
-
-  if (url.searchParams.has('q')) {
-    query = String(url.searchParams.get('q'))
-  }
-
-  GetItems()
+const searchResults = ref<SearchResult>({
+  playlists: [],
+  albums: [],
+  next: false,
+  previous: false
 })
 
-const albums = computed(() => albumStore.albums)
+onMounted(async () => {
+  const url = new URL(location.href)
 
-function Previous() {
-  paginationStore.setOffset(offset.value - limit.value)
-  updateUrl()
-  GetItems()
+  if (url.searchParams.get('limit')) {
+    limit.value = Number(url.searchParams.get('limit'))
+  }
+  if (url.searchParams.get('offset')) {
+    offset.value = Number(url.searchParams.get('offset'))
+  }
+
+  query.value = url.searchParams.get('query') ?? ''
+
+  Search()
+})
+
+async function Search() {
+  loading.value = true
+
+  searchResults.value = { playlists: [], albums: [], next: false, previous: false }
+
+  if (query.value.trim() !== '') {
+    searchResults.value = await searchStore.SearchPlaylistsAndAlbums(
+      query.value,
+      limit.value,
+      offset.value
+    )
+    updateUrl()
+  } else {
+    searchResults.value = await playlistsStore.FetchUsersPlayists(limit.value, offset.value)
+    updateUrl()
+  }
+
+  loading.value = false
 }
 
 function Next() {
-  paginationStore.setOffset(offset.value + limit.value)
-  updateUrl()
-  GetItems()
+  offset.value += limit.value
+  Search()
 }
 
-function Search() {
-  paginationStore.resetPagination()
-  updateUrl()
-  GetItems()
+function Previous() {
+  offset.value -= limit.value
+  Search()
 }
 
-function GetItems() {
-  if (query) {
-    searchStore.SearchPlaylistsAndAlbums(query)
-  } else {
-    albumStore.ClearAlbums()
-    playlistsStore.FetchUsersPlayists()
-  }
+function resetPaginationAndSearch() {
+  offset.value = 0
+  limit.value = 10
+  Search()
 }
 
 function updateUrl() {
@@ -74,104 +78,55 @@ function updateUrl() {
     query: {
       offset: offset.value,
       limit: limit.value,
-      ...(query == '' ? {} : { q: query })
+      ...(query.value.trim() !== '' ? { query: query.value } : {})
     }
   })
 }
 
 function ClearSearchBar() {
-  query = ''
+  query = ref<string>('')
+  offset.value = 0
+  limit.value = 10
   Search()
-}
-
-function SelectItem(id: string, type: string) {
-  router.push({
-    name: '/CassetteView',
-    query: {
-      id: id,
-      type: type
-    }
-  })
 }
 </script>
 
 <template>
   <main>
-    <v-card class="ma-10 pa-3" min-width="400px" max-width="800">
-      <v-text-field
-        v-model="query"
-        label="Search playlists & albums"
-        append-inner-icon="mdi-magnify"
-        clear-icon="mdi-close-circle"
-        clearable
-        type="text"
-        :loading="albums.length == 0 && getPlaylists.length == 0"
-        @click:clear="ClearSearchBar"
-        @click:append-inner="Search"
-        @keydown.enter="Search"
-      />
+    <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="150px">
+      <v-toolbar color="pink">
+        <v-text-field v-model="query" label="Search playlists & albums" append-inner-icon="mdi-magnify"
+          :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
+          hide-details @click:append-inner="resetPaginationAndSearch" @keydown.enter="resetPaginationAndSearch" />
+      </v-toolbar>
       <v-row>
-        <v-col v-if="getPlaylists.length > 0" cols="12" :md="albums.length > 0 ? 6 : 12">
-          <v-list lines="two" density="compact">
-            <v-list-subheader v-if="query == ''"> Your Playlists </v-list-subheader>
-            <v-list-subheader v-else> Playlists </v-list-subheader>
-            <v-list-item
-              v-for="playlist in getPlaylists"
-              :key="playlist.id"
-              :title="playlist.name"
-              :subtitle="playlist.owner"
-              @click="SelectItem(playlist.id, 'playlist')"
-            >
-              <template #prepend>
-                <v-avatar tile>
-                  <v-img v-if="playlist.image" :src="playlist.image.href" />
-                  <v-icon v-else icon="mdi-playlist-music" />
-                </v-avatar>
-              </template>
-              <v-divider />
-            </v-list-item>
-          </v-list>
+        <v-col>
+          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit"/>
         </v-col>
-        <v-col v-if="albums.length > 0" cols="12" :md="getPlaylists.length > 0 ? 6 : 12">
-          <v-list lines="two" density="compact">
-            <v-list-subheader>Albums</v-list-subheader>
-            <v-list-item
-              v-for="album in albums"
-              :key="album.id"
-              :title="album.name"
-              :subtitle="album.artists.toString()"
-              @click="SelectItem(album.id, 'album')"
-            >
-              <template #prepend>
-                <v-avatar tile>
-                  <v-img v-if="album.image" :src="album.image.href" />
-                  <v-icon v-else icon="mdi-album" />
-                </v-avatar>
-              </template>
-              <v-divider />
-            </v-list-item>
-          </v-list>
+        <v-col v-if="(searchResults.albums.length > 0) || (query.length > 0 && loading)" >
+          <AlbumList :albums="searchResults.albums" :loading="loading" :loading-item-count="limit"/>
         </v-col>
       </v-row>
       <v-row class="ma-1" align="center" justify="center">
-        <v-btn
-          variant="plain"
-          density="comfortable"
-          icon="mdi-chevron-left"
-          :disabled="!previousPageAvailable"
-          @click="Previous"
-        />
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-left" :disabled="!searchResults.previous"
+          @click="Previous" />
         <div class="button">
           {{ offset / limit + 1 }}
         </div>
-        <v-btn
-          variant="plain"
-          density="comfortable"
-          icon="mdi-chevron-right"
-          :disabled="!nextPageAvailable"
-          @click="Next"
-        />
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-right" :disabled="!searchResults.next"
+          @click="Next" />
       </v-row>
     </v-card>
   </main>
 </template>
+
+<style scoped>
+.cassette-card {
+  margin: 16px auto;
+  max-width: 900px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+</style>

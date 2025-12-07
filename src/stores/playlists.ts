@@ -1,36 +1,17 @@
 import { defineStore } from 'pinia'
-import { usePaginationStore } from './pagination'
 import { UseTracksStore } from './tracks'
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
-import type { EpisodeDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
+import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
-import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
-import type { Playlist } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
+import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
+import type { SearchResult } from '@/types/tapeify/models'
 
 export const usePlaylistsStore = defineStore('playlists', {
-  state: () => ({
-    playlists: [] as Playlist[]
-  }),
-  getters: {
-    getPlaylists(state): Playlist[] {
-      if (!state.playlists) return []
-      return state.playlists
-    }
-  },
   actions: {
-    async FetchUsersPlayists(): Promise<void> {
-      const paginationStore = usePaginationStore();
-      this.ClearPlaylists();
-
-      const limit = paginationStore.limit;
-      if (limit < 1 || limit > 50) throw new Error("Limit out of bounds");
-
-      const offset = paginationStore.offset;
-      if (offset < 0 || offset > 10000) throw new Error("Offset out of bounds");
-
+    async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<SearchResult> {
       const response = await apiClient.get<UsersPlaylistsResponse>(
         "/me/playlists",
         {
@@ -40,21 +21,14 @@ export const usePlaylistsStore = defineStore('playlists', {
           },
         }
       );
+      const playlists = response.data.items.map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
 
-      for (const playlist of response.data.items) {
-        this.AddPlaylist(ParsePlaylistDTO(playlist));
+      return {
+        albums: [],
+        playlists: playlists,
+        next: !!response.data.next,
+        previous:!!response.data.previous,
       }
-
-      paginationStore.setAvailability(
-        response.data.previous != null,
-        response.data.next != null
-      );
-    },
-    AddPlaylist(playlist: Playlist) {
-      this.playlists.push(playlist)
-    },
-    ClearPlaylists() {
-      this.playlists = []
     },
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassettesStore()

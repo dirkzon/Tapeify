@@ -1,104 +1,144 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { setActivePinia, createPinia } from 'pinia';
-import { usePlaylistsStore } from './playlists';
-import { usePaginationStore } from './pagination';
-import type { Playlist } from '@/types/tapeify/models';
+import { createPinia, setActivePinia } from 'pinia';
 import { apiClient } from '@/api/clients';
+import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses';
+import { usePlaylistsStore } from './playlists';
 
-vi.mock('../router', () => ({ default: { push: vi.fn() } }));
-vi.mock('@/api/clients');
-
-const makePlaylistModel = (overrides?: Partial<Playlist>): Playlist => ({
-  id: '12345',
-  name: 'my playlist',
-  owner: 'John Doe',
-  image: new URL('https://example.com/image.jpg'),
-  ...overrides,
-});
-
-const spotifyPlaylistsResponse = {
-  limit: 2,
-  next: 'https://api.spotify.com/next',
-  previous: null,
+const mockGetUserPlaylistsResponse: UsersPlaylistsResponse = {
+  items: [],
+  next: '',
+  previous: '',
+  limit: 10,
   offset: 0,
-  total: 98,
-  items: [
-    { id: 'p1', name: 'one', owner: { display_name: 'owner1' }, images: [{ url: 'https://img/1' }] },
-    { id: 'p2', name: 'two', owner: { display_name: 'owner2' }, images: [{ url: 'https://img/2' }] }
-  ]
-};
+  total: 18
+}
 
-const playlistDetailResponse = {
-  id: 'p1',
-  name: 'one',
-  tracks: { limit: 2, total: 3, offset: 0 }
-};
+const mockGetPlaylistResponse: GetPlaylistsResponse = {
+  tracks: {
+    items: [],
+    next: '',
+    previous: '',
+    limit: 10,
+    offset: 0,
+    total: 18
+  },
+  id: '3cEYpjA9oz9GiPac4AsH4n',
+  name: 'Today\'s Top Hits',
+  images: [
+    {
+      url: 'https://i.scdn.co/image/ab67616d0000b2732c5b24ecfa39523a75c993c4',
+      height: 640,
+      width: 640
+    }
+  ],
+  owner: {
+    id: 'spotify',
+    display_name: 'Spotify'
+  },
+  collaborative: false,
+  href: ''
+}
 
-const playlistTracksPage1 = {
+const mockGetPlaylistTracksResponse: GetPlaylistTracksResponse = {
   items: [
-    { track: { type: 'track', id: 't1', name: 'Track 1' } },
-    { track: { type: 'episode', id: 'e1', name: 'Episode 1' } }
-  ]
-};
-const playlistTracksPage2 = {
-  items: [
-    { track: { type: 'track', id: 't2', name: 'Track 2' } }
-  ]
-};
+    {
+      added_by: {
+        id: 'spotify',
+        display_name: 'Spotify'
+      },
+      track: {
+        type: 'track',
+        id: '6habFhsOp2NvshLv26DqMb',
+        name: 'Blinding Lights',
+        uri: 'spotify:track:6habFhsOp2NvshLv26DqMb',
+        artists: [
+          {
+            type: 'artist',
+            id: '0TnOYISbd1XYRBk9myaseg',
+            name: 'The Weeknd'
+          }
+        ],
+        duration_ms: 231733,
+        explicit: false,
+        album: {
+          type: 'album',
+          album_type: 'album',
+          total_tracks: 0,
+          id: '4aawyAB9vmqN3uQ7FjRGTy',
+          images: [],
+          name: 'After Hours',
+          uri: 'spotify:album:4aawyAB9vmqN3uQ7FjRGTy',
+          artists: []
+        }
+      }
+    }
+  ],
+  next: '',
+  previous: '',
+  limit: 0,
+  offset: 0,
+  total: 0
+}
 
-describe('Playlists store (apiClient mocked)', () => {
-  let mockedGet: ReturnType<typeof vi.spyOn>;
+vi.mock('@/api/clients');
+vi.mock('../router', () => ({
+  default: { push: vi.fn() }
+}));
+
+describe('Playlist store', () => {
+  const getSpy = vi.spyOn(apiClient, 'get');
 
   beforeEach(() => {
     setActivePinia(createPinia());
 
-    vi.resetAllMocks();
-    mockedGet = vi.spyOn(apiClient as any, 'get');
+    vi.mocked(apiClient.get).mockImplementation((url: string, config?) => {
+      console.log(url)
+      if (url === "/me/playlists") {
+        return Promise.resolve({ data: mockGetUserPlaylistsResponse });
+      }
+      if (url === '/playlists/3cEYpjA9oz9GiPac4AsH4n') {
+        return Promise.resolve({ data: mockGetPlaylistResponse });
+      }
+      if  (url === '/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks') {
+        return Promise.resolve({ data: mockGetPlaylistTracksResponse });
+      }
+      return Promise.reject('Failed to match mock implementation');
+    })
   });
 
-  it('initial state & Add/Clear behave correctly', () => {
-    const store = usePlaylistsStore();
-    expect(store.getPlaylists).toHaveLength(0);
+  describe('FetchAlbumTracks', () => {
+    it('fetches users playlists', async () => {
+      const playlistSTore = usePlaylistsStore();
 
-    const p = makePlaylistModel();
-    store.AddPlaylist(p);
-    expect(store.getPlaylists).toContainEqual(p);
+      await playlistSTore.FetchUsersPlayists(10, 0);
 
-    store.ClearPlaylists();
-    expect(store.getPlaylists).toHaveLength(0);
+      expect(getSpy).toHaveBeenCalledWith('/me/playlists', {
+        params: {
+          limit: 10,
+          offset: 0,
+        },
+      });
+    });
   });
+  describe('FetchAlbumTracks', () => {
+    it('fetches the album', async () => {
+      const albumsStore = usePlaylistsStore();
 
-  it('FetchUsersPlayists maps apiClient response into playlists and updates pagination', async () => {
-    mockedGet.mockResolvedValueOnce({ data: spotifyPlaylistsResponse });
+      await albumsStore.FetchPlaylistTracks('3cEYpjA9oz9GiPac4AsH4n');
 
-    const store = usePlaylistsStore();
-    const pagination = usePaginationStore();
-
-    await store.FetchUsersPlayists();
-
-    expect(mockedGet).toHaveBeenCalledWith('/me/playlists', expect.objectContaining({
-      params: expect.objectContaining({ limit: pagination.limit, offset: pagination.offset })
-    }));
-
-    const playlists = store.getPlaylists;
-    expect(playlists).toHaveLength(2);
-    expect(playlists[0].id).toBe(spotifyPlaylistsResponse.items[0].id);
-    expect(playlists[0].name).toBe(spotifyPlaylistsResponse.items[0].name);
-    expect(playlists[0].owner).toBe(spotifyPlaylistsResponse.items[0].owner.display_name);
-
-    expect(pagination.nextPageAvailable).toBe(true);
-    expect(pagination.previousPageAvailable).toBe(false);
-  });
-
-  it('FetchUsersPlayists rejects when limit/offset out of bounds', async () => {
-    const store = usePlaylistsStore();
-    const pagination = usePaginationStore();
-
-    pagination.limit = 1000;
-    await expect(store.FetchUsersPlayists()).rejects.toThrow('Limit out of bounds');
-
-    pagination.limit = 10;
-    pagination.offset = -1;
-    await expect(store.FetchUsersPlayists()).rejects.toThrow('Offset out of bounds');
-  });
+      expect(getSpy).toHaveBeenCalledWith('/playlists/3cEYpjA9oz9GiPac4AsH4n');
+      expect(getSpy).toHaveBeenCalledWith('/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks', {
+        params: {
+          limit: 10,
+          offset: 0,
+        },
+      });
+      expect(getSpy).toHaveBeenCalledWith('/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks', {
+        params: {
+          limit: 10,
+          offset: 10,
+        },
+      });
+    });
+  })
 });

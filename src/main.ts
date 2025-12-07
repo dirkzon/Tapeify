@@ -13,6 +13,9 @@ import { registerPlugins } from '@/plugins'
 import App from './App.vue'
 import CassetteSide from './components/CassetteSide.vue'
 import TrackItem from './components/TrackItem.vue'
+import AlbumsList from './components/AlbumList.vue'
+import PlaylistsList from './components/PlaylistList.vue'
+
 import { VueDraggableNext } from 'vue-draggable-next'
 
 // Composables
@@ -24,6 +27,8 @@ registerPlugins(app)
 
 app.component('cassette-side', CassetteSide)
 app.component('track-item', TrackItem)
+app.component('playlist-list', PlaylistsList)
+app.component('album-list', AlbumsList)
 app.component('draggable', VueDraggableNext)
 
 app.mount('#app')

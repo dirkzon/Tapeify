@@ -4,7 +4,8 @@
  * Configures SASS variables and Vuetify overwrites
  */
 
-// https://vuetifyjs.com/features/sass-variables/`
-// @use 'vuetify/settings' with (
-//   $color-pack: false
-// );
+@use 'vuetify/settings' with (
+    $skeleton-loader-text-height: 8px,
+);
+
+@use 'vuetify' as *;
