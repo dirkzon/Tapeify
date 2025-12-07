@@ -12,12 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AlbumList: typeof import('./components/AlbumList.vue')['default']
-    AlbumsList: typeof import('./components/AlbumsList.vue')['default']
     Cassette: typeof import('./components/Cassette.vue')['default']
     CassetteSide: typeof import('./components/CassetteSide.vue')['default']
+    ListLoader: typeof import('./components/ListLoader.vue')['default']
     PlaylistList: typeof import('./components/PlaylistList.vue')['default']
-    Playlists: typeof import('./components/Playlists.vue')['default']
-    PlaylistsList: typeof import('./components/PlaylistsList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TrackItem: typeof import('./components/TrackItem.vue')['default']

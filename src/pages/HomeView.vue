@@ -98,18 +98,18 @@ function ClearSearchBar() {
 
 <template>
   <main>
-    <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="80px">
+    <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="150px">
       <v-toolbar color="pink">
         <v-text-field v-model="query" label="Search playlists & albums" append-inner-icon="mdi-magnify"
           :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
           hide-details @click:append-inner="resetPaginationAndSearch" @keydown.enter="resetPaginationAndSearch" />
       </v-toolbar>
       <v-row>
-        <v-col v-if="playlists.length > 0">
-          <PlaylistList :playlists="playlists" />
+        <v-col>
+          <PlaylistList :playlists="playlists" :loading="loading" :loading-item-count="limit"/>
         </v-col>
-        <v-col v-if="albums.length > 0">
-          <AlbumList :albums="albums" />
+        <v-col v-if="(albums.length > 0) || (query.length > 0 && loading)" >
+          <AlbumList :albums="albums" :loading="loading" :loading-item-count="limit"/>
         </v-col>
       </v-row>
       <v-row class="ma-1" align="center" justify="center">
