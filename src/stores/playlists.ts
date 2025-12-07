@@ -4,17 +4,12 @@ import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsRes
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
-import type { Playlist } from '@/types/tapeify/models'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { SearchResult } from '@/types/tapeify/models'
 
 export const usePlaylistsStore = defineStore('playlists', {
-  state: () => ({
-    playlists: [] as Playlist[]
-  }),
-  getters: {},
   actions: {
     async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<SearchResult> {
       const response = await apiClient.get<UsersPlaylistsResponse>(
@@ -34,12 +29,6 @@ export const usePlaylistsStore = defineStore('playlists', {
         next: !!response.data.next,
         previous:!!response.data.previous,
       }
-    },
-    AddPlaylist(playlist: Playlist) {
-      this.playlists.push(playlist)
-    },
-    ClearPlaylists() {
-      this.playlists = []
     },
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassettesStore()
