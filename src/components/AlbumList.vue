@@ -47,7 +47,6 @@ function SelectItem(id: string) {
                         <v-icon v-else icon="mdi-album" />
                     </v-avatar>
                 </template>
-                <v-divider />
             </v-list-item>
         </template>
     </v-list>

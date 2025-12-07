@@ -57,7 +57,6 @@ function SelectItem(id: string) {
           </v-avatar>
         </template>
 
-        <v-divider />
       </v-list-item>
     </template>
   </v-list>
