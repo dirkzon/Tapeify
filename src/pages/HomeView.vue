@@ -2,9 +2,9 @@
 import router from '@/router'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { UseSearchStore } from '@/stores/search'
-import type { Playlist, Album } from '@/types/tapeify/models'
+import type { SearchResult } from '@/types/tapeify/models'
 import { onMounted } from 'vue'
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 
 const playlistsStore = usePlaylistsStore()
 const searchStore = UseSearchStore()
@@ -13,10 +13,13 @@ let query = ref('')
 let offset = ref(0)
 let limit = ref(10)
 const loading = ref(false)
-const playlists: Ref<Playlist[]> = ref([])
-const albums: Ref<Album[]> = ref([])
-const nextPageAvailable = ref(false)
-const previousPageAvailable = ref(false)
+
+const searchResults = ref<SearchResult>({
+  playlists: [],
+  albums: [],
+  next: false,
+  previous: false
+})
 
 onMounted(async () => {
   const url = new URL(location.href)
@@ -36,25 +39,17 @@ onMounted(async () => {
 async function Search() {
   loading.value = true
 
-  playlists.value = []
-  albums.value = []
+  searchResults.value = { playlists: [], albums: [], next: false, previous: false }
 
   if (query.value.trim() !== '') {
-    const searchResults = await searchStore.SearchPlaylistsAndAlbums(
+    searchResults.value = await searchStore.SearchPlaylistsAndAlbums(
       query.value,
       limit.value,
       offset.value
     )
-    playlists.value = searchResults.playlists
-    albums.value = searchResults.albums
-    nextPageAvailable.value = searchResults.next
-    previousPageAvailable.value = searchResults.previous
     updateUrl()
   } else {
-    const usersPlaylists = await playlistsStore.FetchUsersPlayists(limit.value, offset.value)
-    playlists.value = usersPlaylists.playlists
-    nextPageAvailable.value = usersPlaylists.next
-    previousPageAvailable.value = usersPlaylists.previous
+    searchResults.value = await playlistsStore.FetchUsersPlayists(limit.value, offset.value)
     updateUrl()
   }
 
@@ -106,19 +101,19 @@ function ClearSearchBar() {
       </v-toolbar>
       <v-row>
         <v-col>
-          <PlaylistList :playlists="playlists" :loading="loading" :loading-item-count="limit"/>
+          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit"/>
         </v-col>
-        <v-col v-if="(albums.length > 0) || (query.length > 0 && loading)" >
-          <AlbumList :albums="albums" :loading="loading" :loading-item-count="limit"/>
+        <v-col v-if="(searchResults.albums.length > 0) || (query.length > 0 && loading)" >
+          <AlbumList :albums="searchResults.albums" :loading="loading" :loading-item-count="limit"/>
         </v-col>
       </v-row>
       <v-row class="ma-1" align="center" justify="center">
-        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-left" :disabled="!previousPageAvailable"
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-left" :disabled="!searchResults.previous"
           @click="Previous" />
         <div class="button">
           {{ offset / limit + 1 }}
         </div>
-        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-right" :disabled="!nextPageAvailable"
+        <v-btn variant="plain" density="comfortable" icon="mdi-chevron-right" :disabled="!searchResults.next"
           @click="Next" />
       </v-row>
     </v-card>
