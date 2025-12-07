@@ -37,7 +37,7 @@ export const useAlbumsStore = defineStore('albums', {
         offset += limit
       }
 
-      cassetteStore.updateName('cassette-1', album.name)
+      cassetteStore.updateName('default', album.name)
     }
   }
 })

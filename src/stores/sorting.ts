@@ -9,7 +9,7 @@ import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
 export const useSortingStore = defineStore('sorting', {
   state: () => ({
     layout: [] as TapeSideLayout[],
-    selectedSortType: 'keep-order',
+    selectedSortType: 'greedy',
   }),
   getters: {
     getLayoutByCassetteId: (state) => {

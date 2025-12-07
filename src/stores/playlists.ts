@@ -36,7 +36,7 @@ export const usePlaylistsStore = defineStore('playlists', {
 
       const playlistResponse = await apiClient.get<GetPlaylistsResponse>('/playlists/' + playlistId)
       const playlist = playlistResponse.data
-      cassetteStore.updateName('cassette-1', playlist.name)
+      cassetteStore.updateName('default', playlist.name)
 
       const limit = playlist.tracks.limit
       const total = playlist.tracks.total

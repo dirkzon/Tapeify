@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
     cassettes: [
-      { id: 'cassette-1', name: 'My First Cassette', capacityMs: 3600000 },
+      { id: 'default', name: 'My First Cassette', capacityMs: (90 * 60000) },
     ] as Cassette[],
   }),
   getters: {
@@ -20,7 +20,7 @@ export const useCassettesStore = defineStore('cassettes', {
       this.cassettes.push({
         id: uuidv4(),
         name: "New Cassette",
-        capacityMs: 3600000,
+        capacityMs: 90 * 60000,
       })
     },
     removeCassette(cassetteId: string) {
