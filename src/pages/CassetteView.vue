@@ -47,11 +47,14 @@ const selectedSortType = computed({
     <v-select v-model="selectedSortType" :items="availableSorters" item-value="type" label="Track Sorter"
       item-title="name">
       <template v-slot:item="{ props: itemProps, item }">
-        <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name"></v-list-item>
+        <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name" />
       </template>
     </v-select>
-    <v-col>
-      <cassette v-for="cassette in cassetteStore.cassettes" :key="cassette.id" :cassetteId="cassette.id" />
-    </v-col>
+
+    <v-row justify="center" class="pa-15">
+      <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" md="6" class="w-100">
+        <cassette :cassetteId="cassette.id" />
+      </v-col>
+    </v-row>
   </div>
 </template>
