@@ -12,9 +12,14 @@ export interface Playlist {
   image?: URL
 }
 
-export interface SearchResult {
-  albums: Album[]
+export interface PlaylistSearchResult {
   playlists: Playlist[]
+  next: boolean
+  previous: boolean
+}
+
+export interface AlbumSearchResult {
+  albums: Album[]
   next: boolean
   previous: boolean
 }

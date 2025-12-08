@@ -23,7 +23,6 @@ function SelectItem(id: string) {
 
 <template>
     <v-list lines="two" density="compact" class="w-100 pa-3">
-        <v-list-subheader> Albums </v-list-subheader>
 
         <template v-if="loading">
             <v-list-item v-for="(_, i) in Array.from({ length: itemCount })" :key="i" class="w-100 m-0 pt-0 pb-0">

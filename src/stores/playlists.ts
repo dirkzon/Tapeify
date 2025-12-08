@@ -1,17 +1,18 @@
 import { defineStore } from 'pinia'
 import { UseTracksStore } from './tracks'
-import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
+import type { GetPlaylistsResponse, GetPlaylistTracksResponse, SearchResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
-import type { SearchResult } from '@/types/tapeify/models'
+import type { PlaylistSearchResult } from '@/types/tapeify/models'
+import { useProfileStore } from './profile'
 
 export const usePlaylistsStore = defineStore('playlists', {
   actions: {
-    async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<SearchResult> {
+    async FetchUsersPlayists(limit: number = 10, offset: number = 0): Promise<PlaylistSearchResult> {
       const response = await apiClient.get<UsersPlaylistsResponse>(
         "/me/playlists",
         {
@@ -24,11 +25,32 @@ export const usePlaylistsStore = defineStore('playlists', {
       const playlists = response.data.items.map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
 
       return {
-        albums: [],
         playlists: playlists,
         next: !!response.data.next,
-        previous:!!response.data.previous,
+        previous: !!response.data.previous,
       }
+    },
+    async searchPlaylists(query: string, limit: number = 10, offset: number = 0): Promise<PlaylistSearchResult> {
+      const profileStore = useProfileStore()
+
+      const response = await apiClient.get<SearchResponse>('/search', {
+        params: {
+          q: query,
+          type: 'playlist',
+          market: profileStore.country,
+          limit: limit,
+          offset: offset,
+        },
+      })
+
+      const playlists = response.data.playlists?.items.filter((playlist: PlaylistDTO) => playlist).map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
+
+      return {
+        playlists: playlists || [],
+        next: !!response.data.albums?.next || !!response.data.playlists?.next,
+        previous: !!response.data.albums?.previous || !!response.data.playlists?.previous,
+      }
+
     },
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassettesStore()
@@ -42,14 +64,14 @@ export const usePlaylistsStore = defineStore('playlists', {
       const total = playlist.tracks.total
       let offset = playlist.tracks.offset
 
-      while(offset < total) {
+      while (offset < total) {
         const trackResponse = await apiClient.get<GetPlaylistTracksResponse>('/playlists/' + playlistId + '/tracks', {
           params: {
             limit,
             offset,
           },
         })
-        
+
         const tracks = trackResponse.data
 
         for (const item of tracks.items) {
@@ -90,7 +112,7 @@ export const usePlaylistsStore = defineStore('playlists', {
     // },
     // async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
     //   const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')
-  
+
     //   if (track_uris.length > 100) throw new Error('Cannot upload more than 100 tracks to a playlist at once.')
 
     //   return await fetchWrapper.post(url, {

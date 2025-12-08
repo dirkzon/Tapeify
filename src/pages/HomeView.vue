@@ -1,21 +1,33 @@
 <script setup lang="ts">
 import router from '@/router'
+import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists'
 import { UseSearchStore } from '@/stores/search'
-import type { SearchResult } from '@/types/tapeify/models'
+import type { AlbumSearchResult, PlaylistSearchResult } from '@/types/tapeify/models'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 
 const playlistsStore = usePlaylistsStore()
-const searchStore = UseSearchStore()
+const albumsStore = useAlbumsStore()
 
 let query = ref('')
 let offset = ref(0)
 let limit = ref(10)
 const loading = ref(false)
 
-const searchResults = ref<SearchResult>({
+const searchPlaylistResults = ref<PlaylistSearchResult>({
   playlists: [],
+  next: false,
+  previous: false
+})
+
+const userPlaylistsResults = ref<PlaylistSearchResult>({
+  playlists: [],
+  next: false,
+  previous: false
+})
+
+const searchAlbumsResponse = ref<AlbumSearchResult>({
   albums: [],
   next: false,
   previous: false
@@ -33,44 +45,59 @@ onMounted(async () => {
 
   query.value = url.searchParams.get('query') ?? ''
 
-  Search()
+  await fetchUserPlaylists()
 })
 
-async function Search() {
+async function searchPlaylists() {
   loading.value = true
 
-  searchResults.value = { playlists: [], albums: [], next: false, previous: false }
-
-  if (query.value.trim() !== '') {
-    searchResults.value = await searchStore.SearchPlaylistsAndAlbums(
-      query.value,
-      limit.value,
-      offset.value
-    )
-    updateUrl()
-  } else {
-    searchResults.value = await playlistsStore.FetchUsersPlayists(limit.value, offset.value)
-    updateUrl()
-  }
+  searchPlaylistResults.value = await playlistsStore.searchPlaylists(
+    query.value,
+    limit.value,
+    offset.value
+  )
 
   loading.value = false
 }
 
-function Next() {
-  offset.value += limit.value
-  Search()
+async function searchAlbums() {
+  loading.value = true
+
+  searchAlbumsResponse.value = await albumsStore.searchAlbums(
+    query.value,
+    limit.value,
+    offset.value
+  )
+
+  loading.value = false
 }
 
-function Previous() {
-  offset.value -= limit.value
-  Search()
+async function fetchUserPlaylists() {
+  loading.value = true
+
+  userPlaylistsResults.value = await playlistsStore.FetchUsersPlayists(
+    limit.value,
+    offset.value
+  )
+
+  loading.value = false
 }
 
-function resetPaginationAndSearch() {
-  offset.value = 0
-  limit.value = 10
-  Search()
-}
+// function Next() {
+//   offset.value += limit.value
+//   Search()
+// }
+
+// function Previous() {
+//   offset.value -= limit.value
+//   Search()
+// }
+
+// function resetPaginationAndSearch() {
+//   offset.value = 0
+//   limit.value = 10
+//   Search()
+// }
 
 function updateUrl() {
   router.push({
@@ -87,17 +114,16 @@ function ClearSearchBar() {
   query = ref<string>('')
   offset.value = 0
   limit.value = 10
-  Search()
 }
 
-const tab = ref('Appetizers')
+const tab = ref('user_playlists')
 </script>
 
 <template>
   <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="200px">
-    <v-toolbar color="pink" title="Select Playlist">
+    <v-toolbar color="pink" title="Select Playlist or Album">
       <template v-slot:extension>
-        <v-tabs v-model="tab">
+        <v-tabs v-model="tab" align-tabs="center">
           <v-tab value="user_playlists">My Playlists</v-tab>
           <v-tab value="search_albums">Search Albums</v-tab>
           <v-tab value="search_playlists">Search Playlists</v-tab>
@@ -107,15 +133,24 @@ const tab = ref('Appetizers')
     <v-tabs-window v-model="tab" class="pa-3">
       <v-tabs-window-item value="user_playlists">
         <v-card flat>
-          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit" />
+          <v-text-field v-model="query" label="Search your playlists" append-inner-icon="mdi-magnify"
+            :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
+            hide-details @click:append-inner="" @keydown.enter="" />
+          <PlaylistList :playlists="userPlaylistsResults.playlists" :loading="loading" :loading-item-count="limit" />
         </v-card> </v-tabs-window-item>
       <v-tabs-window-item value="search_albums">
         <v-card flat>
-          <AlbumList :albums="searchResults.albums" :loading="loading" :loading-item-count="limit" />
+          <v-text-field v-model="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
+            :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
+            hide-details @click:append-inner="searchAlbums" @keydown.enter="searchAlbums" />
+          <AlbumList :albums="searchAlbumsResponse.albums" :loading="loading" :loading-item-count="limit" />
         </v-card> </v-tabs-window-item>
       <v-tabs-window-item value="search_playlists">
         <v-card flat>
-          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit" />
+           <v-text-field v-model="query" label="Search playlists on Spotify" append-inner-icon="mdi-magnify"
+            :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
+            hide-details @click:append-inner="searchPlaylists" @keydown.enter="searchPlaylists" />
+          <PlaylistList :playlists="searchPlaylistResults.playlists" :loading="loading" :loading-item-count="limit" />
         </v-card>
       </v-tabs-window-item>
     </v-tabs-window>

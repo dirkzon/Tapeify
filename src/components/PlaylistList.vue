@@ -21,7 +21,6 @@ function SelectItem(id: string) {
 
 <template>
   <v-list lines="two" density="compact" class="w-100 pa-0">
-    <v-list-subheader> Playlists </v-list-subheader>
 
     <template v-if="loading">
       <v-list-item
