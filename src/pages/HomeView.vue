@@ -89,12 +89,37 @@ function ClearSearchBar() {
   limit.value = 10
   Search()
 }
+
+const tab = ref('Appetizers')
 </script>
 
 <template>
-  <main>
-    <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="150px">
-      <v-toolbar color="pink">
+  <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="200px">
+    <v-toolbar color="pink" title="Select Playlist">
+      <template v-slot:extension>
+        <v-tabs v-model="tab">
+          <v-tab value="user_playlists">My Playlists</v-tab>
+          <v-tab value="search_albums">Search Albums</v-tab>
+          <v-tab value="search_playlists">Search Playlists</v-tab>
+        </v-tabs>
+      </template>
+    </v-toolbar>
+    <v-tabs-window v-model="tab" class="pa-3">
+      <v-tabs-window-item value="user_playlists">
+        <v-card flat>
+          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit" />
+        </v-card> </v-tabs-window-item>
+      <v-tabs-window-item value="search_albums">
+        <v-card flat>
+          <AlbumList :albums="searchResults.albums" :loading="loading" :loading-item-count="limit" />
+        </v-card> </v-tabs-window-item>
+      <v-tabs-window-item value="search_playlists">
+        <v-card flat>
+          <PlaylistList :playlists="searchResults.playlists" :loading="loading" :loading-item-count="limit" />
+        </v-card>
+      </v-tabs-window-item>
+    </v-tabs-window>
+    <!-- <v-toolbar color="pink">
         <v-text-field v-model="query" label="Search playlists & albums" append-inner-icon="mdi-magnify"
           :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
           hide-details @click:append-inner="resetPaginationAndSearch" @keydown.enter="resetPaginationAndSearch" />
@@ -115,9 +140,8 @@ function ClearSearchBar() {
         </div>
         <v-btn variant="plain" density="comfortable" icon="mdi-chevron-right" :disabled="!searchResults.next"
           @click="Next" />
-      </v-row>
-    </v-card>
-  </main>
+      </v-row> -->
+  </v-card>
 </template>
 
 <style scoped>
