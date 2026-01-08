@@ -24,7 +24,6 @@ function updateUrl(playlistQuery: string, albumQuery: string) {
   if (playlistQuery.trim() !== '') {
     query.playlistQuery = playlistQuery;
   }
-  alert('Album Query: ' + albumQuery);
   if (albumQuery.trim() !== '') {
     query.albumQuery = albumQuery;
   }
