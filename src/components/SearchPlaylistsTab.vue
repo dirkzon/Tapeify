@@ -47,6 +47,7 @@ async function searchPlaylists() {
 
 async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
+    done('loading')
     await playlistsStore.searchPlaylists(
         query.value,
         limit.value,

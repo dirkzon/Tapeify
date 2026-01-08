@@ -47,6 +47,7 @@ async function searchAlbums() {
 
 async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
+    done('loading')
     await albumsStore.searchAlbums(
         query.value,
         limit.value,
