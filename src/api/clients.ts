@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
     async (error) => {
         const authStore = useAuthStore();
 
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 || error.response?.status === 400) {
             if (!authStore.refreshToken && !authStore.accessToken){
                 router.push({ name: '/LoginView' })
                 return Promise.reject(error);
@@ -51,7 +51,6 @@ apiClient.interceptors.response.use(
             router.push({ name: '/LoginView' })
             return Promise.reject(error);
         }
-
         return Promise.reject(error);
     }
 );
