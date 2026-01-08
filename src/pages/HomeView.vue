@@ -5,11 +5,17 @@ import { ref } from 'vue'
 
 let playlistQuery = ref('')
 let albumQuery = ref('')
+const selectedTab = ref('user_playlists')
 
 onMounted(async () => {
   const url = new URL(location.href)
   playlistQuery.value = url.searchParams.get('playlistQuery') ?? ''
   albumQuery.value = url.searchParams.get('albumQuery') ?? ''
+  if (albumQuery.value !== '') {
+    selectedTab.value = 'search_albums'
+  } else if (playlistQuery.value !== '') {
+    selectedTab.value = 'search_playlists'
+  }
 })
 
 function updateUrl(playlistQuery: string, albumQuery: string) {
@@ -18,7 +24,7 @@ function updateUrl(playlistQuery: string, albumQuery: string) {
   if (playlistQuery.trim() !== '') {
     query.playlistQuery = playlistQuery;
   }
-
+  alert('Album Query: ' + albumQuery);
   if (albumQuery.trim() !== '') {
     query.albumQuery = albumQuery;
   }
@@ -35,22 +41,20 @@ function onPlaylistQueryChange(newQuery: string) {
 function onAlbumQueryChange(newQuery: string) {
   updateUrl('', newQuery)
 }
-
-const tab = ref('user_playlists')
 </script>
 
 <template>
   <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="200px">
     <v-toolbar color="pink" title="Select Playlist or Album">
       <template v-slot:extension>
-        <v-tabs v-model="tab" align-tabs="center">
+        <v-tabs v-model="selectedTab" align-tabs="center">
           <v-tab value="user_playlists">My Playlists</v-tab>
           <v-tab value="search_albums">Search Albums</v-tab>
           <v-tab value="search_playlists">Search Playlists</v-tab>
         </v-tabs>
       </template>
     </v-toolbar>
-    <v-tabs-window v-model="tab" class="pa-3">
+    <v-tabs-window v-model="selectedTab" class="pa-3">
       <v-tabs-window-item value="user_playlists">
         <user-playlists-tab />
       </v-tabs-window-item>
