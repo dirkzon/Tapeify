@@ -1,15 +1,12 @@
 <script lang="ts" setup>
 import router from '@/router';
 import type { Playlist } from '@/types/tapeify/models';
-import { computed } from 'vue';
+import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 
 const props = defineProps<{
   playlists: Playlist[]
-  loading: boolean
-  loadingItemCount?: number
+  load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
 }>()
-
-const itemCount = computed(() => props.loadingItemCount ?? 5);
 
 function SelectItem(id: string) {
   router.push({
@@ -22,41 +19,19 @@ function SelectItem(id: string) {
 <template>
   <v-list lines="two" density="compact" class="w-100 pa-0">
 
-    <template v-if="loading">
-      <v-list-item
-        v-for="(_, i) in Array.from({ length: itemCount })"
-        :key="i"
-        class="w-100 m-0 pt-0 pb-0"
-      >
-        <template #prepend>
-          <v-avatar tile>
-            <v-skeleton-loader type="image" width="40" height="40" />
-          </v-avatar>
-        </template>
-
-        <template #title>
-            <v-skeleton-loader type="list-item-two-line"/>
-        </template>
-      </v-list-item>
-    </template>
-
-    <template v-else>
-      <v-list-item
-        v-for="playlist in playlists"
-        :key="playlist.id"
-        :title="playlist.name"
-        :subtitle="playlist.owner"
-        @click="SelectItem(playlist.id)"
-        class="w-100"
-      >
+    <v-infinite-scroll height="500" @load="load" v-if="playlists.length > 0">
+      <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name" :subtitle="playlist.owner"
+        @click="SelectItem(playlist.id)" class="w-100">
         <template #prepend>
           <v-avatar tile>
             <v-img v-if="playlist.image" :src="playlist.image.toString()" />
             <v-icon v-else icon="mdi-playlist-music" />
           </v-avatar>
         </template>
-
       </v-list-item>
-    </template>
+      <template v-slot:empty>
+        <span>No more playlists</span>
+      </template>
+    </v-infinite-scroll>
   </v-list>
 </template>

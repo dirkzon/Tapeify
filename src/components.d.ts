@@ -18,6 +18,9 @@ declare module 'vue' {
     PlaylistList: typeof import('./components/PlaylistList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchAlbumsTab: typeof import('./components/SearchAlbumsTab.vue')['default']
+    SearchPlaylistsTab: typeof import('./components/SearchPlaylistsTab.vue')['default']
     TrackItem: typeof import('./components/TrackItem.vue')['default']
+    UserPlaylistsTab: typeof import('./components/UserPlaylistsTab.vue')['default']
   }
 }
