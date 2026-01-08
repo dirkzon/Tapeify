@@ -47,24 +47,25 @@ async function searchPlaylists() {
 
 async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
-    const newPlaylists = await playlistsStore.searchPlaylists(
+    await playlistsStore.searchPlaylists(
         props.initQuery,
         limit.value,
         offset.value
-    )
-    playlists.value.playlists.push(...newPlaylists.playlists)
-    if (!newPlaylists.next) {
-        done('empty')
-    } else {
-        done('ok')
-    }
+    ).then((newPlaylists) => {
+        playlists.value.playlists.push(...newPlaylists.playlists)
+        if (!newPlaylists.next) {
+            done('empty')
+        } else {
+            done('ok')
+        }
+    }).catch(() => done('error'))
 }
 
 function ClearSearchBar() {
-  query.value = ''
-  playlists.value.playlists = []
-  offset.value = 0
-  limit.value = 10
+    query.value = ''
+    playlists.value.playlists = []
+    offset.value = 0
+    limit.value = 10
 }
 </script>
 

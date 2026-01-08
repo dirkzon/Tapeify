@@ -32,6 +32,9 @@ function SelectItem(id: string) {
       <template v-slot:empty>
         <span>No more playlists</span>
       </template>
+      <template v-slot:error>
+        <span>Error on fetching new playlists</span>
+      </template>
     </v-infinite-scroll>
   </v-list>
 </template>

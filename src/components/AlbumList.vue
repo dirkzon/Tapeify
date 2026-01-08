@@ -32,6 +32,12 @@ function SelectItem(id: string) {
                     </v-avatar>
                 </template>
             </v-list-item>
+            <template v-slot:empty>
+                <span>No more albums</span>
+            </template>
+            <template v-slot:error>
+                <span>Error on fetching new albums</span>
+            </template>
         </v-infinite-scroll>
     </v-list>
 </template>

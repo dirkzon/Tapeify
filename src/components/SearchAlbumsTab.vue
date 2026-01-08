@@ -47,24 +47,25 @@ async function searchAlbums() {
 
 async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
-    const newAlbums = await albumsStore.searchAlbums(
+    await albumsStore.searchAlbums(
         props.initQuery,
         limit.value,
         offset.value
-    )
-    albums.value.albums.push(...newAlbums.albums)
-    if (!newAlbums.next) {
-        done('empty')
-    } else {
-        done('ok')
-    }
+    ).then((newAlbums) => {
+        albums.value.albums.push(...newAlbums.albums)
+        if (!newAlbums.next) {
+            done('empty')
+        } else {
+            done('ok')
+        }
+    }).catch(() => done('error'))
 }
 
 function ClearSearchBar() {
-  query.value = ''
-  albums.value.albums = []
-  offset.value = 0
-  limit.value = 10
+    query.value = ''
+    albums.value.albums = []
+    offset.value = 0
+    limit.value = 10
 }
 
 </script>
