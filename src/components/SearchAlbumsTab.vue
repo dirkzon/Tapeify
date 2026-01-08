@@ -48,7 +48,7 @@ async function searchAlbums() {
 async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
     await albumsStore.searchAlbums(
-        props.initQuery,
+        query.value,
         limit.value,
         offset.value
     ).then((newAlbums) => {

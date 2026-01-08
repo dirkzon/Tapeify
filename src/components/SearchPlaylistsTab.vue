@@ -48,7 +48,7 @@ async function searchPlaylists() {
 async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
     offset.value += limit.value
     await playlistsStore.searchPlaylists(
-        props.initQuery,
+        query.value,
         limit.value,
         offset.value
     ).then((newPlaylists) => {
