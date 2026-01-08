@@ -15,6 +15,9 @@ import CassetteSide from './components/CassetteSide.vue'
 import TrackItem from './components/TrackItem.vue'
 import AlbumsList from './components/AlbumList.vue'
 import PlaylistsList from './components/PlaylistList.vue'
+import UserPlaylistsTab from './components/UserPlaylistsTab.vue'
+import SearchPlaylistsTab from './components/SearchPlaylistsTab.vue'
+import SearchAlbumsTab from './components/SearchAlbumsTab.vue'
 
 import { VueDraggableNext } from 'vue-draggable-next'
 
@@ -30,5 +33,8 @@ app.component('track-item', TrackItem)
 app.component('playlist-list', PlaylistsList)
 app.component('album-list', AlbumsList)
 app.component('draggable', VueDraggableNext)
+app.component('user-playlists-tab', UserPlaylistsTab)
+app.component('search-playlists-tab', SearchPlaylistsTab)
+app.component('search-albums-tab', SearchAlbumsTab)
 
 app.mount('#app')

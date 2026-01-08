@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import router from '@/router';
 import type { Album } from '@/types/tapeify/models';
+import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 
 const props = defineProps<{
     albums: Album[]
-    loading: boolean
-    loadingItemCount?: number
+    load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
 }>()
 
-const itemCount = computed(() => props.loadingItemCount ?? 5);
+const infiniteScrollRef = useTemplateRef('albumsScroll')
 
 function SelectItem(id: string) {
     router.push({
@@ -19,26 +19,15 @@ function SelectItem(id: string) {
         }
     })
 }
+
+function reset() {
+    infiniteScrollRef.value?.reset('end')
+}
 </script>
 
 <template>
     <v-list lines="two" density="compact" class="w-100 pa-3">
-        <v-list-subheader> Albums </v-list-subheader>
-
-        <template v-if="loading">
-            <v-list-item v-for="(_, i) in Array.from({ length: itemCount })" :key="i" class="w-100 m-0 pt-0 pb-0">
-                <template #prepend>
-                    <v-avatar tile>
-                        <v-skeleton-loader type="image" width="40" height="40" />
-                    </v-avatar>
-                </template>
-
-                <template #title>
-                    <v-skeleton-loader type="list-item-two-line" />
-                </template>
-            </v-list-item>
-        </template>
-        <template v-else>
+        <v-infinite-scroll height="500" @load="load" v-if="albums.length > 0" ref="albumsScroll">
             <v-list-item v-for="album in albums" :key="album.id" :title="album.name"
                 :subtitle="album.artists.toString()" @click="SelectItem(album.id)">
                 <template #prepend>
@@ -48,7 +37,15 @@ function SelectItem(id: string) {
                     </v-avatar>
                 </template>
             </v-list-item>
-        </template>
+            <template v-slot:empty>
+                <v-alert type="warning" title="No more albums" variant="outlined"></v-alert>
+            </template>
+            <template v-slot:error>
+                <v-alert type="error" title="Error on fetching new albums" text="close this message to try again"
+                    closable variant="outlined" @click:close="reset">
+                </v-alert>
+            </template>
+        </v-infinite-scroll>
     </v-list>
 </template>
 
