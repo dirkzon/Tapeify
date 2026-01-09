@@ -21,13 +21,19 @@ onMounted(async () => {
 })
 
 function updateUrl(query: string) {
-  router.push({
-    name: '/HomeView',
-    query: {
-      query: query,
-      tab: selectedTab.value
-    }
-  });
+  if (query === '') {
+    router.push({
+      name: '/HomeView',
+    });
+  } else {
+    router.push({
+      name: '/HomeView',
+      query: {
+        query: query,
+        tab: selectedTab.value
+      }
+    });
+  }
 }
 </script>
 

@@ -35,11 +35,14 @@ function reset() {
         </template>
       </v-list-item>
       <template v-slot:empty>
-        <v-alert type="warning" title="No more playlists" variant="outlined"></v-alert>
+        <v-alert type="warning" text="No more playlists" variant="outlined"></v-alert>
       </template>
       <template v-slot:error>
-        <v-alert type="error" title="Error on fetching new playlists" text="close this message to try again" closable
+        <v-alert type="error" text="Error during loading playlists" closable
           variant="outlined" @click:close="reset">
+          <template #close="{ props }">
+            <v-btn v-bind="props" icon="mdi-refresh" size="small"></v-btn>
+          </template>
         </v-alert>
       </template>
     </v-infinite-scroll>

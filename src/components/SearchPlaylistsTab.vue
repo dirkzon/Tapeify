@@ -33,19 +33,26 @@ onMounted(async () => {
 })
 
 async function searchPlaylists() {
-    loading.value = true
-    offset.value = 0
-    limit.value = 10
     props.onQueryChange?.(query.value)
-    playlists.value = await playlistsStore.searchPlaylists(
-        query.value,
-        limit.value,
-        offset.value
-    )
-    loading.value = false
+    if (query.value === '') {
+        playlists.value.playlists = []
+    } else {
+        loading.value = true
+        offset.value = 0
+        playlists.value = await playlistsStore.searchPlaylists(
+            query.value,
+            limit.value,
+            offset.value
+        ).finally(() =>  loading.value = false)
+    }
 }
 
 async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
+    if (query.value === '') {
+        playlists.value.playlists = []
+        return
+    }
+    props.onQueryChange?.(query.value)
     offset.value += limit.value
     done('loading')
     await playlistsStore.searchPlaylists(
@@ -63,18 +70,16 @@ async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; don
 }
 
 function ClearSearchBar() {
-    query.value = ''
     playlists.value.playlists = []
     offset.value = 0
-    limit.value = 10
 }
 </script>
 
 <template>
     <v-card flat>
-        <v-text-field v-model="query" label="Search playlists on Spotify" append-inner-icon="mdi-magnify"
-            :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
-            hide-details @click:append-inner="searchPlaylists" @keydown.enter="searchPlaylists" />
+        <v-text-field v-model:model-value="query" label="Search playlists on Spotify" append-inner-icon="mdi-magnify"
+            :loading="loading" dense hide-details @keydown.enter="searchPlaylists" @update:model-value="searchPlaylists"
+            @click:clear="ClearSearchBar" />
         <PlaylistList :playlists="playlists.playlists" :load="LoadMorePlaylists" />
     </v-card>
 </template>

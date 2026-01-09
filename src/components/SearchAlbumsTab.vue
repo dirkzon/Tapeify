@@ -33,19 +33,26 @@ onMounted(async () => {
 })
 
 async function searchAlbums() {
-    loading.value = true
-    offset.value = 0
-    limit.value = 10
     props.onQueryChange?.(query.value)
-    albums.value = await albumsStore.searchAlbums(
-        query.value,
-        limit.value,
-        offset.value
-    )
-    loading.value = false
+    if (query.value === '') {
+        albums.value.albums = []
+    } else {
+        loading.value = true
+        offset.value = 0
+        albums.value = await albumsStore.searchAlbums(
+            query.value,
+            limit.value,
+            offset.value
+        ).finally(() =>  loading.value = false)
+    }
 }
 
 async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) {
+    if (query.value === '') {
+        albums.value.albums = []
+        return
+    }
+    props.onQueryChange?.(query.value)
     offset.value += limit.value
     done('loading')
     await albumsStore.searchAlbums(
@@ -63,19 +70,17 @@ async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: 
 }
 
 function ClearSearchBar() {
-    query.value = ''
     albums.value.albums = []
     offset.value = 0
-    limit.value = 10
 }
 
 </script>
 
 <template>
     <v-card flat>
-        <v-text-field v-model="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
-            :loading="loading" clear-icon="mdi-close-circle" clearable type="text" @click:clear="ClearSearchBar" dense
-            hide-details @click:append-inner="searchAlbums" @keydown.enter="searchAlbums" />
+        <v-text-field v-model:model-value="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
+            :loading="loading" @click:clear="ClearSearchBar" dense hide-details @update:model-value="searchAlbums"
+            @click:append-inner="searchAlbums" @keydown.enter="searchAlbums" clearable/>
         <AlbumList :albums="albums.albums" :load="LoadMoreAlbums" />
     </v-card>
 </template>
