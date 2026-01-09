@@ -52,7 +52,7 @@ async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; don
         playlists.value.playlists = []
         return
     }
-
+    props.onQueryChange?.(query.value)
     offset.value += limit.value
     done('loading')
     await playlistsStore.searchPlaylists(
