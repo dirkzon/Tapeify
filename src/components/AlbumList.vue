@@ -48,5 +48,3 @@ function reset() {
         </v-infinite-scroll>
     </v-list>
 </template>
-
-<style scoped></style>

@@ -3,42 +3,31 @@ import router from '@/router'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 
-let playlistQuery = ref('')
-let albumQuery = ref('')
 const selectedTab = ref('user_playlists')
+const initQuery = ref('')
 
 onMounted(async () => {
   const url = new URL(location.href)
-  playlistQuery.value = url.searchParams.get('playlistQuery') ?? ''
-  albumQuery.value = url.searchParams.get('albumQuery') ?? ''
-  if (albumQuery.value !== '') {
-    selectedTab.value = 'search_albums'
-  } else if (playlistQuery.value !== '') {
-    selectedTab.value = 'search_playlists'
+
+  const queryParam = url.searchParams.get('query')
+  if (queryParam !== null) {
+    initQuery.value = queryParam
+  }
+
+  const tabParam = url.searchParams.get('tab')
+  if (tabParam !== null) {
+    selectedTab.value = tabParam
   }
 })
 
-function updateUrl(playlistQuery: string, albumQuery: string) {
-  const query: Record<string, string> = {};
-
-  if (playlistQuery.trim() !== '') {
-    query.playlistQuery = playlistQuery;
-  }
-  if (albumQuery.trim() !== '') {
-    query.albumQuery = albumQuery;
-  }
-
+function updateUrl(query: string) {
   router.push({
     name: '/HomeView',
-    query: query
+    query: {
+      query: query,
+      tab: selectedTab.value
+    }
   });
-}
-
-function onPlaylistQueryChange(newQuery: string) {
-  updateUrl(newQuery, '')
-}
-function onAlbumQueryChange(newQuery: string) {
-  updateUrl('', newQuery)
 }
 </script>
 
@@ -58,10 +47,10 @@ function onAlbumQueryChange(newQuery: string) {
         <user-playlists-tab />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_albums">
-        <SearchAlbumsTab :initQuery="albumQuery" :onQueryChange="onAlbumQueryChange" />
+        <SearchAlbumsTab :initQuery="initQuery" :onQueryChange="updateUrl" />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_playlists">
-        <SearchPlaylistsTab :initQuery="playlistQuery" :onQueryChange="onPlaylistQueryChange" />
+        <SearchPlaylistsTab :initQuery="initQuery" :onQueryChange="updateUrl" />
       </v-tabs-window-item>
     </v-tabs-window>
   </v-card>

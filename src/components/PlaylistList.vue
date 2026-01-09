@@ -23,8 +23,7 @@ function reset() {
 </script>
 
 <template>
-  <v-list lines="two" density="compact" class="w-100 pa-0">
-
+  <v-list lines="two" density="compact" class="w-100 pa-3">
     <v-infinite-scroll height="500" @load="load" v-if="playlists.length > 0" ref="playlistScroll">
       <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name" :subtitle="playlist.owner"
         @click="SelectItem(playlist.id)" class="w-100">
