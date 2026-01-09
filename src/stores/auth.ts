@@ -51,10 +51,11 @@ export const useAuthStore = defineStore('auth', {
       this.expiresAt = Date.now() + response.data.expires_in * 1000
     },
     async refreshAccessToken(): Promise<void> {
+      const client_id = import.meta.env.VITE_CLIENT_ID
       const body = qs.stringify({
         grant_type: "refresh_token",
         refresh_token: this.refreshToken,
-        client_id: import.meta.env.VITE_CLIENT_ID,
+        client_id: client_id,
       });
 
       const response = await authApiClient.post<TokenResponse>(
