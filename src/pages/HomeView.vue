@@ -4,19 +4,23 @@ import { onMounted } from 'vue'
 import { ref } from 'vue'
 
 const selectedTab = ref('user_playlists')
-const initQuery = ref('')
+const initAlbumQuery = ref('')
+const initPlaylistQuery = ref('')
 
 onMounted(async () => {
   const url = new URL(location.href)
 
   const queryParam = url.searchParams.get('query')
-  if (queryParam !== null) {
-    initQuery.value = queryParam
-  }
-
   const tabParam = url.searchParams.get('tab')
-  if (tabParam !== null) {
+
+  if (queryParam !== null && tabParam !== null) {
     selectedTab.value = tabParam
+    if (tabParam === 'search_albums') {
+      initAlbumQuery.value = queryParam
+    }
+    if (tabParam === 'search_playlists') {
+      initPlaylistQuery.value = queryParam
+    }
   }
 })
 
@@ -53,10 +57,10 @@ function updateUrl(query: string) {
         <user-playlists-tab />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_albums">
-        <SearchAlbumsTab :initQuery="initQuery" :onQueryChange="updateUrl" />
+        <SearchAlbumsTab :initQuery="initAlbumQuery" :onQueryChange="updateUrl" />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_playlists">
-        <SearchPlaylistsTab :initQuery="initQuery" :onQueryChange="updateUrl" />
+        <SearchPlaylistsTab :initQuery="initPlaylistQuery" :onQueryChange="updateUrl" />
       </v-tabs-window-item>
     </v-tabs-window>
   </v-card>
