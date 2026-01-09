@@ -59,7 +59,7 @@ export const useAlbumsStore = defineStore('albums', {
 
       return {
         albums: albums || [],
-        next: !!response.data.albums?.next,
+        next: response.data.albums?.next !== null && albums?.length > 0,
         previous: !!response.data.albums?.previous,
       }
     }

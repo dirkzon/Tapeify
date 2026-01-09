@@ -43,12 +43,12 @@ export const usePlaylistsStore = defineStore('playlists', {
         },
       })
 
-      const playlists = response.data.playlists?.items.filter((playlist: PlaylistDTO) => playlist).map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
+      const playlists = response.data.playlists?.items.filter((playlist: PlaylistDTO) => playlist !== null).map((playlist: PlaylistDTO) => { return ParsePlaylistDTO(playlist) })
 
       return {
-        playlists: playlists || [],
-        next: !!response.data.albums?.next || !!response.data.playlists?.next,
-        previous: !!response.data.albums?.previous || !!response.data.playlists?.previous,
+        playlists: playlists,
+        next: response.data.playlists?.next !== null && playlists?.length > 0,
+        previous: response.data.playlists?.previous !== null,
       }
 
     },
