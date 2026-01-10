@@ -3,6 +3,9 @@ import { useSortingStore } from '@/stores/sorting';
 
 const sortingStore = useSortingStore()
 
+const route = useRoute()
+const showDrawer = computed(() => route.name === '/CassetteView')
+
 const availableSorters = sortingStore.getAvailableSorters()
 const selectedSortType = computed({
   get: () => sortingStore.selectedSortType,
@@ -11,7 +14,7 @@ const selectedSortType = computed({
 </script>
 
 <template>
-    <v-navigation-drawer location="left" class="pa-4" color="pink" permanent>
+    <v-navigation-drawer location="left" class="pa-4" color="pink" permanent v-if="showDrawer">
         <v-select v-model="selectedSortType" :items="availableSorters" item-value="type" label="Track Sorter"
             item-title="name">
             <template v-slot:item="{ props: itemProps, item }">
