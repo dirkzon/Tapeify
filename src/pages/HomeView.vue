@@ -57,7 +57,7 @@ function updateUrl(query: string) {
         <user-playlists-tab />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_albums">
-        <SearchAlbumsTab :initQuery="initAlbumQuery" :onQueryChange="updateUrl" />
+        <SearchAlbumsTab/>
       </v-tabs-window-item>
       <v-tabs-window-item value="search_playlists">
         <SearchPlaylistsTab :initQuery="initPlaylistQuery" :onQueryChange="updateUrl" />

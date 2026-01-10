@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import router from '@/router'
 import { useAlbumsStore } from '@/stores/album';
 import type { AlbumSearchResult } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
@@ -14,26 +15,26 @@ const albums = ref<AlbumSearchResult>({
     next: false,
     previous: false
 })
-
-const props = defineProps<{
-    initQuery: string
-    onQueryChange?: (newQuery: string) => void
-}>()
+const tab = 'search_albums'
 
 onMounted(async () => {
-    if (props.initQuery === '') {
-        return
+    const url = new URL(location.href)
+
+    const queryParam = url.searchParams.get('query')
+    const tabParam = url.searchParams.get('tab')
+
+    if (queryParam !== null && tabParam === tab) {
+        query.value = queryParam
+        albums.value = await albumsStore.searchAlbums(
+            query.value,
+            limit.value,
+            offset.value
+        )
     }
-    query.value = props.initQuery
-    albums.value = await albumsStore.searchAlbums(
-        props.initQuery,
-        limit.value,
-        offset.value
-    )
 })
 
 async function searchAlbums() {
-    props.onQueryChange?.(query.value)
+    updateUrl()
     if (query.value === '') {
         albums.value.albums = []
     } else {
@@ -43,7 +44,7 @@ async function searchAlbums() {
             query.value,
             limit.value,
             offset.value
-        ).finally(() =>  loading.value = false)
+        ).finally(() => loading.value = false)
     }
 }
 
@@ -52,7 +53,7 @@ async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: 
         albums.value.albums = []
         return
     }
-    props.onQueryChange?.(query.value)
+    updateUrl()
     offset.value += limit.value
     done('loading')
     await albumsStore.searchAlbums(
@@ -71,7 +72,25 @@ async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: 
 
 function ClearSearchBar() {
     albums.value.albums = []
+    query.value = ''
     offset.value = 0
+    updateUrl()
+}
+
+function updateUrl() {
+    if (query.value === '') {
+        router.push({
+            name: '/HomeView',
+        });
+    } else {
+        router.push({
+            name: '/HomeView',
+            query: {
+                query: query.value,
+                tab: tab
+            }
+        });
+    }
 }
 
 </script>
@@ -80,7 +99,7 @@ function ClearSearchBar() {
     <v-card flat>
         <v-text-field v-model:model-value="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
             :loading="loading" @click:clear="ClearSearchBar" dense hide-details @update:model-value="searchAlbums"
-            @click:append-inner="searchAlbums" @keydown.enter="searchAlbums" clearable/>
+            @click:append-inner="searchAlbums" @keydown.enter="searchAlbums" clearable />
         <AlbumList :albums="albums.albums" :load="LoadMoreAlbums" />
     </v-card>
 </template>
