@@ -71,14 +71,14 @@ const name = computed<string>({
       </template>
     </v-toolbar>
 
-    <v-row class="cassette-row"no-gutters>
-      <v-col class="d-flex">
+    <v-row class="pa-2">
+      <v-col>
         <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />
       </v-col>
 
       <v-divider vertical class="full-height-divider" />
 
-      <v-col class="d-flex">
+      <v-col>
         <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
       </v-col>
     </v-row>
@@ -87,16 +87,6 @@ const name = computed<string>({
 
 <style scoped>
 .cassette-card {
-  width: 100%;
   border-radius: 12px;
-}
-
-.cassette-row {
-  margin: 16px;
-}
-
-.cassette-row {
-  margin-top: 16px;
-  gap: 16px;
 }
 </style>

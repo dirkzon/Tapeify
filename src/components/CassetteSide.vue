@@ -109,7 +109,7 @@ const durationChipColor = computed(() => {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable :list="layout?.tracks" group="tracks" item-key="id" animation="200" @change="onChanged">
-      <v-list-item v-for="track in tracks" :key="track.id" :value="track.id" active-class="text-pink" class="py-3"
+      <v-list-item v-for="track in tracks" :key="track.id" :value="track.id" active-class="text-pink" class="py-2"
         handle=".drag-handle" @click="toggleAnchor(track.id)">
         <template v-slot:prepend>
           <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large">
