@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import router from '@/router'
 import { usePlaylistsStore } from '@/stores/playlists';
 import type { PlaylistSearchResult } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
@@ -14,26 +15,27 @@ const playlists = ref<PlaylistSearchResult>({
     next: false,
     previous: false
 })
+const tab = 'search_playlists'
 
-const props = defineProps<{
-    initQuery: string
-    onQueryChange?: (newQuery: string) => void
-}>()
 
 onMounted(async () => {
-    if (props.initQuery === '') {
-        return
+    const url = new URL(location.href)
+
+    const queryParam = url.searchParams.get('query')
+    const tabParam = url.searchParams.get('tab')
+
+    if (queryParam !== null && tabParam === tab) {
+        query.value = queryParam
+        playlists.value = await playlistsStore.searchPlaylists(
+            query.value,
+            limit.value,
+            offset.value
+        )
     }
-    query.value = props.initQuery
-    playlists.value = await playlistsStore.searchPlaylists(
-        props.initQuery,
-        limit.value,
-        offset.value
-    )
 })
 
 async function searchPlaylists() {
-    props.onQueryChange?.(query.value)
+    updateUrl()
     if (query.value === '') {
         playlists.value.playlists = []
     } else {
@@ -43,7 +45,7 @@ async function searchPlaylists() {
             query.value,
             limit.value,
             offset.value
-        ).finally(() =>  loading.value = false)
+        ).finally(() => loading.value = false)
     }
 }
 
@@ -52,7 +54,7 @@ async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; don
         playlists.value.playlists = []
         return
     }
-    props.onQueryChange?.(query.value)
+    updateUrl()
     offset.value += limit.value
     done('loading')
     await playlistsStore.searchPlaylists(
@@ -72,6 +74,24 @@ async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; don
 function ClearSearchBar() {
     playlists.value.playlists = []
     offset.value = 0
+    query.value = ''
+    updateUrl()
+}
+
+function updateUrl() {
+    if (query.value === '') {
+        router.push({
+            name: '/HomeView',
+        });
+    } else {
+        router.push({
+            name: '/HomeView',
+            query: {
+                query: query.value,
+                tab: tab
+            }
+        });
+    }
 }
 </script>
 
@@ -79,7 +99,7 @@ function ClearSearchBar() {
     <v-card flat>
         <v-text-field v-model:model-value="query" label="Search playlists on Spotify" append-inner-icon="mdi-magnify"
             :loading="loading" dense hide-details @keydown.enter="searchPlaylists" @update:model-value="searchPlaylists"
-            @click:clear="ClearSearchBar" />
+            @click:clear="ClearSearchBar" :clearable="true"/>
         <PlaylistList :playlists="playlists.playlists" :load="LoadMorePlaylists" />
     </v-card>
 </template>

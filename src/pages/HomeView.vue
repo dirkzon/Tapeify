@@ -1,44 +1,17 @@
 <script setup lang="ts">
-import router from '@/router'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 
 const selectedTab = ref('user_playlists')
-const initAlbumQuery = ref('')
-const initPlaylistQuery = ref('')
 
 onMounted(async () => {
   const url = new URL(location.href)
 
-  const queryParam = url.searchParams.get('query')
   const tabParam = url.searchParams.get('tab')
-
-  if (queryParam !== null && tabParam !== null) {
+  if (tabParam !== null) {
     selectedTab.value = tabParam
-    if (tabParam === 'search_albums') {
-      initAlbumQuery.value = queryParam
-    }
-    if (tabParam === 'search_playlists') {
-      initPlaylistQuery.value = queryParam
-    }
   }
 })
-
-function updateUrl(query: string) {
-  if (query === '') {
-    router.push({
-      name: '/HomeView',
-    });
-  } else {
-    router.push({
-      name: '/HomeView',
-      query: {
-        query: query,
-        tab: selectedTab.value
-      }
-    });
-  }
-}
 </script>
 
 <template>
@@ -57,10 +30,10 @@ function updateUrl(query: string) {
         <user-playlists-tab />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_albums">
-        <SearchAlbumsTab/>
+        <SearchAlbumsTab />
       </v-tabs-window-item>
       <v-tabs-window-item value="search_playlists">
-        <SearchPlaylistsTab :initQuery="initPlaylistQuery" :onQueryChange="updateUrl" />
+        <SearchPlaylistsTab />
       </v-tabs-window-item>
     </v-tabs-window>
   </v-card>
