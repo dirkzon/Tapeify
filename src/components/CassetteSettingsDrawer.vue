@@ -28,7 +28,7 @@ const openOwnerPage = () => {
 </script>
 
 <template>
-    <v-navigation-drawer location="left" class="pa-4" color="pink" permanent v-if="showDrawer">
+    <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer">
         <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover @click="openOriginalItemPage" class="cassette-image"/>
         <h3 @click="openOwnerPage" class="clickable">{{ cassetteStore.metadata.owner_display_name }}</h3>
         <p>{{ cassetteStore.metadata.description }}</p>
