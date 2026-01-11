@@ -20,7 +20,7 @@ export const useCassettesStore = defineStore('cassettes', {
     addCassette() {
       this.cassettes.push({
         id: uuidv4(),
-        name: `${this.metadata.item_name} ${this.cassettes.length}`,
+        name: `${this.metadata.item_name} ${this.cassettes.length + 1}`,
         capacityMs: 90 * 60000,
       })
     },
@@ -30,7 +30,7 @@ export const useCassettesStore = defineStore('cassettes', {
     updateName(cassetteId: string, newName: string) {
       const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
       if (cassette) {
-        cassette.name = newName
+        cassette.name = `${newName} ${this.cassettes.length}`
       }
     },
     updateCapacity(cassetteId: string, newCapacityMs: number) {
