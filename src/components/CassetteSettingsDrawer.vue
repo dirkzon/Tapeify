@@ -19,7 +19,7 @@ const selectedSortType = computed({
 </script>
 
 <template>
-    <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer">
+    <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer" app>
         <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover class="rounded-lg"/>
         <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable" target="_blank"
             v-text="cassetteStore.metadata.item_name"></a>
