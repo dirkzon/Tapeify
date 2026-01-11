@@ -13,25 +13,16 @@ const selectedSortType = computed({
     get: () => sortingStore.selectedSortType,
     set: (val: string) => sortingStore.setSortType(val)
 })
-
-const openOriginalItemPage = () => {
-    if (cassetteStore.metadata.original_item_url) {
-        window.open(cassetteStore.metadata.original_item_url.toString(), '_blank')
-    }
-}
-
-const openOwnerPage = () => {
-    if (cassetteStore.metadata.owner_url) {
-        window.open(cassetteStore.metadata.owner_url.toString(), '_blank')
-    }
-}
 </script>
 
 <template>
     <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer">
-        <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover @click="openOriginalItemPage" class="cassette-image"/>
-        <h3 @click="openOwnerPage" class="clickable">{{ cassetteStore.metadata.owner_display_name }}</h3>
-        <p>{{ cassetteStore.metadata.description }}</p>
+        <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover />
+        <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable"
+            v-text="cassetteStore.metadata.item_name"></a>
+        <br />
+        <a :href="cassetteStore.metadata.owner_url?.toString()" class="text-subtitle-1 clickable"
+            v-text="cassetteStore.metadata.owner_display_name"></a>
         <v-divider class="my-4" />
         <v-select v-model="selectedSortType" :items="availableSorters" item-value="type" label="Track Sorter"
             item-title="name">
@@ -43,13 +34,18 @@ const openOwnerPage = () => {
 </template>
 
 <style scoped>
-.cassette-image {
-  width: 100%;
-  display: block;
-  cursor: pointer;
+.clickable {
+    text-decoration: none;
+    color: inherit;
 }
 
-.clickable {
-  cursor: pointer;
+.clickable:visited,
+.clickable:hover,
+.clickable:active {
+    color: inherit;
+}
+
+.clickable:hover {
+    text-decoration: underline;
 }
 </style>

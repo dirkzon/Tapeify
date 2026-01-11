@@ -94,6 +94,7 @@ export const usePlaylistsStore = defineStore('playlists', {
         description: playlist.description,
         image_url: new URL(playlist.images[0].url),
         original_item_url: playlist.external_urls.spotify,
+        item_name: playlist.name,
       })
     },
 

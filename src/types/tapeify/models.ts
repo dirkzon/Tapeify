@@ -69,6 +69,7 @@ export interface TapeSideLayout {
 
 export interface CassetteMetadata {
   owner_display_name: string
+  item_name: string
   original_item_url: string
   owner_url: string
   description: string

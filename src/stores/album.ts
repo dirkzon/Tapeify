@@ -47,6 +47,7 @@ export const useAlbumsStore = defineStore('albums', {
         description: '',
         image_url: imageUrl,
         original_item_url: album.external_urls.spotify,
+        item_name: album.name,
       })
     },
     async searchAlbums(query: string, limit: number = 10, offset: number = 0) {
