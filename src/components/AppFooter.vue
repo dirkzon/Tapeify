@@ -4,7 +4,7 @@ const releaseUrl = `https://github.com/dirkzon/Tapeify/releases/tag/${releaseTag
 </script>
 
 <template>
-    <v-footer class="d-flex align-center justify-center" app>
+    <v-footer class="d-flex align-center justify-end" app>
         <v-btn class="me-2 text-none" prepend-icon="mdi-github" density="comfortable" variant="plain"
             href="https://github.com/dirkzon/Tapeify" target="_blank">
             <span class="mt-auto">github</span>
