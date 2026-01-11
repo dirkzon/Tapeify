@@ -15,7 +15,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-card class="cassette-card" min-width="400px" max-width="800" variant="outlined" min-height="200px">
+  <v-card class="cassette-card">
     <v-toolbar color="primary" title="Select Playlist or Album">
       <template v-slot:extension>
         <v-tabs v-model="selectedTab" align-tabs="center">

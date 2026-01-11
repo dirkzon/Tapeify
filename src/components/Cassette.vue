@@ -51,7 +51,7 @@ const name = computed<string>({
 </script>
 
 <template>
-  <v-card class="cassette-card" variant="outlined">
+  <v-card class="cassette-card">
     <v-toolbar color="primary">
       <template v-slot:prepend>
         <v-select v-model="capacityMinutes" :items="[60, 90, 120]" dense hide-details class="ma-0"
