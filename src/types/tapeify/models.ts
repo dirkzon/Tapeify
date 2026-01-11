@@ -66,3 +66,12 @@ export interface TapeSideLayout {
   tracks: Array<string | null>
   durationMs: number
 }
+
+export interface CassetteMetadata {
+  owner_display_name: string
+  item_name: string
+  original_item_url: string
+  owner_url: string
+  description: string
+  image_url?: URL
+}

@@ -30,9 +30,15 @@ const mockGetAlbumResponse: GetAlbumResponse = {
     {
       type: 'artist',
       id: '0TnOYISbd1XYRBk9myaseg',
-      name: 'Pitbull'
+      name: 'Pitbull',
+      external_urls: {
+        spotify: 'https://open.spotify.com/artist/0TnOYISbd1XYRBk9myaseg'
+      }
     }
-  ]
+  ],
+  external_urls: {
+    spotify: ''
+  }
 }
 
 const mockGetAlbumTracksResponse: GetAlbumTracksResponse = {
@@ -46,7 +52,10 @@ const mockGetAlbumTracksResponse: GetAlbumTracksResponse = {
         {
           type: 'artist',
           id: '0TnOYISbd1XYRBk9myaseg',
-          name: 'Pitbull'
+          name: 'Pitbull',
+          external_urls: {
+            spotify: 'https://open.spotify.com/artist/0TnOYISbd1XYRBk9myaseg'
+          }
         }
       ],
       duration_ms: 231733,

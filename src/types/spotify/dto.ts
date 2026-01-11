@@ -1,6 +1,7 @@
 export interface UserDTO {
     id: string
     display_name: string
+    external_urls: ExternalUrlsDTO
 }
   
 export interface ImageDTO {
@@ -16,6 +17,8 @@ export interface PlaylistDTO {
     name: string
     owner: UserDTO
     collaborative: Boolean
+    external_urls: ExternalUrlsDTO
+    description: string
 }
 
 export interface PlaylistItemDTO {
@@ -45,6 +48,7 @@ export interface AlbumDTO {
     images: ImageDTO[]
     name: string
     uri: string
+    external_urls: { spotify: string }
     artists: ArtistDTO[]
 }
 
@@ -62,6 +66,7 @@ export interface ArtistDTO {
     type: string
     id: string
     name: string
+    external_urls: ExternalUrlsDTO
 }
 
 export interface PlaylistTracksPaginationDTO extends PaginationDTO {
@@ -95,4 +100,9 @@ export interface ProfileDTO {
     id: string
     display_name: string
     country: string
+    external_urls: ExternalUrlsDTO
+}
+
+export interface ExternalUrlsDTO {
+    spotify: string
 }

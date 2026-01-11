@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import type { Cassette } from '@/types/tapeify/models'
+import type { Cassette, CassetteMetadata } from '@/types/tapeify/models'
 import { v4 as uuidv4 } from 'uuid';
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
+    metadata: {} as CassetteMetadata,
     cassettes: [
       { id: 'default', name: 'My First Cassette', capacityMs: (90 * 60000) },
     ] as Cassette[],
@@ -19,7 +20,7 @@ export const useCassettesStore = defineStore('cassettes', {
     addCassette() {
       this.cassettes.push({
         id: uuidv4(),
-        name: "New Cassette",
+        name: `${this.metadata.item_name} ${this.cassettes.length + 1}`,
         capacityMs: 90 * 60000,
       })
     },
@@ -29,7 +30,7 @@ export const useCassettesStore = defineStore('cassettes', {
     updateName(cassetteId: string, newName: string) {
       const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
       if (cassette) {
-        cassette.name = newName
+        cassette.name = `${newName} ${this.cassettes.length}`
       }
     },
     updateCapacity(cassetteId: string, newCapacityMs: number) {
@@ -37,6 +38,9 @@ export const useCassettesStore = defineStore('cassettes', {
       if (cassette) {
         cassette.capacityMs = newCapacityMs
       }
+    },
+    updateMetadata(newMetadata: CassetteMetadata) {
+      this.metadata = newMetadata
     },
   },
 })

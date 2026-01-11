@@ -9,6 +9,7 @@ import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { PlaylistSearchResult } from '@/types/tapeify/models'
 import { useProfileStore } from './profile'
+import { GetSmallestImage } from '@/utils/images/imageUtils'
 
 export const usePlaylistsStore = defineStore('playlists', {
   actions: {
@@ -58,7 +59,6 @@ export const usePlaylistsStore = defineStore('playlists', {
 
       const playlistResponse = await apiClient.get<GetPlaylistsResponse>('/playlists/' + playlistId)
       const playlist = playlistResponse.data
-      cassetteStore.updateName('default', playlist.name)
 
       const limit = playlist.tracks.limit
       const total = playlist.tracks.total
@@ -86,6 +86,16 @@ export const usePlaylistsStore = defineStore('playlists', {
 
         offset += limit
       }
+
+      cassetteStore.updateName('default', playlist.name)
+      cassetteStore.updateMetadata({
+        owner_display_name: playlist.owner.display_name,
+        owner_url: playlist.owner.external_urls.spotify,
+        description: playlist.description,
+        image_url: new URL(playlist.images[0].url),
+        original_item_url: playlist.external_urls.spotify,
+        item_name: playlist.name,
+      })
     },
 
     // async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {

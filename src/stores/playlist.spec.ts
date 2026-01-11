@@ -33,10 +33,17 @@ const mockGetPlaylistResponse: GetPlaylistsResponse = {
   ],
   owner: {
     id: 'spotify',
-    display_name: 'Spotify'
+    display_name: 'Spotify',
+    external_urls: {
+      spotify: 'https://open.spotify.com/user/spotify'
+    }
   },
   collaborative: false,
-  href: ''
+  href: '',
+  external_urls: {
+    spotify: 'https://open.spotify.com/user/spotify'
+  },
+  description: ''
 }
 
 const mockGetPlaylistTracksResponse: GetPlaylistTracksResponse = {
@@ -44,7 +51,10 @@ const mockGetPlaylistTracksResponse: GetPlaylistTracksResponse = {
     {
       added_by: {
         id: 'spotify',
-        display_name: 'Spotify'
+        display_name: 'Spotify',
+        external_urls: {
+          spotify: 'https://open.spotify.com/user/spotify'
+        }
       },
       track: {
         type: 'track',
@@ -55,7 +65,10 @@ const mockGetPlaylistTracksResponse: GetPlaylistTracksResponse = {
           {
             type: 'artist',
             id: '0TnOYISbd1XYRBk9myaseg',
-            name: 'The Weeknd'
+            name: 'The Weeknd',
+            external_urls: {
+              spotify: 'https://open.spotify.com/user/spotify'
+            }
           }
         ],
         duration_ms: 231733,
@@ -68,7 +81,10 @@ const mockGetPlaylistTracksResponse: GetPlaylistTracksResponse = {
           images: [],
           name: 'After Hours',
           uri: 'spotify:album:4aawyAB9vmqN3uQ7FjRGTy',
-          artists: []
+          artists: [],
+          external_urls: {
+            spotify: ''
+          }
         }
       }
     }
@@ -99,7 +115,7 @@ describe('Playlist store', () => {
       if (url === '/playlists/3cEYpjA9oz9GiPac4AsH4n') {
         return Promise.resolve({ data: mockGetPlaylistResponse });
       }
-      if  (url === '/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks') {
+      if (url === '/playlists/3cEYpjA9oz9GiPac4AsH4n/tracks') {
         return Promise.resolve({ data: mockGetPlaylistTracksResponse });
       }
       return Promise.reject('Failed to match mock implementation');
