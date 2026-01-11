@@ -55,7 +55,7 @@ const name = computed<string>({
     <v-toolbar color="pink">
       <template v-slot:prepend>
         <v-select v-model="capacityMinutes" :items="[60, 90, 120]" dense hide-details class="ma-0"
-          style="min-width:140px" label="Capacity (min)" />
+          style="min-width:150px" label="Capacity (min)" />
       </template>
       <template v-slot:title>
         <v-text-field v-model="name" dense hide-details placeholder="Cassette name"
