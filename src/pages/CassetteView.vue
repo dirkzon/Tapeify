@@ -23,9 +23,11 @@ onMounted(async () => {
     switch (type) {
       case 'album':
         await albumStore.FetchAlbumTracks(id)
+        sortStore.setSortType('keep-order')
         break
       case 'playlist':
         await playlistsStore.FetchPlaylistTracks(id)
+        sortStore.setSortType('greedy')
         break
     }
   }
