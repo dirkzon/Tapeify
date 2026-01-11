@@ -1,32 +1,32 @@
 import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, ImageDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO, ProfileDTO } from "./dto"
 
-export interface UsersPlaylistsResponse extends PlaylistPaginationDTO {}
+export interface UsersPlaylistsResponse extends PlaylistPaginationDTO { }
 
 export interface GetPlaylistsResponse extends PlaylistDTO {
-    tracks: PlaylistTracksPaginationDTO 
+    tracks: PlaylistTracksPaginationDTO
 }
 
 export interface GetAlbumResponse extends AlbumDTO {
     tracks: AlbumTracksPaginationDTO
 }
 
-export interface GetPlaylistTracksResponse extends PlaylistTracksPaginationDTO {}
+export interface GetPlaylistTracksResponse extends PlaylistTracksPaginationDTO { }
 
-export interface GetAlbumTracksResponse extends AlbumTracksPaginationDTO {}
+export interface GetAlbumTracksResponse extends AlbumTracksPaginationDTO { }
 
 export interface SearchResponse {
     albums: AlbumPaginationDTO
     playlists: PlaylistPaginationDTO
 }
 
-export interface GetProfileResponse extends ProfileDTO {}
+export interface GetProfileResponse extends ProfileDTO { }
 
 export interface TokenResponse {
-  access_token: string
-  token_type: string
-  scope: string
-  expires_in: number
-  refresh_token: string
+    access_token: string
+    token_type: string
+    scope: string
+    expires_in: number
+    refresh_token: string
 }
 
-export interface CreatePlaylistResponse extends PlaylistDTO {}
+export interface CreatePlaylistResponse extends PlaylistDTO { }

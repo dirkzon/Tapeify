@@ -41,6 +41,13 @@ export const useAlbumsStore = defineStore('albums', {
       }
 
       cassetteStore.updateName('default', album.name)
+      cassetteStore.updateMetadata({
+        owner_display_name: album.artists[0].name,
+        owner_url: album.artists[0].external_urls.spotify,
+        description: '',
+        image_url: imageUrl,
+        original_item_url: album.external_urls.spotify,
+      })
     },
     async searchAlbums(query: string, limit: number = 10, offset: number = 0) {
       const profileStore = useProfileStore()
