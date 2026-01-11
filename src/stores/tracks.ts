@@ -6,6 +6,9 @@ export const UseTracksStore = defineStore('tracks', {
     tracks: [] as Track[],
   }),
   getters: {
+    totalDuration(state): number {
+      return state.tracks.reduce((acc, track) => acc + track.durationMs, 0)
+    }
   },
   actions: {
     AddTrack(track: Track) {

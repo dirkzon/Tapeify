@@ -20,7 +20,7 @@ export const useCassettesStore = defineStore('cassettes', {
     addCassette() {
       this.cassettes.push({
         id: uuidv4(),
-        name: "New Cassette",
+        name: `${this.metadata.item_name} ${this.cassettes.length}`,
         capacityMs: 90 * 60000,
       })
     },

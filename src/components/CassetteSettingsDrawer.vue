@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
+import { UseTracksStore } from '@/stores/tracks';
+import { formatDuration } from '@/utils/duration/durationHelper';
 
 const sortingStore = useSortingStore()
 const cassetteStore = useCassettesStore()
+const tracksStore = UseTracksStore()
 
 const route = useRoute()
 const showDrawer = computed(() => route.name === '/CassetteView')
@@ -30,6 +33,10 @@ const selectedSortType = computed({
                 <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name" />
             </template>
         </v-select>
+        <v-divider class="my-4" />
+        <div class="text-body-1">Cassettes: {{ cassetteStore.cassettes.length }}</div>
+        <div class="text-body-1">Tracks: {{ tracksStore.tracks.length }}</div>
+        <div class="text-body-1"> Total Duration: {{formatDuration(tracksStore.totalDuration)}}</div>
     </v-navigation-drawer>
 </template>
 
