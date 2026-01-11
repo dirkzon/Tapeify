@@ -20,7 +20,7 @@ const selectedSortType = computed({
 
 <template>
     <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer">
-        <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover class="rounded-t-lg"/>
+        <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover class="rounded-lg"/>
         <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable" target="_blank"
             v-text="cassetteStore.metadata.item_name"></a>
         <br />
@@ -34,9 +34,9 @@ const selectedSortType = computed({
             </template>
         </v-select>
         <v-divider class="my-4"/>
-        <div class="text-body-1">Cassettes: {{ cassetteStore.cassettes.length }}</div>
-        <div class="text-body-1">Tracks: {{ tracksStore.tracks.length }}</div>
-        <div class="text-body-1"> Total Duration: {{formatDuration(tracksStore.totalDuration)}}</div>
+        <div class="text-body-1"><strong>Cassettes:</strong> {{ cassetteStore.cassettes.length }}</div>
+        <div class="text-body-1"><strong>Tracks:</strong> {{ tracksStore.tracks.length }}</div>
+        <div class="text-body-1"><strong>Total Duration:</strong> {{formatDuration(tracksStore.totalDuration)}}</div>
     </v-navigation-drawer>
 </template>
 
