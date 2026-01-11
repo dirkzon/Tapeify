@@ -18,10 +18,10 @@ const selectedSortType = computed({
 <template>
     <v-navigation-drawer location="left" class="pa-4" color="primary" permanent v-if="showDrawer">
         <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover />
-        <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable"
+        <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable" target="_blank"
             v-text="cassetteStore.metadata.item_name"></a>
         <br />
-        <a :href="cassetteStore.metadata.owner_url?.toString()" class="text-subtitle-1 clickable"
+        <a :href="cassetteStore.metadata.owner_url?.toString()" class="text-subtitle-1 clickable" target="_blank"
             v-text="cassetteStore.metadata.owner_display_name"></a>
         <v-divider class="my-4" />
         <v-select v-model="selectedSortType" :items="availableSorters" item-value="type" label="Track Sorter"
