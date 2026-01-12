@@ -34,7 +34,7 @@ export const useAlbumsStore = defineStore('albums', {
         })
 
         for (const item of tracksResponse.data.items) {
-          tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl))
+          tracksStore.AddTrackToMasterList(ParseAlbumTrackDTO(item, imageUrl))
         }
 
         offset += limit

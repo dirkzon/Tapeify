@@ -77,10 +77,10 @@ export const usePlaylistsStore = defineStore('playlists', {
         for (const item of tracks.items) {
           const track = item.track
           if (track.type === 'track') {
-            tracksStore.AddTrack(ParsePlaylistTrackDTO(track as PlaylistTrackDTO))
+            tracksStore.AddTrackToMasterList(ParsePlaylistTrackDTO(track as PlaylistTrackDTO))
           }
           if (track.type === 'episode') {
-            tracksStore.AddTrack(ParsePlaylistEpisodeDTO(track as EpisodeDTO))
+            tracksStore.AddTrackToMasterList(ParsePlaylistEpisodeDTO(track as EpisodeDTO))
           }
         }
 
