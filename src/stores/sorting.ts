@@ -2,7 +2,7 @@ import type { TapeSideLayout } from "@/types/tapeify/models";
 import { TapeSide } from "@/utils/sorting/tapeSideLayout";
 import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
-import { UseTracksStore } from "./tracks";
+import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
 import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
 
@@ -26,7 +26,7 @@ export const useSortingStore = defineStore('sorting', {
   actions: {
     sortTracks() {
       const cassetteStore = useCassettesStore()
-      const trackStore = UseTracksStore()
+      const trackStore = useTracksStore()
       const anchorsStore = useAnchorsStore()
 
       const sides: TapeSide[] = []

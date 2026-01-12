@@ -2,11 +2,11 @@
 import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
-import { UseTracksStore } from '@/stores/tracks';
+import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
-const tracksStore = UseTracksStore()
+const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 
 const props = defineProps<{

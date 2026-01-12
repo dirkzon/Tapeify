@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSortingStore } from '@/stores/sorting';
-import { UseTracksStore } from '@/stores/tracks';
+import { useTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
 
@@ -8,7 +8,7 @@ import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 
 const sortStore = useSortingStore()
-const tracksStore = UseTracksStore()
+const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()

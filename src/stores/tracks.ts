@@ -1,7 +1,7 @@
 import type { Track } from '@/types/tapeify/models'
 import { defineStore } from 'pinia'
 
-export const UseTracksStore = defineStore('tracks', {
+export const useTracksStore = defineStore('tracks', {
   state: () => ({
     tracks: [] as Track[],
   }),

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { UseTracksStore } from './tracks'
+import { useTracksStore } from './tracks'
 import type { GetAlbumResponse, GetAlbumTracksResponse, SearchResponse } from '@/types/spotify/responses'
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
@@ -12,7 +12,7 @@ import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
 export const useAlbumsStore = defineStore('albums', {
   actions: {
     async FetchAlbumTracks(albumId: string) {
-      const tracksStore = UseTracksStore()
+      const tracksStore = useTracksStore()
       const cassetteStore = useCassettesStore()
 
       const response = await apiClient.get<GetAlbumResponse>('/albums/' + albumId)
