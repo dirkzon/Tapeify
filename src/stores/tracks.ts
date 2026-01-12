@@ -27,8 +27,11 @@ export const useTracksStore = defineStore('tracks', {
     GetTrackById(trackId: string): Track | undefined {
       return this._masterTrackList.find(track => track.id === trackId)
     },
+    TrackExists(trackId: string): boolean {
+      return this._masterTrackList.some(track => track.id === trackId)
+    },
     MarkTrackAsUnavailable(trackId: string) {
-      if (!this._unavailableTrackIds.includes(trackId)) {
+      if (!this._unavailableTrackIds.includes(trackId) && this.TrackExists(trackId)) {
         this._unavailableTrackIds.push(trackId)
       }
     },
