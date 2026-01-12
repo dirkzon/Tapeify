@@ -5,7 +5,6 @@ import { useCassettesStore } from "./cassette";
 import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
 import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
-import { useUnusedTracksStore } from "./unused-tracks";
 
 export const useSortingStore = defineStore('sorting', {
   state: () => ({
@@ -29,7 +28,6 @@ export const useSortingStore = defineStore('sorting', {
       const cassetteStore = useCassettesStore()
       const trackStore = useTracksStore()
       const anchorsStore = useAnchorsStore()
-      const unsusedTracksStore = useUnusedTracksStore()
 
       const sides: TapeSide[] = []
 
