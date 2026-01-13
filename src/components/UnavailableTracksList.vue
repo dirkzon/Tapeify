@@ -20,8 +20,8 @@ function onChanged(changeEvent: any) {
 }
 
 const unavailableTracks = computed({
-  get: () => tracksStore.unavailableTracks,
-  set: () => {}
+    get: () => tracksStore.unavailableTracks,
+    set: () => { }
 })
 
 function trackClicked(trackId: string) {
@@ -38,10 +38,9 @@ function trackClicked(trackId: string) {
         <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
             @change="onChanged">
             <v-list-item v-for="track in unavailableTracks" :key="track.id" :value="track.id"
-                active-class="text-secondary" v-on:click="trackClicked(track.id)">
+                v-on:click="trackClicked(track.id)" class="pa-0">
                 <template v-slot:prepend>
-                    <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large">
-                    </v-icon>
+                    <v-icon class="drag-handle" icon="mdi-drag-vertical" />
                     <v-avatar tile>
                         <v-img v-if="track.image" :src="track.image.href" />
                         <v-icon v-else icon="mdi-music" />
