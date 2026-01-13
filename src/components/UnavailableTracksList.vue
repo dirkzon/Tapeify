@@ -32,13 +32,13 @@ function trackClicked(trackId: string) {
 
 <template>
     <v-list select-strategy="leaf" v-model:selected="tracksStore.unavailableTracks" color="secondary">
-        <v-list-subheader class="text-subtitle-1" style="color: inherit;">
+        <v-list-subheader class="text-subtitle-1" style="color: inherit">
             Unused Tracks
         </v-list-subheader>
         <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
-            @change="onChanged" :sort="false">
+            @change="onChanged" :sort="false" class="drag-container">
             <v-list-item v-for="track in unavailableTracks" :key="track.id" :value="track.id"
-                v-on:click="trackClicked(track.id)" class="pa-0">
+                v-on:click="trackClicked(track.id)" class="pa-1">
                 <template v-slot:prepend>
                     <v-icon class="drag-handle" icon="mdi-drag-vertical" />
                     <v-avatar tile>
@@ -55,3 +55,9 @@ function trackClicked(trackId: string) {
         </draggable>
     </v-list>
 </template>
+
+<style scoped>
+.drag-container {
+    min-height: 200px;
+}
+</style>
