@@ -35,7 +35,7 @@ const selectedSortType = computed({
         </v-select>
         <v-divider class="my-4" />
         <div class="text-body-1"><strong>Cassettes:</strong> {{ cassetteStore.cassettes.length }}</div>
-        <div class="text-body-1"><strong>Tracks:</strong> {{ tracksStore._masterTrackList.length }}</div>
+        <div class="text-body-1"><strong>Tracks:</strong> {{ tracksStore.availableTracks.length }}</div>
         <div class="text-body-1"><strong>Total Duration:</strong> {{ formatDuration(tracksStore.availableTracksTotalDuration) }}</div>
         <v-divider class="my-4" />
         <unavailable-tracks-list />
