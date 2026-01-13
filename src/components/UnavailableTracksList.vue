@@ -36,7 +36,7 @@ function trackClicked(trackId: string) {
             Unused Tracks
         </v-list-subheader>
         <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
-            @change="onChanged">
+            @change="onChanged" :sort="false">
             <v-list-item v-for="track in unavailableTracks" :key="track.id" :value="track.id"
                 v-on:click="trackClicked(track.id)" class="pa-0">
                 <template v-slot:prepend>
