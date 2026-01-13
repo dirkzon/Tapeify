@@ -14,7 +14,7 @@ const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
 
 onMounted(async () => {
-  tracksStore.ClearMasterTrackList()
+  tracksStore.ClearTracks()
   const url = new URL(location.href)
   const id = url.searchParams.get('id')
   const type = url.searchParams.get('type')

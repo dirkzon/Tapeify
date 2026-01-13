@@ -18,10 +18,10 @@ export const useTracksStore = defineStore('tracks', {
     }
   },
   actions: {
-    AddTrackToMasterList(track: Track) {
+    AddTrack(track: Track) {
       this._masterTrackList.push(track)
     },
-    ClearMasterTrackList() {
+    ClearTracks() {
       this._masterTrackList = []
     },
     GetTrackById(trackId: string): Track | undefined {
