@@ -1,9 +1,11 @@
 <script lang="ts" setup>
+import { useAnchorsStore } from '@/stores/anchor';
 import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 
 const tracksStore = useTracksStore()
 const sortingStore = useSortingStore()
+const anchorsStore = useAnchorsStore()
 
 function onChanged(changeEvent: any) {
     const eventType = Object.keys(changeEvent)[0]
@@ -11,6 +13,10 @@ function onChanged(changeEvent: any) {
         case 'moved':
             break;
         case 'added':
+            const trackId = changeEvent.added.element
+            if (anchorsStore.isTrackAnchored(trackId)) {
+                anchorsStore.removeAnchor(trackId)
+            }
             tracksStore.MarkTrackAsUnavailable(changeEvent.added.element)
             break
         case 'removed':
