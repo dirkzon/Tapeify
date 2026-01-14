@@ -21,6 +21,7 @@ import SearchAlbumsTab from './components/SearchAlbumsTab.vue'
 import CassetteSettingsDrawer from './components/CassetteSettingsDrawer.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import AppFooter from './components/AppFooter.vue'
+import UnavailableTracksList from './components/UnavailableTracksList.vue'
 
 // Composables
 import { createApp } from 'vue'
@@ -39,5 +40,6 @@ app.component('search-playlists-tab', SearchPlaylistsTab)
 app.component('search-albums-tab', SearchAlbumsTab)
 app.component('cassette-settings-drawer', CassetteSettingsDrawer)
 app.component('app-footer', AppFooter)
+app.component('unavailable-tracks-list', UnavailableTracksList)
 
 app.mount('#app')

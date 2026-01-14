@@ -27,5 +27,8 @@ export const useAnchorsStore = defineStore('anchors', {
     removeAnchorsByTapeSide(cassetteId: string, sideIndex: number) {
       this.anchors = this.anchors.filter(anchor => !(anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex))
     },
+    isTrackAnchored(trackId: string): boolean {
+      return this.anchors.some(anchor => anchor.trackId === trackId);
+    },
   }
 })

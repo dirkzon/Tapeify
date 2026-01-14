@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { UseTracksStore } from './tracks'
+import { useTracksStore } from './tracks'
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, SearchResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
@@ -55,7 +55,7 @@ export const usePlaylistsStore = defineStore('playlists', {
     },
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassettesStore()
-      const tracksStore = UseTracksStore()
+      const tracksStore = useTracksStore()
 
       const playlistResponse = await apiClient.get<GetPlaylistsResponse>('/playlists/' + playlistId)
       const playlist = playlistResponse.data

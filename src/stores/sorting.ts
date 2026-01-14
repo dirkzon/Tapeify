@@ -1,8 +1,8 @@
-import type { TapeSideLayout } from "@/types/tapeify/models";
+import type { TapeSideLayout, Track } from "@/types/tapeify/models";
 import { TapeSide } from "@/utils/sorting/tapeSideLayout";
 import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
-import { UseTracksStore } from "./tracks";
+import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
 import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
 
@@ -26,7 +26,7 @@ export const useSortingStore = defineStore('sorting', {
   actions: {
     sortTracks() {
       const cassetteStore = useCassettesStore()
-      const trackStore = UseTracksStore()
+      const trackStore = useTracksStore()
       const anchorsStore = useAnchorsStore()
 
       const sides: TapeSide[] = []
@@ -40,8 +40,10 @@ export const useSortingStore = defineStore('sorting', {
 
       const trackSorter = trackSorterRegistry.create(this.selectedSortType, sides)
 
-      const anchored_tracks = trackSorter.prepackAnchoredTracks(trackStore.tracks, anchorsStore.anchors)
-      const unanchored_tracks = trackStore.tracks.filter(t => !anchored_tracks.includes(t))
+      const tracks = trackStore.availableTracks
+
+      const anchored_tracks = trackSorter.prepackAnchoredTracks(tracks, anchorsStore.anchors)
+      const unanchored_tracks = tracks.filter(t => !anchored_tracks.includes(t))
       trackSorter.sortTracks(sides, unanchored_tracks)
 
       this.layout = sides.map(side => ({

@@ -1,24 +1,42 @@
 import type { Track } from '@/types/tapeify/models'
 import { defineStore } from 'pinia'
 
-export const UseTracksStore = defineStore('tracks', {
+export const useTracksStore = defineStore('tracks', {
   state: () => ({
-    tracks: [] as Track[],
+    _masterTrackList: [] as Track[],
+    unavailableTrackIds: [] as string[],
   }),
   getters: {
-    totalDuration(state): number {
-      return state.tracks.reduce((acc, track) => acc + track.durationMs, 0)
+    availableTracksTotalDuration(): number {
+      return this.availableTracks.reduce((acc, track) => acc + track.durationMs, 0)
+    },
+    availableTracks(state): Track[] {
+      return state._masterTrackList.filter(track => !state.unavailableTrackIds.includes(track.id))
+    },
+    unavailableTracks(state): Track[] {
+      return state._masterTrackList.filter(track => state.unavailableTrackIds.includes(track.id))
     }
   },
   actions: {
     AddTrack(track: Track) {
-      this.tracks.push(track)
+      this._masterTrackList.push(track)
     },
     ClearTracks() {
-      this.tracks = []
+      this._masterTrackList = []
     },
     GetTrackById(trackId: string): Track | undefined {
-      return this.tracks.find(track => track.id === trackId)
-    }
+      return this._masterTrackList.find(track => track.id === trackId)
+    },
+    TrackExists(trackId: string): boolean {
+      return this._masterTrackList.some(track => track.id === trackId)
+    },
+    MarkTrackAsUnavailable(trackId: string) {
+      if (!this.unavailableTrackIds.includes(trackId) && this.TrackExists(trackId)) {
+        this.unavailableTrackIds.push(trackId)
+      }
+    },
+    MarkTrackAsAvailable(trackId: string) {
+      this.unavailableTrackIds = this.unavailableTrackIds.filter(id => id !== trackId)
+    },
   }
 })
