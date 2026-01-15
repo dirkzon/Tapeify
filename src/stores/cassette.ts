@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Cassette, CassetteMetadata } from '@/types/tapeify/models'
 import { v4 as uuidv4 } from 'uuid';
+import { useSortingStore } from './sorting';
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
@@ -8,6 +9,7 @@ export const useCassettesStore = defineStore('cassettes', {
     cassettes: [
       { id: 'default', name: 'My First Cassette', capacityMs: (90 * 60000) },
     ] as Cassette[],
+    alerts: []
   }),
   getters: {
     getCassetteById: (state) => {
@@ -41,6 +43,12 @@ export const useCassettesStore = defineStore('cassettes', {
     },
     updateMetadata(newMetadata: CassetteMetadata) {
       this.metadata = newMetadata
+    },
+    initAlerts() {
+      const sortStore = useSortingStore()
+      sortStore.$subscribe((_mutation, state) => {
+        console.log(state)
+      })
     },
   },
 })
