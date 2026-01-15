@@ -84,3 +84,9 @@ export interface CassetteAlert {
     message: string
   }
 }
+
+export type AlertRule = {
+  when: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => boolean
+  message: string
+  action?: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => CassetteAlert['action']
+}

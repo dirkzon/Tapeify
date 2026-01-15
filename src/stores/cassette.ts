@@ -7,6 +7,7 @@ import type {
 } from '@/types/tapeify/models'
 import { v4 as uuidv4 } from 'uuid'
 import { useSortingStore } from './sorting'
+import { CASSETTE_ALERT_RULES } from './cassette.alert.rules'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
@@ -92,28 +93,14 @@ export const useCassettesStore = defineStore('cassettes', {
       sides: Record<number, TapeSideLayout>,
       cassette: Cassette
     ) {
-      if (sides[0].durationMs === 0 && sides[1].durationMs === 0) {
+      for (const rule of CASSETTE_ALERT_RULES) {
+        if (!rule.when(cassette, sides)) continue
+
         this.alerts.push({
           cassetteId: cassette.id,
-          message: "Cassette is emtpy.",
-          action: {
-            fn: () => this.removeCassette(cassette.id),
-            message: "Remove cassette"
-          }
+          message: rule.message,
+          action: rule.action?.(cassette, sides),
         })
-      } else {
-        if (sides[0].durationMs === 0) {
-          this.alerts.push({
-            cassetteId: cassette.id,
-            message: "Side A is emtpy."
-          })
-        }
-        if (sides[1].durationMs === 0) {
-          this.alerts.push({
-            cassetteId: cassette.id,
-            message: "Side B is emtpy."
-          })
-        }
       }
     }
   },
