@@ -1,23 +1,32 @@
 import { defineStore } from 'pinia'
-import type { Cassette, CassetteMetadata } from '@/types/tapeify/models'
-import { v4 as uuidv4 } from 'uuid';
-import { useSortingStore } from './sorting';
+import type {
+  Cassette,
+  CassetteAlert,
+  CassetteMetadata,
+  TapeSideLayout,
+} from '@/types/tapeify/models'
+import { v4 as uuidv4 } from 'uuid'
+import { useSortingStore } from './sorting'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
     metadata: {} as CassetteMetadata,
     cassettes: [
-      { id: 'default', name: 'My First Cassette', capacityMs: (90 * 60000) },
+      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000 },
     ] as Cassette[],
-    alerts: []
+    alerts: [] as CassetteAlert[],
   }),
+
   getters: {
     getCassetteById: (state) => {
-      return (cassetteId: string) => {
-        return state.cassettes.find(cassette => cassette.id === cassetteId)
-      }
-    }
+      return (cassetteId: string) =>
+        state.cassettes.find(cassette => cassette.id === cassetteId)
+    },
+
+    alertsForCassette: (state) => (cassetteId: string) =>
+      state.alerts.filter(alert => alert.cassetteId === cassetteId),
   },
+
   actions: {
     addCassette() {
       this.cassettes.push({
@@ -26,29 +35,86 @@ export const useCassettesStore = defineStore('cassettes', {
         capacityMs: 90 * 60000,
       })
     },
+
     removeCassette(cassetteId: string) {
-      this.cassettes = this.cassettes.filter(cassette => cassette.id !== cassetteId)
+      this.cassettes = this.cassettes.filter(c => c.id !== cassetteId)
+      this.alerts = this.alerts.filter(a => a.cassetteId !== cassetteId)
     },
+
     updateName(cassetteId: string, newName: string) {
-      const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
+      const cassette = this.getCassetteById(cassetteId)
       if (cassette) {
         cassette.name = `${newName} ${this.cassettes.length}`
       }
     },
+
     updateCapacity(cassetteId: string, newCapacityMs: number) {
-      const cassette = this.cassettes.find(cassette => cassette.id === cassetteId)
+      const cassette = this.getCassetteById(cassetteId)
       if (cassette) {
         cassette.capacityMs = newCapacityMs
       }
     },
+
     updateMetadata(newMetadata: CassetteMetadata) {
       this.metadata = newMetadata
     },
     initAlerts() {
       const sortStore = useSortingStore()
+
       sortStore.$subscribe((_mutation, state) => {
-        console.log(state)
+        this.alerts = []
+
+        const sidesByCassette: Record<
+          string,
+          Record<number, TapeSideLayout>
+        > = {}
+
+        for (const side of Object.values(state.layout)) {
+          if (!sidesByCassette[side.cassetteId]) {
+            sidesByCassette[side.cassetteId] = {}
+          }
+
+          sidesByCassette[side.cassetteId][side.sideIndex] = side
+        }
+
+        for (const cassetteId in sidesByCassette) {
+          const cassette = this.getCassetteById(cassetteId)
+          if (!cassette) continue
+
+          this._createAlertsForCassette(
+            sidesByCassette[cassetteId],
+            cassette
+          )
+        }
       })
     },
+    _createAlertsForCassette(
+      sides: Record<number, TapeSideLayout>,
+      cassette: Cassette
+    ) {
+      if (sides[0].durationMs === 0 && sides[1].durationMs === 0) {
+        this.alerts.push({
+          cassetteId: cassette.id,
+          message: "Cassette is emtpy.",
+          action: {
+            fn: () => this.removeCassette(cassette.id),
+            message: "Remove cassette"
+          }
+        })
+      } else {
+        if (sides[0].durationMs === 0) {
+          this.alerts.push({
+            cassetteId: cassette.id,
+            message: "Side A is emtpy."
+          })
+        }
+        if (sides[1].durationMs === 0) {
+          this.alerts.push({
+            cassetteId: cassette.id,
+            message: "Side B is emtpy."
+          })
+        }
+      }
+    }
   },
 })

@@ -58,8 +58,7 @@ const name = computed<string>({
           style="min-width:150px" label="Capacity (min)" />
       </template>
       <template v-slot:title>
-        <v-text-field v-model="name" dense hide-details placeholder="Cassette name"
-          class="cassette-title-field" />
+        <v-text-field v-model="name" dense hide-details placeholder="Cassette name" class="cassette-title-field" />
       </template>
       <template v-slot:append>
         <v-btn icon @click="addCassette" title="Add cassette">
@@ -70,7 +69,15 @@ const name = computed<string>({
         </v-btn>
       </template>
     </v-toolbar>
-
+    <v-alert v-for="(alert, index) in cassetteStore.alertsForCassette(props.cassetteId)" :key="index" type="warning"
+      variant="outlined">
+      <div class="d-flex justify-space-between align-center w-100">
+        <span>{{ alert.message }}</span>
+        <a v-if="alert.action" class="text-decoration-underline cursor-pointer" @click="() => alert.action!.fn()">
+          {{ alert.action.message }}
+        </a>
+      </div>
+    </v-alert>
     <v-row class="pa-2">
       <v-col>
         <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />

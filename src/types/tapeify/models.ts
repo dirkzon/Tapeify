@@ -75,3 +75,12 @@ export interface CassetteMetadata {
   description: string
   image_url?: URL
 }
+
+export interface CassetteAlert {
+  cassetteId: string
+  message: string
+  action?: {
+    fn: Function,
+    message: string
+  }
+}
