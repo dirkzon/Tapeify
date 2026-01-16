@@ -79,6 +79,7 @@ export interface CassetteMetadata {
 export interface CassetteAlert {
   cassetteId: string
   message: string
+  priority: number
   action?: {
     fn: Function,
     message: string
@@ -88,5 +89,6 @@ export interface CassetteAlert {
 export type AlertRule = {
   when: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => boolean
   message: string
+  priority: number
   action?: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => CassetteAlert['action']
 }

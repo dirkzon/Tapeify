@@ -23,11 +23,16 @@ export const useCassettesStore = defineStore('cassettes', {
       return (cassetteId: string) =>
         state.cassettes.find(cassette => cassette.id === cassetteId)
     },
-
-    alertsForCassette: (state) => (cassetteId: string) =>
+    alertsForCassette: (state) => (cassetteId: string): CassetteAlert[] =>
       state.alerts.filter(alert => alert.cassetteId === cassetteId),
+    topAlertForCassette: (state) => (cassetteId: string): CassetteAlert | undefined => {
+      const alertsForCassette = state.alerts.filter(alert => alert.cassetteId === cassetteId)
+      if (alertsForCassette.length === 0) return undefined
+      return alertsForCassette.reduce((prev, current) => {
+        return (current.priority > prev.priority) ? current : prev;
+      })
+    },
   },
-
   actions: {
     addCassette() {
       this.cassettes.push({
@@ -100,6 +105,7 @@ export const useCassettesStore = defineStore('cassettes', {
           cassetteId: cassette.id,
           message: rule.message,
           action: rule.action?.(cassette, sides),
+          priority: rule.priority
         })
       }
     }

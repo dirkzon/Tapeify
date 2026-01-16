@@ -16,6 +16,10 @@ const cassette = computed(() => {
   return cassetteStore.getCassetteById(props.cassetteId)
 })
 
+const topAlert = computed(() => {
+  return cassetteStore.topAlertForCassette(props.cassetteId)
+})
+
 function addCassette() {
   cassetteStore.addCassette()
   sortingStore.sortTracks()
@@ -69,12 +73,12 @@ const name = computed<string>({
         </v-btn>
       </template>
     </v-toolbar>
-    <v-alert v-for="(alert, index) in cassetteStore.alertsForCassette(props.cassetteId)" :key="index" type="warning"
+    <v-alert v-if="topAlert" type="warning"
       variant="outlined">
       <div class="d-flex justify-space-between align-center w-100">
-        <span>{{ alert.message }}</span>
-        <a v-if="alert.action" class="text-decoration-underline cursor-pointer" @click="() => alert.action!.fn()">
-          {{ alert.action.message }}
+        <span>{{ topAlert.message }}</span>
+        <a v-if="topAlert.action" class="text-decoration-underline cursor-pointer" @click="() => topAlert!.action!.fn()">
+          {{ topAlert.action.message }}
         </a>
       </div>
     </v-alert>
