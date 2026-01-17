@@ -86,9 +86,27 @@ export interface CassetteAlert {
   }
 }
 
-export type AlertRule = {
-  when: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => boolean
-  message: string
-  priority: number
-  action?: (cassette: Cassette, sides: Record<number, TapeSideLayout>) => CassetteAlert['action']
+export type AlertRule<TPayload = any> = {
+  when: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>
+  ) => boolean | TPayload
+
+  message: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => string
+
+  priority: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => number
+
+  action?: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => CassetteAlert['action']
 }

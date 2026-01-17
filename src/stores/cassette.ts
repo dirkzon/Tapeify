@@ -99,13 +99,14 @@ export const useCassettesStore = defineStore('cassettes', {
       cassette: Cassette
     ) {
       for (const rule of CASSETTE_ALERT_RULES) {
-        if (!rule.when(cassette, sides)) continue
+        const payload = rule.when(cassette, sides)
+        if (!payload) continue
 
         this.alerts.push({
           cassetteId: cassette.id,
-          message: rule.message,
-          action: rule.action?.(cassette, sides),
-          priority: rule.priority
+          message: rule.message(cassette, sides, payload),
+          action: rule.action?.(cassette, sides, payload),
+          priority: rule.priority(cassette, sides, payload),
         })
       }
     }
