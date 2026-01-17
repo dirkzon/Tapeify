@@ -11,6 +11,7 @@ import { CASSETTE_ALERT_RULES } from './cassette.alert.rules'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
+    possibleLengthsMin: [60, 90, 120],
     metadata: {} as CassetteMetadata,
     cassettes: [
       { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000 },

@@ -37,8 +37,8 @@ type ShorterCassettePayload = {
 
 const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
   when: (cassette, sides) => {
-    const possibleLengths = [60, 90, 120]
-    const possibleLengthsMs = possibleLengths.map(m => m * 60_000)
+    const cassetteStore = useCassettesStore()
+    const possibleLengthsMs = cassetteStore.possibleLengthsMin.map(m => m * 60_000)
 
     const longestSide = Math.max(
       sides[0]?.durationMs ?? 0,
