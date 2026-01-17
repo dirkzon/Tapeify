@@ -38,20 +38,26 @@ type ShorterCassettePayload = {
 const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
   when: (cassette, sides) => {
     const cassetteStore = useCassettesStore()
-    const possibleLengthsMs = cassetteStore.possibleLengthsMin.map(m => m * 60_000)
 
-    const longestSide = Math.max(
-      sides[0]?.durationMs ?? 0,
-      sides[1]?.durationMs ?? 0
+    const possibleCapacitiesMs = cassetteStore.possibleLengthsMin.map(
+      m => m * 60_000
     )
 
-    const fitLengthMs = possibleLengthsMs.find(len => len >= longestSide)
+    const longestSide = Math.max(
+      sides[0].durationMs ?? 0,
+      sides[1].durationMs ?? 0
+    )
 
-    if (!fitLengthMs || cassette.capacityMs <= fitLengthMs) return false
+    const suggestedCapacity = possibleCapacitiesMs.find(
+      total => total / 2 >= longestSide
+    )
+
+    if (!suggestedCapacity || cassette.capacityMs <= suggestedCapacity)
+      return false
 
     return {
-      suggestedCapacityMs: fitLengthMs,
-      label: `${fitLengthMs / 60_000} min`,
+      suggestedCapacityMs: suggestedCapacity,
+      label: `${suggestedCapacity / 60_000} min`,
     }
   },
 
@@ -69,6 +75,7 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
     message: `Set capacity to ${payload!.label}`,
   }),
 }
+
 
 export const CASSETTE_ALERT_RULES: AlertRule<any>[] = [
   emptyCassetteRule,
