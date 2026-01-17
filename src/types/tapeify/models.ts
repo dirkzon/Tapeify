@@ -75,3 +75,38 @@ export interface CassetteMetadata {
   description: string
   image_url?: URL
 }
+
+export interface CassetteAlert {
+  cassetteId: string
+  message: string
+  priority: number
+  action?: {
+    fn: Function,
+    message: string
+  }
+}
+
+export type AlertRule<TPayload = any> = {
+  when: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>
+  ) => boolean | TPayload
+
+  message: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => string
+
+  priority: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => number
+
+  action?: (
+    cassette: Cassette,
+    sides: Record<number, TapeSideLayout>,
+    payload?: TPayload
+  ) => CassetteAlert['action']
+}
