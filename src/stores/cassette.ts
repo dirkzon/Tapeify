@@ -51,7 +51,7 @@ export const useCassettesStore = defineStore('cassettes', {
     updateName(cassetteId: string, newName: string) {
       const cassette = this.getCassetteById(cassetteId)
       if (cassette) {
-        cassette.name = `${newName} ${this.cassettes.length}`
+        cassette.name = newName
       }
     },
 
