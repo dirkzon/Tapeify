@@ -64,7 +64,7 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
   message: (_cassette, _sides, payload) =>
     `Cassette can fit in ${payload!.label}.`,
 
-  priority: () => 2,
+  priority: () => 8,
 
   action: (cassette, _sides, payload) => ({
     fn: () => {
@@ -89,7 +89,6 @@ const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
       m => m * 60_000
     )
 
-    // total duration of both sides combined
     const totalDuration = (sides[0]?.durationMs ?? 0) + (sides[1]?.durationMs ?? 0)
 
     const requiredPerSide = totalDuration / 2
@@ -122,6 +121,54 @@ const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
   }),
 }
 
+type AddCassettePayload = {
+  totalDurationMs: number
+  largestCapacityMs: number
+  label: string
+}
+
+const needsNewCassetteRule: AlertRule<AddCassettePayload> = {
+  when: (cassette, sides) => {
+    const cassetteStore = useCassettesStore()
+
+    const possibleCapacitiesMs = cassetteStore.possibleLengthsMin.map(
+      m => m * 60_000
+    )
+
+    const largestCapacity = Math.max(...possibleCapacitiesMs)
+
+    const totalDuration =
+      (sides[0]?.durationMs ?? 0) + (sides[1]?.durationMs ?? 0)
+
+    if (totalDuration > largestCapacity) {
+      return {
+        totalDurationMs: totalDuration,
+        largestCapacityMs: largestCapacity,
+        label: `${largestCapacity / 60_000} min`
+      }
+    }
+
+    return false
+  },
+
+  message: (_cassette, _sides, payload) =>
+    `Total program is ${Math.ceil(
+      payload!.totalDurationMs / 60_000
+    )} min — exceeds largest cassette (${payload!.label}).`,
+
+  priority: () => 10,
+
+  action: (_cassette) => ({
+    fn: () => {
+      const cassetteStore = useCassettesStore()
+      const sortStore = useSortingStore()
+
+      cassetteStore.addCassette()
+      sortStore.sortTracks()
+    },
+    message: "Add another cassette",
+  }),
+}
 
 
 export const CASSETTE_ALERT_RULES: AlertRule<any>[] = [
@@ -130,4 +177,5 @@ export const CASSETTE_ALERT_RULES: AlertRule<any>[] = [
   emptySideBRule,
   shorterCassetteRule,
   expandCassetteRule,
+  needsNewCassetteRule,
 ]
