@@ -66,7 +66,7 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
       cassette.capacityMs = payload!.suggestedCapacityMs
       sortStore.sortTracks()
     },
-    message: `Make ${payload!.label}`,
+    message: `Set capacity to ${payload!.label}`,
   }),
 }
 
