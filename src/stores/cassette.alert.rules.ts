@@ -76,10 +76,58 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
   }),
 }
 
+type ExpandCassettePayload = {
+  suggestedCapacityMs: number
+  label: string
+}
+
+const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
+  when: (cassette, sides) => {
+    const cassetteStore = useCassettesStore()
+
+    const possibleCapacitiesMs = cassetteStore.possibleLengthsMin.map(
+      m => m * 60_000
+    )
+
+    // total duration of both sides combined
+    const totalDuration = (sides[0]?.durationMs ?? 0) + (sides[1]?.durationMs ?? 0)
+
+    const requiredPerSide = totalDuration / 2
+
+    const requiredTotal = possibleCapacitiesMs.find(
+      total => total / 2 >= requiredPerSide
+    )
+
+    if (!requiredTotal || cassette.capacityMs >= requiredTotal)
+      return false
+
+    return {
+      suggestedCapacityMs: requiredTotal,
+      label: `${requiredTotal / 60_000} min`,
+    }
+  },
+
+  message: (_cassette, _sides, payload) =>
+    `Cassette too short. Needs at least ${payload!.label}.`,
+
+  priority: () => 8,
+
+  action: (cassette, _sides, payload) => ({
+    fn: () => {
+      const sortStore = useSortingStore()
+      cassette.capacityMs = payload!.suggestedCapacityMs
+      sortStore.sortTracks()
+    },
+    message: `Expand to ${payload!.label}`,
+  }),
+}
+
+
 
 export const CASSETTE_ALERT_RULES: AlertRule<any>[] = [
   emptyCassetteRule,
   emptySideARule,
   emptySideBRule,
   shorterCassetteRule,
+  expandCassetteRule,
 ]
