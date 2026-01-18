@@ -39,6 +39,8 @@ const selectedSortType = computed({
         <div class="text-body-1"><strong>Total Duration:</strong> {{ formatDuration(tracksStore.availableTracksTotalDuration) }}</div>
         <v-divider class="my-4" />
         <unavailable-tracks-list />
+        <v-divider class="my-4" />
+        <v-btn block color="secondary" :disabled="cassetteStore.alerts.length > 0">Upload Cassette</v-btn>
     </v-navigation-drawer>
 </template>
 
