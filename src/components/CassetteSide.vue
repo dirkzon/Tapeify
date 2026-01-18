@@ -74,7 +74,7 @@ function toggleAnchor(trackId: string) {
       cassetteId: props.cassetteId,
       trackId,
       sideIndex: props.sideIndex,
-      positionIndex: layout.value?.tracks.indexOf(trackId) ?? 0
+      positionIndex: layout.value?.trackIds.indexOf(trackId) ?? 0
     })
   }
 
@@ -83,7 +83,7 @@ function toggleAnchor(trackId: string) {
 
 const tracks = computed(() => {
   const output = []
-  for (const trackId of layout.value?.tracks || []) {
+  for (const trackId of layout.value?.trackIds || []) {
     if (trackId) {
       const track = tracksStore.GetTrackById(trackId)
       if (track) {
@@ -108,7 +108,7 @@ const durationChipColor = computed(() => {
     <v-list-subheader>
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
-    <draggable :list="layout?.tracks" group="tracks" item-key="id" animation="200" @change="onChanged">
+    <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged">
       <v-list-item v-for="track in tracks" :key="track.id" :value="track.id" active-class="text-secondary" class="py-2"
         handle=".drag-handle" @click="toggleAnchor(track.id)">
         <template v-slot:prepend>

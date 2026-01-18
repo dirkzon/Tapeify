@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { useTracksStore } from './tracks'
-import type { GetPlaylistsResponse, GetPlaylistTracksResponse, SearchResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
+import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksResponse, SearchResponse, UsersPlaylistsResponse } from '@/types/spotify/responses'
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
 import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
-import type { PlaylistSearchResult } from '@/types/tapeify/models'
+import type { Playlist, PlaylistSearchResult, Track } from '@/types/tapeify/models'
 import { useProfileStore } from './profile'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 
@@ -97,43 +97,33 @@ export const usePlaylistsStore = defineStore('playlists', {
         item_name: playlist.name,
       })
     },
+    async UploadNewPlaylist(name: string, description: string, isPublic: boolean): Promise<Playlist> {
+      const profileStore = useProfileStore()
+      const userId = profileStore.id
 
-    // async UploadNewPlaylist(name: string, description: string, is_public: boolean): Promise<Playlist> {
-    //   const profileStore = useProfileStore()
-    //   const userId = profileStore.id
+      const response = await apiClient.post<CreatePlaylistResponse>(`/users/${userId}/playlists`, {
+        name: name,
+        description: description,
+        public: isPublic
+      }, { headers: { "Content-Type": "application/json" } });
 
-    //   const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/users/' + userId + '/playlists')
 
-    //   if (name.length < 1 || name.length > 30) throw new Error('Name must be between 1 and 30 characters.')
-    //   if (description.length < 1 || description.length > 200) throw new Error('Description must be between 1 and 30 characters.')
-
-    //   const playlistDTO = await fetchWrapper.post<CreatePlaylistResponse>(url, {
-    //     headers: {
-    //      'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ 
-    //       name, 
-    //       description, 
-    //       public: is_public 
-    //     })
-    //   })
-
-    //   return ParsePlaylistDTO(playlistDTO)
-    // },
-    // async UploadTracksToPlaylists(playlist_id: string, track_uris: string[]) {
-    //   const url = new URL(import.meta.env.VITE_SPOTIFY_ENDPOINT + '/playlists/' + playlist_id + '/tracks')
-
-    //   if (track_uris.length > 100) throw new Error('Cannot upload more than 100 tracks to a playlist at once.')
-
-    //   return await fetchWrapper.post(url, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       uris: track_uris,
-    //       position: 0
-    //     })
-    //   })
-    // }
+      return ParsePlaylistDTO(response.data)
+    },
+    async UploadTracksToPlaylists(playlistId: string, trackUris: string[]) {
+      const chunkSize = 100;
+      let position = 0;
+      for (let i = 0; i < trackUris.length; i += chunkSize) {
+        const chunk = trackUris.slice(i, i + chunkSize);
+        await this._uploadTracks(playlistId, chunk, position);
+        position += chunk.length;
+      }
+    },
+    async _uploadTracks(playlistId: string, uris: string[], position: number) {
+      const body = { uris, position };
+      return await apiClient.post(`/playlists/${playlistId}/tracks`, body, {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
   }
 })

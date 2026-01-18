@@ -1,4 +1,4 @@
-import type { TapeSideLayout, Track } from "@/types/tapeify/models";
+import type { TapeSideLayout } from "@/types/tapeify/models";
 import { TapeSide } from "@/utils/sorting/tapeSideLayout";
 import { defineStore } from "pinia";
 import { useCassettesStore } from "./cassette";
@@ -49,7 +49,7 @@ export const useSortingStore = defineStore('sorting', {
       this.layout = sides.map(side => ({
         cassetteId: side.getCassetteId(),
         sideIndex: side.getSideIndex(),
-        tracks: side.toArray(),
+        trackIds: side.toArray(),
         durationMs: side.getUsedMs(),
       }))
     },

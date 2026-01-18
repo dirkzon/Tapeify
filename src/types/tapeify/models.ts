@@ -63,7 +63,7 @@ export interface Track {
 export interface TapeSideLayout {
   cassetteId: string
   sideIndex: number
-  tracks: Array<string | null>
+  trackIds: Array<string>
   durationMs: number
 }
 

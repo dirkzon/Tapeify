@@ -40,7 +40,7 @@ const selectedSortType = computed({
         <v-divider class="my-4" />
         <unavailable-tracks-list />
         <v-divider class="my-4" />
-        <v-btn block color="secondary" :disabled="cassetteStore.alerts.length > 0">Upload Cassette</v-btn>
+        <v-btn block color="secondary" :disabled="cassetteStore.alerts.length > 0" @click="cassetteStore.uploadCassette">Upload Cassette</v-btn>
     </v-navigation-drawer>
 </template>
 
