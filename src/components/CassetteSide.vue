@@ -88,9 +88,8 @@ const durationChipColor = computed(() => {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged">
-      <div v-for="id in layout?.trackIds" :key="id" :value="id">
-        <cassette-item :track-id="id" :clicked="() => toggleAnchor(id)" />
-      </div>
+      <cassette-item v-for="id in layout?.trackIds" :key="id" :value="id" :track-id="id"
+        :clicked="() => toggleAnchor(id)" />
     </draggable>
   </v-list>
 </template>
