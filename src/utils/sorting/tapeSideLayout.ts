@@ -7,7 +7,7 @@ export class TapeSide {
     private durationMs = 0
     private capacityMs: number
 
-    constructor(private cassette: Cassette, private sideIndex: number) { 
+    constructor(private cassette: Cassette, private sideIndex: number) {
         this.capacityMs = cassette.capacityMs / 2
     }
 
@@ -49,10 +49,12 @@ export class TapeSide {
     public getRemainingMs(): number { return Math.max(0, this.capacityMs - this.durationMs) }
     public getCassetteId(): string { return this.cassette.id }
     public getSideIndex(): number { return this.sideIndex }
-
-    public toArray(): Array<string | null> {
-        return Array.from({ length: this.maxIndex + 1 }, (_, i) =>
-            this.tracksMap[i] ? this.tracksMap[i].trackId : null
-        )
+    public toArray(): string[] {
+        const result: string[] = [];
+        for (let i = 0; i <= this.maxIndex; i++) {
+            const entry = this.tracksMap[i];
+            if (entry && entry.trackId != null) result.push(entry.trackId);
+        }
+        return result;
     }
 }

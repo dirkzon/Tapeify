@@ -8,6 +8,8 @@ import type {
 import { v4 as uuidv4 } from 'uuid'
 import { useSortingStore } from './sorting'
 import { CASSETTE_ALERT_RULES } from './cassette.alert.rules'
+import { usePlaylistsStore } from './playlists'
+import { useTracksStore } from './tracks'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
@@ -109,6 +111,22 @@ export const useCassettesStore = defineStore('cassettes', {
           action: rule.action?.(cassette, sides, payload),
           priority: rule.priority(cassette, sides, payload),
         })
+      }
+    },
+    async uploadCassette() {
+      const sortStore = useSortingStore()
+      const playlistStore = usePlaylistsStore()
+      const trackStore = useTracksStore()
+
+      for (const cassette of this.cassettes) {
+        const layouts = sortStore.getLayoutByCassetteId(cassette.id)
+
+        for (const layout of layouts) {
+          const trackUris = layout.trackIds.map(id => trackStore.GetTrackById(id)?.uri).filter(uri => uri !== undefined)
+
+          const playlist = await playlistStore.UploadNewPlaylist(`${cassette.name} side ${String.fromCharCode(65 + layout.sideIndex)}`, "Made with Tapeify", false)
+          await playlistStore.UploadTracksToPlaylists(playlist.id, trackUris)
+        }
       }
     }
   },
