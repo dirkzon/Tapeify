@@ -2,22 +2,21 @@
 import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
+import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const anchorStore = useAnchorsStore()
 const sortStore = useSortingStore()
+const trackStore = useTracksStore()
 
 const props = defineProps<{
   cassetteId: string,
   sideIndex: number
 }>()
 
-
 const layout = computed(() => sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex))
 const cassette = computed(() => cassetteStore.getCassetteById(props.cassetteId))
-
-const selectedItems = ref([])
 
 function onChanged(changeEvent: any) {
   const eventType = Object.keys(changeEvent)[0]
@@ -45,16 +44,6 @@ function onChanged(changeEvent: any) {
   sortStore.sortTracks()
 }
 
-// const selectedTracks = computed({
-//   get: () => {
-//     return anchorStore.anchors
-//       .filter(a => a.cassetteId === props.cassetteId && a.sideIndex === props.sideIndex)
-//       .map(a => a.trackId)
-//   },
-//   set: (_val: string[]) => {
-//   }
-// })
-
 function toggleAnchor(trackId: string, anchored: boolean) {
   if (anchored) {
     anchorStore.removeAnchor(trackId)
@@ -77,8 +66,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  {{ selectedItems }}
-  <v-list select-strategy="leaf" v-model:selected="selectedItems">
+  <v-list select-strategy="leaf" v-model:selected="trackStore.selectedTracks">
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
