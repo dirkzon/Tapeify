@@ -2,11 +2,9 @@
 import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
-import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
-const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 
 const props = defineProps<{
@@ -61,14 +59,8 @@ const selectedTracks = computed({
 })
 
 function toggleAnchor(trackId: string) {
-  const existing = anchorStore.anchors.find(
-    a => a.cassetteId === props.cassetteId &&
-      a.sideIndex === props.sideIndex &&
-      a.trackId === trackId
-  )
-
-  if (existing) {
-    anchorStore.anchors = anchorStore.anchors.filter(a => a !== existing)
+  if (anchorStore.isTrackAnchored(trackId)) {
+    anchorStore.removeAnchor(trackId)
   } else {
     anchorStore.anchorTrack({
       cassetteId: props.cassetteId,
@@ -80,19 +72,6 @@ function toggleAnchor(trackId: string) {
 
   sortStore.sortTracks()
 }
-
-const tracks = computed(() => {
-  const output = []
-  for (const trackId of layout.value?.trackIds || []) {
-    if (trackId) {
-      const track = tracksStore.GetTrackById(trackId)
-      if (track) {
-        output.push(track)
-      }
-    }
-  }
-  return output
-})
 
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
@@ -109,25 +88,9 @@ const durationChipColor = computed(() => {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged">
-      <v-list-item v-for="track in tracks" :key="track.id" :value="track.id" active-class="text-secondary" class="py-2"
-        handle=".drag-handle" @click="toggleAnchor(track.id)">
-        <template v-slot:prepend>
-          <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large">
-          </v-icon>
-          <v-avatar tile>
-            <v-img v-if="track.image" :src="track.image.href" />
-            <v-icon v-else icon="mdi-music" />
-          </v-avatar>
-        </template>
-        <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
-        <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join() }}</v-list-item-subtitle>
-        <template v-slot:append="{ isSelected }">
-          <div class="track-meta d-flex align-center">
-            <v-icon v-if="isSelected" size="16">mdi-lock</v-icon>
-            <div class="text-subtitle-1">{{ formatDuration(track.durationMs) }}</div>
-          </div>
-        </template>
-      </v-list-item>
+      <div v-for="id in layout?.trackIds" :key="id" :value="id">
+        <cassette-item :track-id="id" :clicked="() => toggleAnchor(id)" />
+      </div>
     </draggable>
   </v-list>
 </template>

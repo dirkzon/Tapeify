@@ -14,6 +14,7 @@ declare module 'vue' {
     AlbumList: typeof import('./components/AlbumList.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Cassette: typeof import('./components/Cassette.vue')['default']
+    CassetteItem: typeof import('./components/CassetteItem.vue')['default']
     CassetteSettingsDrawer: typeof import('./components/CassetteSettingsDrawer.vue')['default']
     CassetteSide: typeof import('./components/CassetteSide.vue')['default']
     Footer: typeof import('./components/Footer.vue')['default']
