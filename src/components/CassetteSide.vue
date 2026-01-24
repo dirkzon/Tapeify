@@ -17,6 +17,8 @@ const props = defineProps<{
 const layout = computed(() => sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex))
 const cassette = computed(() => cassetteStore.getCassetteById(props.cassetteId))
 
+const selectedItems = ref([])
+
 function onChanged(changeEvent: any) {
   const eventType = Object.keys(changeEvent)[0]
   switch (eventType) {
@@ -75,7 +77,8 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list select-strategy="leaf">
+  {{ selectedItems }}
+  <v-list select-strategy="leaf" v-model:selected="selectedItems">
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
