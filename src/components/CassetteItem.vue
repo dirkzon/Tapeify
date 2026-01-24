@@ -5,7 +5,7 @@ import { formatDuration } from '@/utils/duration/durationHelper';
 
 const props = defineProps<{
     trackId: string,
-    onLockClick: Function
+    onLockClick: (anchored: boolean) => void
 }>()
 
 const tracksStore = useTracksStore()
@@ -27,8 +27,7 @@ const anchorIcon = computed(() => {
         <template v-slot:default="{ isHovering, props }">
             <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props">
                 <template v-slot:prepend>
-                    <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large">
-                    </v-icon>
+                    <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                     <v-avatar tile>
                         <v-img v-if="track?.image" :src="track.image.href" />
                         <v-icon v-else icon="mdi-music" />
@@ -39,7 +38,7 @@ const anchorIcon = computed(() => {
                 <template v-slot:append>
                     <div class="track-meta d-flex align-center">
                         <v-btn v-if="isHovering || anchored" :icon="anchorIcon" size="x-small" variant="text"
-                            @click="onLockClick" />
+                            @click="onLockClick(anchored)" />
                         <div class="text-subtitle-1">{{ formatDuration(track?.durationMs) }}</div>
                     </div>
                 </template>

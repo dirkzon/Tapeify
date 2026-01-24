@@ -6,21 +6,16 @@ import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const anchorStore = useAnchorsStore()
+const sortStore = useSortingStore()
 
 const props = defineProps<{
   cassetteId: string,
   sideIndex: number
 }>()
 
-const sortStore = useSortingStore()
 
-const layout = computed(() => {
-  return sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex)
-})
-
-const cassette = computed(() => {
-  return cassetteStore.getCassetteById(props.cassetteId)
-})
+const layout = computed(() => sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex))
+const cassette = computed(() => cassetteStore.getCassetteById(props.cassetteId))
 
 function onChanged(changeEvent: any) {
   const eventType = Object.keys(changeEvent)[0]
@@ -48,18 +43,18 @@ function onChanged(changeEvent: any) {
   sortStore.sortTracks()
 }
 
-const selectedTracks = computed({
-  get: () => {
-    return anchorStore.anchors
-      .filter(a => a.cassetteId === props.cassetteId && a.sideIndex === props.sideIndex)
-      .map(a => a.trackId)
-  },
-  set: (_val: string[]) => {
-  }
-})
+// const selectedTracks = computed({
+//   get: () => {
+//     return anchorStore.anchors
+//       .filter(a => a.cassetteId === props.cassetteId && a.sideIndex === props.sideIndex)
+//       .map(a => a.trackId)
+//   },
+//   set: (_val: string[]) => {
+//   }
+// })
 
-function toggleAnchor(trackId: string) {
-  if (anchorStore.isTrackAnchored(trackId)) {
+function toggleAnchor(trackId: string, anchored: boolean) {
+  if (anchored) {
     anchorStore.removeAnchor(trackId)
   } else {
     anchorStore.anchorTrack({
@@ -80,7 +75,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list select-strategy="leaf" v-model:selected="selectedTracks">
+  <v-list select-strategy="leaf">
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
@@ -89,8 +84,8 @@ const durationChipColor = computed(() => {
     </v-list-subheader>
     <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged"
       handle=".drag-handle">
-      <cassette-item v-for="id in layout?.trackIds" :key="id" :value="id" :track-id="id"
-        :clicked="() => toggleAnchor(id)" />
+      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id"
+        :onLockClick="(anchored) => toggleAnchor(id, anchored)" />
     </draggable>
   </v-list>
 </template>
