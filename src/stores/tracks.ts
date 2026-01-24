@@ -5,6 +5,7 @@ export const useTracksStore = defineStore('tracks', {
   state: () => ({
     _masterTrackList: [] as Track[],
     unavailableTrackIds: [] as string[],
+    selectedTracks: [],
   }),
   getters: {
     availableTracksTotalDuration(): number {

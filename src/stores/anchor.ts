@@ -7,8 +7,10 @@ export const useAnchorsStore = defineStore('anchors', {
   }),
 
   getters: {
+    isTrackAnchored: (state) => (trackId: string): boolean => {
+      return state.anchors.some(anchor => anchor.trackId == trackId)
+    }
   },
-
   actions: {
     anchorTrack(anchor: Anchor) {
       if (this.anchors.find(a => a.trackId === anchor.trackId)) {
@@ -26,9 +28,6 @@ export const useAnchorsStore = defineStore('anchors', {
     },
     removeAnchorsByTapeSide(cassetteId: string, sideIndex: number) {
       this.anchors = this.anchors.filter(anchor => !(anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex))
-    },
-    isTrackAnchored(trackId: string): boolean {
-      return this.anchors.some(anchor => anchor.trackId === trackId);
     },
   }
 })
