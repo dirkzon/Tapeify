@@ -81,13 +81,14 @@ const durationChipColor = computed(() => {
 
 <template>
   <v-list select-strategy="leaf" v-model:selected="selectedTracks">
-    <v-chip small outlined :color="durationChipColor">
+    <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
     <v-list-subheader>
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
-    <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged">
+    <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged"
+      handle=".drag-handle">
       <cassette-item v-for="id in layout?.trackIds" :key="id" :value="id" :track-id="id"
         :clicked="() => toggleAnchor(id)" />
     </draggable>
@@ -95,34 +96,10 @@ const durationChipColor = computed(() => {
 </template>
 
 <style scoped>
-.item-with-handle {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  margin: 5px 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
 .drag-handle {
   cursor: grab;
   margin-right: 10px;
   color: #999;
   user-select: none;
-}
-
-.drag-handle:active {
-  cursor: grabbing;
-}
-
-.item-content {
-  flex: 1;
-}
-
-.track-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 </style>

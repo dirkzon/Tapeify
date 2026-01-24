@@ -32,3 +32,17 @@ const track = computed(() => tracksStore.GetTrackById(props.trackId))
         </template>
     </v-list-item>
 </template>
+
+
+<style scoped>
+.drag-handle {
+  cursor: grab;
+  margin-right: 10px;
+  color: #999;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+</style>
