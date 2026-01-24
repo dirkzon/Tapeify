@@ -26,7 +26,8 @@ const anchorIcon = computed(() => {
     <div>
         <v-hover>
             <template v-slot:default="{ isHovering, props }">
-                <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props" :value="trackId">
+                <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props"
+                    :value="trackId">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                         <v-avatar tile>
@@ -41,7 +42,7 @@ const anchorIcon = computed(() => {
                     <template v-slot:append>
                         <div class="track-meta d-flex align-center">
                             <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="x-small" variant="text"
-                                @click="onLockClick(isAnchored)" />
+                                @click.stop="onLockClick(isAnchored)" />
                             <div class="text-subtitle-1">{{ formatDuration(track?.durationMs) }}</div>
                         </div>
                     </template>
