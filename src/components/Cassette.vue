@@ -55,13 +55,14 @@ const name = computed<string>({
   }
 })
 
+const cassetteEl = ref<HTMLElement | null>(null)
 function include() {
-  return [document.querySelector('.included')]
+  return cassetteEl.value ? [cassetteEl.value] : []
 }
 </script>
 
 <template>
-  <v-card class="cassette-card" v-click-outside="{
+  <v-card class="cassette-card" ref="cassetteEl" v-click-outside="{
     handler: trackStore.ClearSelectedTracks,
     include
   }">
@@ -82,11 +83,11 @@ function include() {
         </v-btn>
       </template>
     </v-toolbar>
-    <v-alert v-if="topAlert" type="warning"
-      variant="outlined">
+    <v-alert v-if="topAlert" type="warning" variant="outlined">
       <div class="d-flex justify-space-between align-center w-100">
         <span>{{ topAlert.message }}</span>
-        <a v-if="topAlert.action" class="text-decoration-underline cursor-pointer" @click="() => topAlert!.action!.fn()">
+        <a v-if="topAlert.action" class="text-decoration-underline cursor-pointer"
+          @click="() => topAlert!.action!.fn()">
           {{ topAlert.action.message }}
         </a>
       </div>
