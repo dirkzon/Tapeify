@@ -24,7 +24,7 @@ const anchorIcon = computed(() => {
 
 <template>
     <div>
-        <v-hover>
+        <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
                 <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props"
                     :value="trackId">
