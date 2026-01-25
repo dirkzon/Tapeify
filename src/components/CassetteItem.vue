@@ -41,7 +41,7 @@ const anchorIcon = computed(() => {
                     </v-list-item-subtitle>
                     <template v-slot:append>
                         <div class="track-meta d-flex align-center">
-                            <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="x-small" variant="text"
+                            <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
                                 @click.stop="onLockClick(isAnchored)" />
                             <div class="text-subtitle-1">{{ formatDuration(track?.durationMs) }}</div>
                         </div>
