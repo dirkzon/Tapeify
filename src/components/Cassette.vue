@@ -3,10 +3,12 @@ import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
 import { useSortingStore } from '@/stores/sorting';
 import { useAnchorsStore } from '@/stores/anchor';
+import { useTracksStore } from '@/stores/tracks';
 
 const cassetteStore = useCassettesStore()
 const sortingStore = useSortingStore();
 const anchorsStore = useAnchorsStore();
+const trackStore = useTracksStore();
 
 const props = defineProps<{
   cassetteId: string
@@ -52,10 +54,17 @@ const name = computed<string>({
     cassetteStore.updateName(cassette.value.id, val)
   }
 })
+
+function include() {
+  return [document.querySelector('.included')]
+}
 </script>
 
 <template>
-  <v-card class="cassette-card">
+  <v-card class="cassette-card" v-click-outside="{
+    handler: trackStore.ClearSelectedTracks,
+    include
+  }">
     <v-toolbar color="primary">
       <template v-slot:prepend>
         <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" dense hide-details class="ma-0"

@@ -66,7 +66,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list select-strategy="leaf" v-model:selected="trackStore.selectedTracks">
+  <v-list :select-strategy="undefined" v-model:selected="trackStore.selectedTracks">
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
@@ -76,7 +76,7 @@ const durationChipColor = computed(() => {
     <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged"
       handle=".drag-handle">
       <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id"
-        :onLockClick="(anchored) => toggleAnchor(id, anchored)" />
+        :onLockClick="(anchored) => toggleAnchor(id, anchored)"/>
     </draggable>
   </v-list>
 </template>

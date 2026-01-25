@@ -39,5 +39,8 @@ export const useTracksStore = defineStore('tracks', {
     MarkTrackAsAvailable(trackId: string) {
       this.unavailableTrackIds = this.unavailableTrackIds.filter(id => id !== trackId)
     },
+    ClearSelectedTracks() {
+      this.selectedTracks = []
+    }
   }
 })
