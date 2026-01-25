@@ -80,12 +80,3 @@ const durationChipColor = computed(() => {
     </draggable>
   </v-list>
 </template>
-
-<style scoped>
-.drag-handle {
-  cursor: grab;
-  margin-right: 10px;
-  color: #999;
-  user-select: none;
-}
-</style>
