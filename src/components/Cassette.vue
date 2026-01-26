@@ -54,18 +54,10 @@ const name = computed<string>({
     cassetteStore.updateName(cassette.value.id, val)
   }
 })
-
-const cassetteEl = ref<HTMLElement | null>(null)
-function include() {
-  return cassetteEl.value ? [cassetteEl.value] : []
-}
 </script>
 
 <template>
-  <v-card class="cassette-card" ref="cassetteEl" v-click-outside="{
-    handler: trackStore.ClearSelectedTracks,
-    include
-  }">
+  <v-card class="cassette-card">
     <v-toolbar color="primary">
       <template v-slot:prepend>
         <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" dense hide-details class="ma-0"

@@ -34,14 +34,24 @@ onMounted(async () => {
   }
   sortStore.sortTracks()
 })
+
+function onGlobalClick(e: MouseEvent) {
+  const target = e.target as HTMLElement | null
+  if (!target) return
+  if (target.closest('.included')) return
+  tracksStore.ClearSelectedTracks()
+}
+
+onMounted(() => document.addEventListener('click', onGlobalClick))
+onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
   <v-layout>
     <v-main class="d-flex align-center justify-center">
       <v-row justify="center" class="pa-15">
-        <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
-          <cassette :cassetteId="cassette.id" />
+        <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6" ref="cassetteRefs">
+          <cassette :cassetteId="cassette.id" class="included" />
         </v-col>
       </v-row>
     </v-main>
