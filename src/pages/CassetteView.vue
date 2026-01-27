@@ -50,7 +50,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
   <v-layout>
     <v-main class="d-flex align-center justify-center">
       <v-row justify="center" class="pa-15">
-        <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6" ref="cassetteRefs">
+        <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
           <cassette :cassetteId="cassette.id" class="included" />
         </v-col>
       </v-row>
