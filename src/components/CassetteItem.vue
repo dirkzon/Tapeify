@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
+import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
@@ -10,6 +11,7 @@ const props = defineProps<{
 
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
+const sortStore = useSortingStore()
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
@@ -20,6 +22,23 @@ const anchorIcon = computed(() => {
         return "mdi-lock-open"
     }
 })
+
+function bulkSelect() {
+    if (!tracksStore.lastSelectedTrackId) return
+    const bulk = sortStore.getTracksIdsBetweenTracks(tracksStore.lastSelectedTrackId, props.trackId)
+    tracksStore.selectedTracks = bulk
+    console.log(tracksStore.selectedTracks)
+}
+
+function selectTrack() {
+    tracksStore.lastSelectedTrackId = props.trackId
+    if (tracksStore.selectedTracks.includes(props.trackId)) {
+        console.log("containes")
+    } else {
+        tracksStore.selectedTracks = [props.trackId]
+        console.log(tracksStore.selectedTracks)
+    }
+}
 </script>
 
 <template>
@@ -27,7 +46,7 @@ const anchorIcon = computed(() => {
         <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
                 <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props"
-                    :value="trackId">
+                    :value="trackId" @click.shift="bulkSelect" @click="selectTrack">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                         <v-avatar tile>
