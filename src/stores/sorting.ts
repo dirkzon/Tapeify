@@ -22,19 +22,6 @@ export const useSortingStore = defineStore('sorting', {
         return state.layout.find(side => side.cassetteId === cassetteId && side.sideIndex === sideIndex)
       }
     },
-    getTracksIdsBetweenTracks: (state) => {
-      return (start: string, end: string): string[] => {
-        const allTracks = state.layout.flatMap(l => l.trackIds)
-
-        const startIndex = allTracks.indexOf(start)
-        const endIndex = allTracks.indexOf(end)
-
-        if (startIndex === -1 || endIndex === -1) return []
-        if (startIndex > endIndex) return []
-
-        return allTracks.slice(startIndex, endIndex + 1)
-      }
-    }
   },
   actions: {
     sortTracks() {
@@ -76,6 +63,19 @@ export const useSortingStore = defineStore('sorting', {
 
     getAvailableSorters() {
       return trackSorterRegistry.list();
+    },
+    getTracksRange(a: string, b: string): string[] {
+      const allTracks = this.layout.flatMap(l => l.trackIds);
+
+      const startIndex = allTracks.indexOf(a);
+      const endIndex = allTracks.indexOf(b);
+
+      if (startIndex === -1 || endIndex === -1) return [];
+
+      const rangeStart = Math.min(startIndex, endIndex);
+      const rangeEnd = Math.max(startIndex, endIndex);
+
+      return allTracks.slice(rangeStart, rangeEnd + 1);
     }
   }
 })

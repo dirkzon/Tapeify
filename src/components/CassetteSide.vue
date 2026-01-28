@@ -66,7 +66,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list :selected="trackStore.selectedTracks" tabindex="0" select-strategy="classic">
+  <v-list :selected="trackStore.selectedTracks" select-strategy="leaf"> 
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>

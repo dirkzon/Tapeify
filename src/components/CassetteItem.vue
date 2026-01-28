@@ -23,21 +23,22 @@ const anchorIcon = computed(() => {
     }
 })
 
-function bulkSelect() {
-    if (!tracksStore.lastSelectedTrackId) return
-    const bulk = sortStore.getTracksIdsBetweenTracks(tracksStore.lastSelectedTrackId, props.trackId)
-    tracksStore.selectedTracks = bulk
-    console.log(tracksStore.selectedTracks)
-}
-
-function selectTrack() {
-    tracksStore.lastSelectedTrackId = props.trackId
-    if (tracksStore.selectedTracks.includes(props.trackId)) {
-        console.log("containes")
+function selectTrack(e: MouseEvent | KeyboardEvent) {
+    if (e.shiftKey) {
+        if (!tracksStore.lastSelectedTrackId) return;
+        const bulk = sortStore.getTracksRange(tracksStore.lastSelectedTrackId, props.trackId);
+        tracksStore.selectedTracks = Array.from(new Set([...tracksStore.selectedTracks, ...bulk]));
     } else {
-        tracksStore.selectedTracks = [props.trackId]
-        console.log(tracksStore.selectedTracks)
+        if (e.ctrlKey || e.metaKey) {
+            if (!tracksStore.selectedTracks.includes(props.trackId)) {
+                tracksStore.selectedTracks.push(props.trackId);
+            }
+        } else {
+            tracksStore.selectedTracks = [props.trackId];
+        }
     }
+
+    tracksStore.lastSelectedTrackId = props.trackId;
 }
 </script>
 
@@ -45,8 +46,8 @@ function selectTrack() {
     <div>
         <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
-                <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props" 
-                    :value="trackId" @click.shift="bulkSelect" @click="selectTrack">
+                <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props"
+                    :value="trackId" @click="selectTrack">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                         <v-avatar tile>
@@ -85,8 +86,11 @@ function selectTrack() {
 }
 
 .no-select {
-  user-select: none;           /* Prevent text selection */
-  -webkit-user-select: none;   /* For Safari */
-  -moz-user-select: none;      /* For Firefox */
+    user-select: none;
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    /* For Safari */
+    -moz-user-select: none;
+    /* For Firefox */
 }
 </style>
