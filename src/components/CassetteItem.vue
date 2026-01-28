@@ -45,7 +45,7 @@ function selectTrack() {
     <div>
         <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
-                <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props"
+                <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props" 
                     :value="trackId" @click.shift="bulkSelect" @click="selectTrack">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
@@ -82,5 +82,11 @@ function selectTrack() {
 
 .drag-handle:active {
     cursor: grabbing;
+}
+
+.no-select {
+  user-select: none;           /* Prevent text selection */
+  -webkit-user-select: none;   /* For Safari */
+  -moz-user-select: none;      /* For Firefox */
 }
 </style>
