@@ -63,22 +63,20 @@ const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
   return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'error' : 'secondary'
 })
-
-const tracks = computed(() => layout.value?.trackIds.map((id) => trackStore.GetTrackById(id)).filter(t => t !== undefined).map((t) => {
-  return {
-    name: t.name,
-    id: t.id
-  }
-}))
 </script>
 
 <template>
-  <v-data-table :items="tracks" hide-default-header hide-default-footer item-key="id">
-    <template #body="data">
-      <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged">
-        <v-data-table-row v-for="(item, index) in data.internalItems" :key="`row.${index}`" :item="item">
-        </v-data-table-row>
-      </draggable>
-    </template>
-  </v-data-table>
+  <v-list :selected="trackStore.selectedTracks" select-strategy="leaf"> 
+    <v-chip small variant="tonal" :color="durationChipColor">
+      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
+    </v-chip>
+    <v-list-subheader>
+      Side {{ String.fromCharCode(65 + sideIndex) }}
+    </v-list-subheader>
+    <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged"
+      handle=".drag-handle">
+      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id"
+        :onLockClick="(anchored) => toggleAnchor(id, anchored)" />
+    </draggable>
+  </v-list>
 </template>
