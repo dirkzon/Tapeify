@@ -47,7 +47,7 @@ function selectTrack(e: MouseEvent | KeyboardEvent) {
         <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
                 <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props"
-                    :value="trackId" @click="selectTrack">
+                    :value="trackId" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                         <v-avatar tile>
@@ -63,7 +63,7 @@ function selectTrack(e: MouseEvent | KeyboardEvent) {
                         <div class="track-meta d-flex align-center">
                             <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
                                 @click.stop="onLockClick(isAnchored)" />
-                            <div class="text-subtitle-1">{{ formatDuration(track?.durationMs) }}</div>
+                            <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
                         </div>
                     </template>
                 </v-list-item>
