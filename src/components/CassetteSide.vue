@@ -2,13 +2,11 @@
 import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
-import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const anchorStore = useAnchorsStore()
 const sortStore = useSortingStore()
-const trackStore = useTracksStore()
 
 const props = defineProps<{
   cassetteId: string,
@@ -66,7 +64,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list select-strategy="leaf" v-model:selected="trackStore.selectedTracks">
+  <v-list>
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>

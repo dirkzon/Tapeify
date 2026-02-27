@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
+import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
@@ -10,6 +11,7 @@ const props = defineProps<{
 
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
+const sortStore = useSortingStore()
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
@@ -20,14 +22,32 @@ const anchorIcon = computed(() => {
         return "mdi-lock-open"
     }
 })
+
+function selectTrack(e: MouseEvent | KeyboardEvent) {
+    if (e.shiftKey) {
+        if (!tracksStore.lastSelectedTrackId) return;
+        const bulk = sortStore.getTracksRange(tracksStore.lastSelectedTrackId, props.trackId);
+        tracksStore.selectedTracks = Array.from(new Set([...tracksStore.selectedTracks, ...bulk]));
+    } else {
+        if (e.ctrlKey || e.metaKey) {
+            if (!tracksStore.selectedTracks.includes(props.trackId)) {
+                tracksStore.selectedTracks.push(props.trackId);
+            }
+        } else {
+            tracksStore.selectedTracks = [props.trackId];
+        }
+    }
+
+    tracksStore.lastSelectedTrackId = props.trackId;
+}
 </script>
 
 <template>
     <div>
         <v-hover :key="Number(isAnchored)">
             <template v-slot:default="{ isHovering, props }">
-                <v-list-item active-class="text-secondary" class="py-2" handle=".drag-handle" v-bind="props"
-                    :value="trackId">
+                <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props"
+                    :value="trackId" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
                         <v-avatar tile>
@@ -43,7 +63,7 @@ const anchorIcon = computed(() => {
                         <div class="track-meta d-flex align-center">
                             <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
                                 @click.stop="onLockClick(isAnchored)" />
-                            <div class="text-subtitle-1">{{ formatDuration(track?.durationMs) }}</div>
+                            <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
                         </div>
                     </template>
                 </v-list-item>
@@ -63,5 +83,14 @@ const anchorIcon = computed(() => {
 
 .drag-handle:active {
     cursor: grabbing;
+}
+
+.no-select {
+    user-select: none;
+    /* Prevent text selection */
+    -webkit-user-select: none;
+    /* For Safari */
+    -moz-user-select: none;
+    /* For Firefox */
 }
 </style>

@@ -3,10 +3,12 @@ import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
 import { useSortingStore } from '@/stores/sorting';
 import { useAnchorsStore } from '@/stores/anchor';
+import { useTracksStore } from '@/stores/tracks';
 
 const cassetteStore = useCassettesStore()
 const sortingStore = useSortingStore();
 const anchorsStore = useAnchorsStore();
+const trackStore = useTracksStore();
 
 const props = defineProps<{
   cassetteId: string
@@ -73,11 +75,11 @@ const name = computed<string>({
         </v-btn>
       </template>
     </v-toolbar>
-    <v-alert v-if="topAlert" type="warning"
-      variant="outlined">
+    <v-alert v-if="topAlert" type="warning" variant="outlined">
       <div class="d-flex justify-space-between align-center w-100">
         <span>{{ topAlert.message }}</span>
-        <a v-if="topAlert.action" class="text-decoration-underline cursor-pointer" @click="() => topAlert!.action!.fn()">
+        <a v-if="topAlert.action" class="text-decoration-underline cursor-pointer"
+          @click="() => topAlert!.action!.fn()">
           {{ topAlert.action.message }}
         </a>
       </div>
