@@ -48,23 +48,23 @@ function bulkUnanchor() {
 <template>
     <v-app-bar v-if="showBar" class="included">
         <template v-slot:append>
-            <v-btn icon @click="bulkUnanchor" :disabled="!multipleSelected">
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">mdi-lock-open-remove</v-icon>
-                    </template>
-                    <span>Unanchor (Ctrl + U)</span>
-                </v-tooltip>
-            </v-btn>
 
-            <v-btn icon @click="bulkAnchor" :disabled="!multipleSelected" class="ml-4">
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">mdi-lock-plus</v-icon>
-                    </template>
-                    <span>Anchor (Ctrl + L)</span>
-                </v-tooltip>
-            </v-btn>
+           <v-tooltip text="bulk unanchor (Ctrl + U)" location="bottom">
+                <template #activator="{ props }">
+                    <v-btn v-bind="props" icon @click="bulkUnanchor" :disabled="!multipleSelected">
+                        <v-icon>mdi-lock-open-remove</v-icon>
+                    </v-btn>
+                </template>
+            </v-tooltip>
+
+            <v-tooltip text="Bulk anchor (Ctrl + L)" location="bottom">
+                <template #activator="{ props }">
+                    <v-btn v-bind="props" icon class="ml-4" @click="bulkAnchor" :disabled="!multipleSelected">
+                        <v-icon>mdi-lock-plus</v-icon>
+                    </v-btn>
+                </template>
+            </v-tooltip>
+
         </template>
     </v-app-bar>
 </template>
