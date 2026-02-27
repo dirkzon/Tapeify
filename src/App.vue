@@ -5,6 +5,7 @@
 <template>
   <v-app>
     <cassette-settings-drawer />
+    <cassette-actions-bar />
     <v-main>
       <router-view />
     </v-main>

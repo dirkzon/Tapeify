@@ -76,6 +76,19 @@ export const useSortingStore = defineStore('sorting', {
       const rangeEnd = Math.max(startIndex, endIndex);
 
       return allTracks.slice(rangeStart, rangeEnd + 1);
+    },
+    getTrackLayout(trackId: string): { cassetteId: string, sideIndex: number, position: number } | null {
+      for (const side of this.layout) {
+        const index = side.trackIds.indexOf(trackId);
+        if (index !== -1) {
+          return {
+            cassetteId: side.cassetteId,
+            sideIndex: side.sideIndex,
+            position: index,
+          };
+        }
+      }
+      return null;
     }
   }
 })

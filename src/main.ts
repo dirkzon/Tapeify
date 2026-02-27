@@ -23,6 +23,7 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import AppFooter from './components/AppFooter.vue'
 import UnavailableTracksList from './components/UnavailableTracksList.vue'
 import CassetteItem from './components/CassetteItem.vue'
+import CassetteActionsBar from './components/CassetteActionsBar.vue'
 
 // Composables
 import { createApp } from 'vue'
@@ -43,5 +44,6 @@ app.component('cassette-settings-drawer', CassetteSettingsDrawer)
 app.component('app-footer', AppFooter)
 app.component('unavailable-tracks-list', UnavailableTracksList)
 app.component('cassette-item', CassetteItem)
+app.component('cassette-actions-bar', CassetteActionsBar)
 
 app.mount('#app')
