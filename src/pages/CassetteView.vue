@@ -6,12 +6,28 @@ import { usePlaylistsStore } from '@/stores/playlists';
 
 import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
+import { useHotkey } from 'vuetify/dist/vuetify.js';
 
 const sortStore = useSortingStore()
 const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
+
+useHotkey('ctrl+a', () => {
+  const lastSelectedTrackId = tracksStore.lastSelectedTrackId
+  if (lastSelectedTrackId) {
+    const lastSelectedTrackLayout = sortStore.getTrackLayout(lastSelectedTrackId)
+    if (lastSelectedTrackLayout) {
+      const trackIdsOnSameSide = sortStore.getLayoutbyCassetteAndSide(lastSelectedTrackLayout.cassetteId, lastSelectedTrackLayout.sideIndex)
+      if (trackIdsOnSameSide) {
+        for (const trackId of trackIdsOnSameSide.trackIds) {
+          tracksStore.selectedTracks.push(trackId)
+        }
+      }
+    }
+  }
+})
 
 onMounted(async () => {
   cassetteStore.initAlerts()
@@ -40,6 +56,7 @@ function onGlobalClick(e: MouseEvent) {
   if (!target) return
   if (target.closest('.included')) return
   tracksStore.ClearSelectedTracks()
+  tracksStore.lastSelectedTrackId = undefined
 }
 
 onMounted(() => document.addEventListener('click', onGlobalClick))
