@@ -2,13 +2,14 @@
 import router from '@/router';
 import type { Playlist } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
+import { VInfiniteScroll } from 'vuetify/components';
 
 const props = defineProps<{
   playlists: Playlist[]
   load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
 }>()
 
-const infiniteScrollRef = useTemplateRef('playlistScroll')
+const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('playlistScroll')
 
 function SelectItem(id: string) {
   router.push({

@@ -18,8 +18,6 @@ declare module 'vue' {
     CassetteItem: typeof import('./components/CassetteItem.vue')['default']
     CassetteSettingsDrawer: typeof import('./components/CassetteSettingsDrawer.vue')['default']
     CassetteSide: typeof import('./components/CassetteSide.vue')['default']
-    Footer: typeof import('./components/Footer.vue')['default']
-    ListLoader: typeof import('./components/ListLoader.vue')['default']
     PlaylistList: typeof import('./components/PlaylistList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -27,7 +25,6 @@ declare module 'vue' {
     SearchPlaylistsTab: typeof import('./components/SearchPlaylistsTab.vue')['default']
     TrackItem: typeof import('./components/TrackItem.vue')['default']
     UnavailableTracksList: typeof import('./components/UnavailableTracksList.vue')['default']
-    UnusedTracksList: typeof import('./components/UnusedTracksList.vue')['default']
     UserPlaylistsTab: typeof import('./components/UserPlaylistsTab.vue')['default']
   }
 }
