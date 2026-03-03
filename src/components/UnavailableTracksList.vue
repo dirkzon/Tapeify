@@ -4,7 +4,6 @@ import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 
 const tracksStore = useTracksStore()
-const sortingStore = useSortingStore()
 const anchorsStore = useAnchorsStore()
 
 function onChanged(changeEvent: any) {
@@ -24,16 +23,6 @@ function onChanged(changeEvent: any) {
             break
     }
 }
-
-const unavailableTracks = computed({
-    get: () => tracksStore.unavailableTracks,
-    set: () => { }
-})
-
-function trackClicked(trackId: string) {
-    tracksStore.MarkTrackAsAvailable(trackId)
-    sortingStore.sortTracks()
-}
 </script>
 
 <template>
@@ -44,22 +33,7 @@ function trackClicked(trackId: string) {
             </v-list-subheader>
             <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
                 @change="onChanged" :sort="false" class="drag-container">
-                <v-list-item v-for="track in unavailableTracks" :key="track.id" :value="track.id"
-                    v-on:click="trackClicked(track.id)" class="pa-1">
-                    <template v-slot:prepend>
-                        <v-icon class="drag-handle" icon="mdi-drag-vertical" />
-                        <v-avatar tile>
-                            <v-img v-if="track.image" :src="track.image.href" />
-                            <v-icon v-else icon="mdi-music" />
-                        </v-avatar>
-                    </template>
-                    <v-list-item-title :title="track.name">{{ track.name }}</v-list-item-title>
-                    <v-list-item-subtitle :title="track.artists.join()">{{ track.artists.join()
-                        }}</v-list-item-subtitle>
-                    <template v-slot:append>
-                        <v-icon icon="mdi-restore" />
-                    </template>
-                </v-list-item>
+                <unavailable-cassette-item v-for="trackId in tracksStore.unavailableTrackIds" :key="trackId" :track-id="trackId"/>
             </draggable>
         </v-list>
     </v-sheet>
