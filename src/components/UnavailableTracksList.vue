@@ -4,7 +4,6 @@ import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 
 const tracksStore = useTracksStore()
-const sortingStore = useSortingStore()
 const anchorsStore = useAnchorsStore()
 
 function onChanged(changeEvent: any) {
@@ -24,11 +23,6 @@ function onChanged(changeEvent: any) {
             break
     }
 }
-
-const unavailableTracks = computed({
-    get: () => tracksStore.unavailableTracks,
-    set: () => { }
-})
 </script>
 
 <template>
@@ -39,7 +33,7 @@ const unavailableTracks = computed({
             </v-list-subheader>
             <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
                 @change="onChanged" :sort="false" class="drag-container">
-                <unavailable-cassette-item v-for="track in unavailableTracks" :key="track.id" :track-id="track.id"/>
+                <unavailable-cassette-item v-for="trackId in tracksStore.unavailableTrackIds" :key="trackId" :track-id="trackId"/>
             </draggable>
         </v-list>
     </v-sheet>
