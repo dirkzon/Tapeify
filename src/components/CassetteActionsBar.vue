@@ -53,7 +53,7 @@ const selectedSortType = computed({
 <template>
   <v-app-bar v-if="showBar" class="included pa-1">
     <template v-slot:prepend>
-      <v-select v-model="selectedSortType" :items="sortStore.getAvailableSorters()" item-value="type"
+      <v-select v-model="selectedSortType" :items="sortStore.getAvailableSorters()" item-value="type" density="compact"
         label="Sorting Algorithm" item-title="name" hide-details min-width="200" variant="outlined">
         <template v-slot:item="{ props: itemProps, item }">
           <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name" />
