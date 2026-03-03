@@ -24,6 +24,7 @@ import AppFooter from './components/AppFooter.vue'
 import UnavailableTracksList from './components/UnavailableTracksList.vue'
 import CassetteItem from './components/CassetteItem.vue'
 import CassetteActionsBar from './components/CassetteActionsBar.vue'
+import UnavailableCassetteItem from './components/UnavailableCassetteItem.vue'
 
 // Composables
 import { createApp } from 'vue'
@@ -44,6 +45,7 @@ app.component('cassette-info-drawer', CassetteInfoDrawer)
 app.component('app-footer', AppFooter)
 app.component('unavailable-tracks-list', UnavailableTracksList)
 app.component('cassette-item', CassetteItem)
+app.component('unavailable-cassette-item', UnavailableCassetteItem)
 app.component('cassette-actions-bar', CassetteActionsBar)
 
 app.mount('#app')

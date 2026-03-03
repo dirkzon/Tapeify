@@ -26,6 +26,7 @@ declare module 'vue' {
     SearchAlbumsTab: typeof import('./components/SearchAlbumsTab.vue')['default']
     SearchPlaylistsTab: typeof import('./components/SearchPlaylistsTab.vue')['default']
     TrackItem: typeof import('./components/TrackItem.vue')['default']
+    UnavailableCassetteItem: typeof import('./components/UnavailableCassetteItem.vue')['default']
     UnavailableTracksList: typeof import('./components/UnavailableTracksList.vue')['default']
     UserPlaylistsTab: typeof import('./components/UserPlaylistsTab.vue')['default']
   }
