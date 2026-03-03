@@ -50,7 +50,7 @@ function selectTrack(e: MouseEvent | KeyboardEvent) {
                     :value="trackId" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
                     <template v-slot:prepend>
                         <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
-                        <v-avatar tile>
+                        <v-avatar class="rounded-sm">
                             <v-img v-if="track?.image" :src="track.image.href" />
                             <v-icon v-else icon="mdi-music" />
                         </v-avatar>
