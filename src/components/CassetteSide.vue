@@ -42,21 +42,6 @@ function onChanged(changeEvent: any) {
   sortStore.sortTracks()
 }
 
-function toggleAnchor(trackId: string, anchored: boolean) {
-  if (anchored) {
-    anchorStore.removeAnchor(trackId)
-  } else {
-    anchorStore.anchorTrack({
-      cassetteId: props.cassetteId,
-      trackId,
-      sideIndex: props.sideIndex,
-      positionIndex: layout.value?.trackIds.indexOf(trackId) ?? 0
-    })
-  }
-
-  sortStore.sortTracks()
-}
-
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
   return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'error' : 'secondary'
@@ -73,8 +58,7 @@ const durationChipColor = computed(() => {
     </v-list-subheader>
     <draggable :list="layout?.trackIds" group="tracks" item-key="id" animation="200" @change="onChanged"
       handle=".drag-handle">
-      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id"
-        :onLockClick="(anchored) => toggleAnchor(id, anchored)" />
+      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id" />
     </draggable>
   </v-list>
 </template>

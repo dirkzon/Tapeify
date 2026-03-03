@@ -16,10 +16,10 @@ const cassetteStore = useCassettesStore()
 
 const atLeastOneTrackSelected = computed(() => tracksStore.selectedTracks.length > 0)
 
-useHotkey('ctrl+l', bulkAnchor)
-useHotkey('ctrl+u', bulkUnanchor)
+useHotkey('ctrl+l', anchor)
+useHotkey('ctrl+u', unanchor)
 
-function bulkAnchor() {
+function anchor() {
   for (const id of tracksStore.selectedTracks) {
 
     const trackLayout = sortStore.getTrackLayout(id)
@@ -37,7 +37,7 @@ function bulkAnchor() {
   tracksStore.ClearSelectedTracks()
 }
 
-function bulkUnanchor() {
+function unanchor() {
   for (const id of tracksStore.selectedTracks) {
     anchorStore.removeAnchor(id)
   }
@@ -60,17 +60,17 @@ const selectedSortType = computed({
         </template>
       </v-select>
 
-      <v-tooltip text="bulk unanchor (Ctrl + U)" location="bottom">
+      <v-tooltip text="Unanchor Track(s) [Ctrl + U]" location="bottom">
         <template #activator="{ props }">
-          <v-btn v-bind="props" icon @click="bulkUnanchor" :disabled="!atLeastOneTrackSelected" size="small">
+          <v-btn v-bind="props" icon @click="unanchor" :disabled="!atLeastOneTrackSelected" size="small">
             <v-icon>mdi-lock-open-remove</v-icon>
           </v-btn>
         </template>
       </v-tooltip>
 
-      <v-tooltip text="Bulk anchor (Ctrl + L)" location="bottom">
+      <v-tooltip text="Anchor Track(s) [Ctrl + L]" location="bottom">
         <template #activator="{ props }">
-          <v-btn v-bind="props" icon class="ml-4" @click="bulkAnchor" :disabled="!atLeastOneTrackSelected" size="small">
+          <v-btn v-bind="props" icon class="ml-4" @click="anchor" :disabled="!atLeastOneTrackSelected" size="small">
             <v-icon>mdi-lock-plus</v-icon>
           </v-btn>
         </template>
