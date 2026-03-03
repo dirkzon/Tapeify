@@ -4,7 +4,7 @@
 
 <template>
   <v-app>
-    <cassette-settings-drawer />
+    <cassette-info-drawer />
     <cassette-actions-bar />
     <v-main>
       <router-view />

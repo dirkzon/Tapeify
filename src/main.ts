@@ -18,7 +18,7 @@ import PlaylistsList from './components/PlaylistList.vue'
 import UserPlaylistsTab from './components/UserPlaylistsTab.vue'
 import SearchPlaylistsTab from './components/SearchPlaylistsTab.vue'
 import SearchAlbumsTab from './components/SearchAlbumsTab.vue'
-import CassetteSettingsDrawer from './components/CassetteSettingsDrawer.vue'
+import CassetteInfoDrawer from './components/CassetteInfoDrawer.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import AppFooter from './components/AppFooter.vue'
 import UnavailableTracksList from './components/UnavailableTracksList.vue'
@@ -40,7 +40,7 @@ app.component('draggable', VueDraggableNext)
 app.component('user-playlists-tab', UserPlaylistsTab)
 app.component('search-playlists-tab', SearchPlaylistsTab)
 app.component('search-albums-tab', SearchAlbumsTab)
-app.component('cassette-settings-drawer', CassetteSettingsDrawer)
+app.component('cassette-info-drawer', CassetteInfoDrawer)
 app.component('app-footer', AppFooter)
 app.component('unavailable-tracks-list', UnavailableTracksList)
 app.component('cassette-item', CassetteItem)
