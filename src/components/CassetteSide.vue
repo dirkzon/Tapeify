@@ -49,7 +49,7 @@ const durationChipColor = computed(() => {
 </script>
 
 <template>
-  <v-list>
+  <v-list class="hide-scrollbar">
     <v-chip small variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
@@ -62,3 +62,9 @@ const durationChipColor = computed(() => {
     </draggable>
   </v-list>
 </template>
+
+<style lang="css">
+.hide-scrollbar {
+    overflow: hidden;
+}
+</style>
