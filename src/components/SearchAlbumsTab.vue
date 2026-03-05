@@ -3,6 +3,7 @@ import router from '@/router'
 import { useAlbumsStore } from '@/stores/album';
 import type { AlbumSearchResult } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
+import debounce from "lodash/debounce"
 
 const albumsStore = useAlbumsStore()
 
@@ -15,7 +16,10 @@ const albums = ref<AlbumSearchResult>({
     next: false,
     previous: false
 })
-const tab = 'search_albums'
+const TAB_NAME = 'search_albums'
+
+
+
 
 onMounted(async () => {
     const url = new URL(location.href)
@@ -23,7 +27,7 @@ onMounted(async () => {
     const queryParam = url.searchParams.get('query')
     const tabParam = url.searchParams.get('tab')
 
-    if (queryParam !== null && tabParam === tab) {
+    if (queryParam !== null && tabParam === TAB_NAME) {
         query.value = queryParam
         albums.value = await albumsStore.searchAlbums(
             query.value,
@@ -32,6 +36,8 @@ onMounted(async () => {
         )
     }
 })
+
+
 
 async function searchAlbums() {
     updateUrl()
@@ -87,7 +93,7 @@ function updateUrl() {
             name: '/HomeView',
             query: {
                 query: query.value,
-                tab: tab
+                tab: TAB_NAME
             }
         });
     }
