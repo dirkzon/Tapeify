@@ -70,8 +70,7 @@ function toggleAnchor(anchored: boolean) {
   <div>
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
-        <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props"
-          :value="trackId" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
+        <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
           <template v-slot:prepend>
             <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
             <v-avatar class="rounded-sm">
