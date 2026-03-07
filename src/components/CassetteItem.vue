@@ -49,9 +49,8 @@ function toggleAnchor(anchored: boolean) {
   if (anchored) {
     anchorStore.removeAnchor(props.trackId)
   } else {
-    anchorStore.anchorTrack({
+    anchorStore.anchorTrack(props.trackId, {
       cassetteId: trackLayout.cassetteId,
-      trackId: props.trackId,
       sideIndex: trackLayout.sideIndex,
       position: trackLayout.position
     })

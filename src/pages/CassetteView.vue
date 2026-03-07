@@ -31,31 +31,44 @@ useHotkey('ctrl+a', () => {
   }
 })
 
-// function checkAndAchorTrack(trackId: string) {
-//   if (!anchorStore.isTrackAnchored(trackId)) {
-//     const trackLayout = sortStore.getTrackLayout(trackId)
-//     if (!trackLayout) return
-//     anchorStore.anchorTrack({
-//       trackId,
-//       cassetteId: trackLayout.cassetteId,
-//       sideIndex: trackLayout.sideIndex,
-//       positionIndex: trackLayout.position
-//     })
-//   }
-// }
+function checkAndAchorTrack(trackId: string) {
+  if (!anchorStore.isTrackAnchored(trackId)) {
+    const trackLayout = sortStore.getTrackLayout(trackId)
+    if (!trackLayout) return
+    anchorStore.anchorTrack(
+      trackId,
+      {
+        cassetteId: trackLayout.cassetteId,
+        sideIndex: trackLayout.sideIndex,
+        position: trackLayout.position
+      })
+  }
+}
 
-// useHotkey('arrowup', () => {
-//   const selectedTrackId = tracksStore.lastSelectedTrackId
-//   if (!selectedTrackId) return
-//   checkAndAchorTrack(selectedTrackId)
+useHotkey('arrowup', () => {
+  const selectedTrackId = tracksStore.lastSelectedTrackId
+  if (!selectedTrackId) return
+  checkAndAchorTrack(selectedTrackId)
 
-//   anchorStore.moveAnchorUp(selectedTrackId)
+  anchorStore.moveAnchorUp(selectedTrackId)
 
-//   sortStore.sortTracks()
-// })
+  sortStore.sortTracks()
+})
 
-// useHotkey('arrowdown', () => {
-// })
+useHotkey('arrowdown', () => {
+  const selectedTrackId = tracksStore.lastSelectedTrackId
+  if (!selectedTrackId) return
+  checkAndAchorTrack(selectedTrackId)
+  const trackLayout = sortStore.getTrackLayout(selectedTrackId)
+  if (!trackLayout) return
+  const layout = sortStore.getLayoutbyCassetteAndSide(trackLayout.cassetteId, trackLayout.sideIndex)
+  if (!layout) return
+  const maxPosition = layout.trackIds.length - 1
+
+  anchorStore.moveAnchorDown(selectedTrackId, maxPosition)
+
+  sortStore.sortTracks()
+})
 
 onMounted(async () => {
   cassetteStore.initAlerts()

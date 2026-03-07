@@ -43,7 +43,6 @@ export interface Cassette {
 
 export interface Anchor {
   cassetteId: string
-  trackId: string
   sideIndex: number
   position: number
   locked?: boolean

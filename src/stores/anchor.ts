@@ -15,8 +15,8 @@ export const useAnchorsStore = defineStore('anchors', {
     },
   },
   actions: {
-    anchorTrack(anchor: Anchor) {
-      this.anchors[anchor.trackId] = anchor
+    anchorTrack(trackId: string, anchor: Anchor) {
+      this.anchors[trackId] = anchor
     },
     removeAnchor(trackId: string) {
       delete this.anchors[trackId]
@@ -33,6 +33,63 @@ export const useAnchorsStore = defineStore('anchors', {
         if (anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex) {
           delete this.anchors[key]
         }
+      }
+    },
+    getTrackIdByAnchor(anchor: Anchor): string | undefined {
+      for (const [trackId, a] of Object.entries(this.anchors)) {
+        if (a.cassetteId === anchor.cassetteId && a.sideIndex === anchor.sideIndex && a.position === anchor.position) {
+          return trackId
+        }
+      }
+      return undefined
+    },
+    _switchAnchors(trackId1: string, trackId2: string) {
+      const anchor1 = this.anchors[trackId1]
+      const anchor2 = this.anchors[trackId2]
+      if (!anchor1 || !anchor2) return
+
+      const temp = { ...anchor1 }
+      this.anchors[trackId1] = { ...anchor2 }
+      this.anchors[trackId2] = temp
+    },
+    moveAnchorUp(trackId: string) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      var newPostiion = anchor.position - 1
+      if (newPostiion < 0) {
+        newPostiion = 0
+      }
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: anchor.sideIndex,
+        position: newPostiion,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.position = newPostiion
+      }
+    },
+    moveAnchorDown(trackId: string, maxPosition: number) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      var newPostiion = anchor.position + 1
+      if (newPostiion > maxPosition) {
+        newPostiion = maxPosition
+      }
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: anchor.sideIndex,
+        position: newPostiion,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.position = newPostiion
       }
     },
   }

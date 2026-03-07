@@ -8,8 +8,8 @@ export abstract class TrackSorter {
 
   prepackAnchoredTracks(tracks: Track[], anchors: Record<string, Anchor>): Track[] {
     const anchored_tracks = [] as Track[]
-    for (const [key, anchor] of Object.entries(anchors)) {
-      const track = tracks.find(t => t.id === anchor.trackId)
+    for (const [trackId, anchor] of Object.entries(anchors)) {
+      const track = tracks.find(t => t.id === trackId)
       if (!track) continue
 
       const side = this.sides.find(s => s.getCassetteId() === anchor.cassetteId && s.getSideIndex() === anchor.sideIndex)

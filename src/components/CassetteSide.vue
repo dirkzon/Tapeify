@@ -20,17 +20,15 @@ function onChanged(changeEvent: any) {
   const eventType = Object.keys(changeEvent)[0]
   switch (eventType) {
     case 'moved':
-      anchorStore.anchorTrack({
+      anchorStore.anchorTrack(changeEvent.moved.element, {
         cassetteId: props.cassetteId,
-        trackId: changeEvent.moved.element,
         sideIndex: props.sideIndex,
         position: changeEvent.moved.newIndex
       })
       break;
     case 'added':
-      anchorStore.anchorTrack({
+      anchorStore.anchorTrack(changeEvent.added.element, {
         cassetteId: props.cassetteId,
-        trackId: changeEvent.added.element,
         sideIndex: props.sideIndex,
         position: changeEvent.added.newIndex
       })
@@ -65,6 +63,6 @@ const durationChipColor = computed(() => {
 
 <style lang="css">
 .hide-scrollbar {
-    overflow: hidden;
+  overflow: hidden;
 }
 </style>

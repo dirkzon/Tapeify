@@ -26,9 +26,8 @@ function anchor() {
     if (!trackLayout) {
       continue
     }
-    anchorStore.anchorTrack({
+    anchorStore.anchorTrack(id, {
       cassetteId: trackLayout.cassetteId,
-      trackId: id,
       sideIndex: trackLayout.sideIndex,
       position: trackLayout.position
     })
