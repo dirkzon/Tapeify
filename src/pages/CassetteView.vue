@@ -7,12 +7,14 @@ import { usePlaylistsStore } from '@/stores/playlists';
 import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
+import { useAnchorsStore } from '@/stores/anchor';
 
 const sortStore = useSortingStore()
 const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
+const anchorStore = useAnchorsStore()
 
 useHotkey('ctrl+a', () => {
   const lastSelectedTrackId = tracksStore.lastSelectedTrackId
@@ -28,6 +30,32 @@ useHotkey('ctrl+a', () => {
     }
   }
 })
+
+// function checkAndAchorTrack(trackId: string) {
+//   if (!anchorStore.isTrackAnchored(trackId)) {
+//     const trackLayout = sortStore.getTrackLayout(trackId)
+//     if (!trackLayout) return
+//     anchorStore.anchorTrack({
+//       trackId,
+//       cassetteId: trackLayout.cassetteId,
+//       sideIndex: trackLayout.sideIndex,
+//       positionIndex: trackLayout.position
+//     })
+//   }
+// }
+
+// useHotkey('arrowup', () => {
+//   const selectedTrackId = tracksStore.lastSelectedTrackId
+//   if (!selectedTrackId) return
+//   checkAndAchorTrack(selectedTrackId)
+
+//   anchorStore.moveAnchorUp(selectedTrackId)
+
+//   sortStore.sortTracks()
+// })
+
+// useHotkey('arrowdown', () => {
+// })
 
 onMounted(async () => {
   cassetteStore.initAlerts()

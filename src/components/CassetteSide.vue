@@ -24,7 +24,7 @@ function onChanged(changeEvent: any) {
         cassetteId: props.cassetteId,
         trackId: changeEvent.moved.element,
         sideIndex: props.sideIndex,
-        positionIndex: changeEvent.moved.newIndex
+        position: changeEvent.moved.newIndex
       })
       break;
     case 'added':
@@ -32,7 +32,7 @@ function onChanged(changeEvent: any) {
         cassetteId: props.cassetteId,
         trackId: changeEvent.added.element,
         sideIndex: props.sideIndex,
-        positionIndex: changeEvent.added.newIndex
+        position: changeEvent.added.newIndex
       })
       break
     case 'removed':

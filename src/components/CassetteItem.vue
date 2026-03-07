@@ -53,7 +53,7 @@ function toggleAnchor(anchored: boolean) {
       cassetteId: trackLayout.cassetteId,
       trackId: props.trackId,
       sideIndex: trackLayout.sideIndex,
-      positionIndex: trackLayout.position
+      position: trackLayout.position
     })
   }
 

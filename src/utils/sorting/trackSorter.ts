@@ -6,15 +6,15 @@ export abstract class TrackSorter {
 
   abstract sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void
 
-  prepackAnchoredTracks(tracks: Track[], anchors: Anchor[]): Track[] {
+  prepackAnchoredTracks(tracks: Track[], anchors: Record<string, Anchor>): Track[] {
     const anchored_tracks = [] as Track[]
-    for (const anchor of anchors) {
+    for (const [key, anchor] of Object.entries(anchors)) {
       const track = tracks.find(t => t.id === anchor.trackId)
       if (!track) continue
 
       const side = this.sides.find(s => s.getCassetteId() === anchor.cassetteId && s.getSideIndex() === anchor.sideIndex)
       if (!side) continue
-      side.placeAtIndex(anchor.positionIndex, track)
+      side.placeAtIndex(anchor.position, track)
       anchored_tracks.push(track)
     }
     return anchored_tracks

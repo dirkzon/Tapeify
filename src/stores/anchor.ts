@@ -3,31 +3,37 @@ import type { Anchor } from '@/types/tapeify/models'
 
 export const useAnchorsStore = defineStore('anchors', {
   state: () => ({
-    anchors: [] as Anchor[],
+    anchors: {} as Record<string, Anchor>,
   }),
 
   getters: {
     isTrackAnchored: (state) => (trackId: string): boolean => {
-      return state.anchors.some(anchor => anchor.trackId == trackId)
-    }
+      return state.anchors.hasOwnProperty(trackId)
+    },
+    getAnchorByTrackId: (state) => (trackId: string): Anchor | undefined => {
+      return state.anchors[trackId]
+    },
   },
   actions: {
     anchorTrack(anchor: Anchor) {
-      if (this.anchors.find(a => a.trackId === anchor.trackId)) {
-        const index = this.anchors.findIndex(a => a.trackId === anchor.trackId)
-        this.anchors[index] = anchor
-        return
-      }
-      this.anchors.push(anchor)
+      this.anchors[anchor.trackId] = anchor
     },
     removeAnchor(trackId: string) {
-      this.anchors = this.anchors.filter(anchor => anchor.trackId !== trackId)
+      delete this.anchors[trackId]
     },
     removeAnchoresByCassetteId(cassetteId: string) {
-      this.anchors = this.anchors.filter(anchor => anchor.cassetteId !== cassetteId)
+      for (const [key, anchor] of Object.entries(this.anchors)) {
+        if (anchor.cassetteId === cassetteId) {
+          delete this.anchors[key]
+        }
+      }
     },
     removeAnchorsByTapeSide(cassetteId: string, sideIndex: number) {
-      this.anchors = this.anchors.filter(anchor => !(anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex))
+      for (const [key, anchor] of Object.entries(this.anchors)) {
+        if (anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex) {
+          delete this.anchors[key]
+        }
+      }
     },
   }
 })
