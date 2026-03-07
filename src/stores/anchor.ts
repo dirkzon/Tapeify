@@ -21,6 +21,12 @@ export const useAnchorsStore = defineStore('anchors', {
     removeAnchor(trackId: string) {
       delete this.anchors[trackId]
     },
+    updateAnchor(trackId: string, anchor: Anchor) { 
+      if (!this.anchors[trackId]) {
+        throw new Error(`No anchor found for trackId: ${trackId}`)
+      }
+      this.anchors[trackId] = anchor
+    },
     removeAnchoresByCassetteId(cassetteId: string) {
       for (const [key, anchor] of Object.entries(this.anchors)) {
         if (anchor.cassetteId === cassetteId) {
@@ -90,6 +96,24 @@ export const useAnchorsStore = defineStore('anchors', {
         this._switchAnchors(trackId, blockingTrack)
       } else {
         anchor.position = newPostiion
+      }
+    },
+    moveAnchorToOtherSide(trackId: string, targetSideIndex: number, maxPosition: number) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: targetSideIndex,
+        position: anchor.position,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.sideIndex = targetSideIndex
+        if (anchor.position > maxPosition) {
+          anchor.position = maxPosition
+        }
       }
     },
   }

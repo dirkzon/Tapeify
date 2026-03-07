@@ -70,6 +70,36 @@ useHotkey('arrowdown', () => {
   sortStore.sortTracks()
 })
 
+useHotkey('arrowleft', () => {
+  const selectedTrackId = tracksStore.lastSelectedTrackId
+  if (!selectedTrackId) return
+  checkAndAchorTrack(selectedTrackId)
+  const trackLayout = sortStore.getTrackLayout(selectedTrackId)
+  if (!trackLayout) return
+  const layout = sortStore.getLayoutbyCassetteAndSide(trackLayout.cassetteId, trackLayout.sideIndex)
+  if (!layout) return
+  const maxPosition = layout.trackIds.length - 1
+  if (trackLayout.sideIndex === 0) return
+
+  anchorStore.moveAnchorToOtherSide(selectedTrackId, trackLayout.sideIndex - 1, maxPosition)
+  sortStore.sortTracks()
+})
+
+useHotkey('arrowright', () => {
+  const selectedTrackId = tracksStore.lastSelectedTrackId
+  if (!selectedTrackId) return
+  checkAndAchorTrack(selectedTrackId)
+  const trackLayout = sortStore.getTrackLayout(selectedTrackId)
+  if (!trackLayout) return
+  const layout = sortStore.getLayoutbyCassetteAndSide(trackLayout.cassetteId, trackLayout.sideIndex)
+  if (!layout) return
+  const maxPosition = layout.trackIds.length - 1
+  if (trackLayout.sideIndex === 1) return
+
+  anchorStore.moveAnchorToOtherSide(selectedTrackId, trackLayout.sideIndex + 1, maxPosition)
+  sortStore.sortTracks()
+})
+
 onMounted(async () => {
   cassetteStore.initAlerts()
   tracksStore.ClearTracks()
