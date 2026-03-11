@@ -85,7 +85,7 @@ function toggleAnchor(anchored: boolean) {
           <template v-slot:append>
             <div class="track-meta d-flex align-center">
               <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
-                @click.stop="toggleAnchor(isAnchored)" />
+                @click.stop="toggleAnchor(isAnchored)" tabindex="-1"/>
               <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
             </div>
           </template>
