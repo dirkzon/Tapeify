@@ -19,7 +19,6 @@ const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
-const anchorStore = useAnchorsStore()
 
 useHotkey('ctrl+a', () => {
   const lastSelectedTrackId = tracksStore.lastSelectedTrackId
