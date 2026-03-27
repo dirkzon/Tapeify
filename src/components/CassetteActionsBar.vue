@@ -26,11 +26,10 @@ function anchor() {
     if (!trackLayout) {
       continue
     }
-    anchorStore.anchorTrack({
+    anchorStore.anchorTrack(id, {
       cassetteId: trackLayout.cassetteId,
-      trackId: id,
       sideIndex: trackLayout.sideIndex,
-      positionIndex: trackLayout.position
+      position: trackLayout.position
     })
   }
   sortStore.sortTracks()

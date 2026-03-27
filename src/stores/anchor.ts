@@ -3,31 +3,118 @@ import type { Anchor } from '@/types/tapeify/models'
 
 export const useAnchorsStore = defineStore('anchors', {
   state: () => ({
-    anchors: [] as Anchor[],
+    anchors: {} as Record<string, Anchor>,
   }),
 
   getters: {
     isTrackAnchored: (state) => (trackId: string): boolean => {
-      return state.anchors.some(anchor => anchor.trackId == trackId)
-    }
+      return state.anchors.hasOwnProperty(trackId)
+    },
+    getAnchorByTrackId: (state) => (trackId: string): Anchor | undefined => {
+      return state.anchors[trackId]
+    },
   },
   actions: {
-    anchorTrack(anchor: Anchor) {
-      if (this.anchors.find(a => a.trackId === anchor.trackId)) {
-        const index = this.anchors.findIndex(a => a.trackId === anchor.trackId)
-        this.anchors[index] = anchor
-        return
-      }
-      this.anchors.push(anchor)
+    anchorTrack(trackId: string, anchor: Anchor) {
+      this.anchors[trackId] = anchor
     },
     removeAnchor(trackId: string) {
-      this.anchors = this.anchors.filter(anchor => anchor.trackId !== trackId)
+      delete this.anchors[trackId]
+    },
+    updateAnchor(trackId: string, anchor: Anchor) { 
+      if (!this.anchors[trackId]) {
+        throw new Error(`No anchor found for trackId: ${trackId}`)
+      }
+      this.anchors[trackId] = anchor
     },
     removeAnchoresByCassetteId(cassetteId: string) {
-      this.anchors = this.anchors.filter(anchor => anchor.cassetteId !== cassetteId)
+      for (const [key, anchor] of Object.entries(this.anchors)) {
+        if (anchor.cassetteId === cassetteId) {
+          delete this.anchors[key]
+        }
+      }
     },
     removeAnchorsByTapeSide(cassetteId: string, sideIndex: number) {
-      this.anchors = this.anchors.filter(anchor => !(anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex))
+      for (const [key, anchor] of Object.entries(this.anchors)) {
+        if (anchor.cassetteId === cassetteId && anchor.sideIndex === sideIndex) {
+          delete this.anchors[key]
+        }
+      }
+    },
+    getTrackIdByAnchor(anchor: Anchor): string | undefined {
+      for (const [trackId, a] of Object.entries(this.anchors)) {
+        if (a.cassetteId === anchor.cassetteId && a.sideIndex === anchor.sideIndex && a.position === anchor.position) {
+          return trackId
+        }
+      }
+      return undefined
+    },
+    _switchAnchors(trackId1: string, trackId2: string) {
+      const anchor1 = this.anchors[trackId1]
+      const anchor2 = this.anchors[trackId2]
+      if (!anchor1 || !anchor2) return
+
+      const temp = { ...anchor1 }
+      this.anchors[trackId1] = { ...anchor2 }
+      this.anchors[trackId2] = temp
+    },
+    moveAnchorUp(trackId: string) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      var newPostiion = anchor.position - 1
+      if (newPostiion < 0) {
+        newPostiion = 0
+      }
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: anchor.sideIndex,
+        position: newPostiion,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.position = newPostiion
+      }
+    },
+    moveAnchorDown(trackId: string, maxPosition: number) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      var newPostiion = anchor.position + 1
+      if (newPostiion > maxPosition) {
+        newPostiion = maxPosition
+      }
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: anchor.sideIndex,
+        position: newPostiion,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.position = newPostiion
+      }
+    },
+    moveAnchorToOtherSide(trackId: string, targetSideIndex: number, maxPosition: number) {
+      const anchor = this.anchors[trackId]
+      if (!anchor) return
+
+      const blockingTrack = this.getTrackIdByAnchor({
+        cassetteId: anchor.cassetteId,
+        sideIndex: targetSideIndex,
+        position: anchor.position,
+      })
+      if (blockingTrack) {
+        this._switchAnchors(trackId, blockingTrack)
+      } else {
+        anchor.sideIndex = targetSideIndex
+        if (anchor.position > maxPosition) {
+          anchor.position = maxPosition
+        }
+      }
     },
   }
 })

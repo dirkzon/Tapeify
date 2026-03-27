@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
+import { useCassettesStore } from '@/stores/cassette';
 import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
@@ -11,6 +12,7 @@ const props = defineProps<{
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 const sortStore = useSortingStore()
+const cassetteStore = useCassettesStore()
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
@@ -49,11 +51,10 @@ function toggleAnchor(anchored: boolean) {
   if (anchored) {
     anchorStore.removeAnchor(props.trackId)
   } else {
-    anchorStore.anchorTrack({
+    anchorStore.anchorTrack(props.trackId, {
       cassetteId: trackLayout.cassetteId,
-      trackId: props.trackId,
       sideIndex: trackLayout.sideIndex,
-      positionIndex: trackLayout.position
+      position: trackLayout.position
     })
   }
 
@@ -65,6 +66,50 @@ function toggleAnchor(anchored: boolean) {
     tracksStore.selectedTracks.push(props.trackId)
   }
 }
+
+const gridNav = inject<any>("trackGridNav")
+
+function handleKey(e: KeyboardEvent) {
+  switch (e.key) {
+    case "ArrowUp":
+      e.preventDefault()
+      gridNav.move(0, -1)
+      break
+
+    case "ArrowDown":
+      e.preventDefault()
+      gridNav.move(0, 1)
+      break
+
+    case "ArrowLeft":
+      e.preventDefault()
+      gridNav.move(-1, 0)
+      break
+
+    case "ArrowRight":
+      e.preventDefault()
+      gridNav.move(1, 0)
+      break
+  }
+}
+
+
+function onFocus() {
+  const layout = sortStore.getTrackLayout(props.trackId)
+  if (!layout) return
+
+  const cassetteIndex =
+    cassetteStore.cassettes.findIndex(
+      c => c.id === layout.cassetteId
+    )
+
+  const col = cassetteIndex * 2 + layout.sideIndex
+
+  gridNav.focused.value = {
+    row: layout.position,
+    col
+  }
+}
 </script>
 
 <template>
@@ -72,7 +117,8 @@ function toggleAnchor(anchored: boolean) {
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
         <v-list-item active-class="text-secondary" class="py-2 no-select" handle=".drag-handle" v-bind="props"
-          :value="trackId" @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)">
+          @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
+          :data-track-id="trackId" @keydown="handleKey" @focus="onFocus">
           <template v-slot:prepend>
             <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
             <v-avatar class="rounded-sm">
@@ -87,7 +133,7 @@ function toggleAnchor(anchored: boolean) {
           <template v-slot:append>
             <div class="track-meta d-flex align-center">
               <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
-                @click.stop="toggleAnchor(isAnchored)" />
+                @click.stop="toggleAnchor(isAnchored)" tabindex="-1" />
               <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
             </div>
           </template>
