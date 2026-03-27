@@ -2,7 +2,7 @@
 import router from '@/router'
 import { usePlaylistsStore } from '@/stores/playlists';
 import type { PlaylistSearchResult } from '@/types/tapeify/models';
-import debounce from 'lodash/debounce';
+import debounce from 'lodash-es/debounce'
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 
 const playlistsStore = usePlaylistsStore()
@@ -112,7 +112,7 @@ function updateUrl() {
 <template>
   <v-card flat>
     <v-text-field v-model:model-value="query" label="Search playlists on Spotify" append-inner-icon="mdi-magnify"
-      :loading="loading" dense hide-details @keydown.enter="searchPlaylists(query, limit, offset)" clearable
+      :loading="loading" density="compact" hide-details @keydown.enter="searchPlaylists(query, limit, offset)" clearable
       @click:clear="ClearSearchBar" />
     <PlaylistList :playlists="playlists.playlists" :load="LoadMorePlaylists" />
   </v-card>

@@ -60,11 +60,11 @@ const name = computed<string>({
   <v-card class="cassette-card">
     <v-toolbar color="primary">
       <template v-slot:prepend>
-        <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" dense hide-details class="ma-0"
+        <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details class="ma-0"
           style="min-width:150px" label="Capacity (min)" />
       </template>
       <template v-slot:title>
-        <v-text-field v-model="name" dense hide-details placeholder="Cassette name" class="cassette-title-field" />
+        <v-text-field v-model="name" density="compact" hide-details placeholder="Cassette name" class="cassette-title-field" />
       </template>
       <template v-slot:append>
         <v-btn icon @click="addCassette" title="Add cassette">
