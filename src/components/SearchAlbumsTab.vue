@@ -112,7 +112,7 @@ function updateUrl() {
 <template>
   <v-card flat>
     <v-text-field v-model:model-value="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
-      :loading="loading" @click:clear="ClearSearchBar" dense hide-details
+      :loading="loading" @click:clear="ClearSearchBar" density="compact" hide-details
       @keydown.enter="searchAlbums(query, limit, offset)" clearable />
     <AlbumList :albums="albums.albums" :load="LoadMoreAlbums" />
   </v-card>

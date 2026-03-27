@@ -48,7 +48,7 @@ const durationChipColor = computed(() => {
 
 <template>
   <v-list class="hide-scrollbar">
-    <v-chip small variant="tonal" :color="durationChipColor">
+    <v-chip size="small" variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
     <v-list-subheader>
