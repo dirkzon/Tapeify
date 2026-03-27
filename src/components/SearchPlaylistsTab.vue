@@ -2,7 +2,7 @@
 import router from '@/router'
 import { usePlaylistsStore } from '@/stores/playlists';
 import type { PlaylistSearchResult } from '@/types/tapeify/models';
-import debounce from 'lodash/debounce';
+import debounce from 'lodash-es/debounce'
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 
 const playlistsStore = usePlaylistsStore()

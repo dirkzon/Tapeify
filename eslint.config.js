@@ -1,8 +1,3 @@
-/**
- * .eslint.js
- *
- * ESLint configuration file.
- */
 import vueParser from 'vue-eslint-parser'
 import vue from 'eslint-plugin-vue'
 import vuetify from 'eslint-plugin-vuetify'
@@ -10,9 +5,12 @@ import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 
 export default [
+  ...vue.configs['flat/base'],
+  ...vuetify.configs['flat/base'],
+
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ['**/*.{js,jsx,ts,mjs,mts,tsx,vue}'],
     plugins: {
       vue,
       vuetify,
@@ -39,7 +37,4 @@ export default [
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
-
-  ...vue.configs['flat/base'],
-  ...vuetify.configs['flat/base'],
 ]
