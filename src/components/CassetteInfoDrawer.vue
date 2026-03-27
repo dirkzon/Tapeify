@@ -7,7 +7,8 @@ const cassetteStore = useCassettesStore()
 const tracksStore = useTracksStore()
 
 const route = useRoute()
-const showDrawer = computed(() => route.name === '/CassetteView')
+const showDrawer = computed(() => route.name === '/cassette/[spotify_id]')
+
 </script>
 
 <template>

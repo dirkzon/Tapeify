@@ -5,50 +5,47 @@ import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/compo
 import { VInfiniteScroll } from 'vuetify/components';
 
 const props = defineProps<{
-    albums: Album[]
-    load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
+  albums: Album[]
+  load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
 }>()
 
 const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('albumsScroll')
 
 function SelectItem(id: string) {
-    router.push({
-        name: '/CassetteView',
-        query: {
-            id: id,
-            type: 'album'
-        }
-    })
+  router.push({
+    name: '/cassette/[spotify_id]',
+    params: { spotify_id: id },
+    query: { type: 'album' }
+  })
 }
 
 function reset() {
-    infiniteScrollRef.value?.reset('end')
+  infiniteScrollRef.value?.reset('end')
 }
 </script>
 
 <template>
-    <v-list lines="two" density="compact" class="w-100 pa-3">
-        <v-infinite-scroll height="500" @load="load" v-if="albums.length > 0" ref="albumsScroll">
-            <v-list-item v-for="album in albums" :key="album.id" :title="album.name"
-                :subtitle="album.artists.toString()" @click="SelectItem(album.id)">
-                <template #prepend>
-                    <v-avatar tile>
-                        <v-img v-if="album.image" :src="album.image.toString()" />
-                        <v-icon v-else icon="mdi-album" />
-                    </v-avatar>
-                </template>
-            </v-list-item>
-            <template v-slot:empty>
-                <v-alert type="warning" text="No more albums" variant="outlined"></v-alert>
-            </template>
-            <template v-slot:error>
-                <v-alert type="error" text="Error on fetching new albums" closable variant="outlined"
-                    @click:close="reset">
-                    <template #close="{ props }">
-                        <v-btn v-bind="props" icon="mdi-refresh" size="small"></v-btn>
-                    </template>
-                </v-alert>
-            </template>
-        </v-infinite-scroll>
-    </v-list>
+  <v-list lines="two" density="compact" class="w-100 pa-3">
+    <v-infinite-scroll height="500" @load="load" v-if="albums.length > 0" ref="albumsScroll">
+      <v-list-item v-for="album in albums" :key="album.id" :title="album.name" :subtitle="album.artists.toString()"
+        @click="SelectItem(album.id)">
+        <template #prepend>
+          <v-avatar tile>
+            <v-img v-if="album.image" :src="album.image.toString()" />
+            <v-icon v-else icon="mdi-album" />
+          </v-avatar>
+        </template>
+      </v-list-item>
+      <template v-slot:empty>
+        <v-alert type="warning" text="No more albums" variant="outlined"></v-alert>
+      </template>
+      <template v-slot:error>
+        <v-alert type="error" text="Error on fetching new albums" closable variant="outlined" @click:close="reset">
+          <template #close="{ props }">
+            <v-btn v-bind="props" icon="mdi-refresh" size="small"></v-btn>
+          </template>
+        </v-alert>
+      </template>
+    </v-infinite-scroll>
+  </v-list>
 </template>

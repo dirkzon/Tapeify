@@ -13,8 +13,9 @@ const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('
 
 function SelectItem(id: string) {
   router.push({
-    name: '/CassetteView',
-    query: { id: id, type: 'playlist' }
+    name: '/cassette/[spotify_id]',
+    params: { spotify_id: id },
+    query: { type: 'playlist' }
   })
 }
 
@@ -39,8 +40,7 @@ function reset() {
         <v-alert type="warning" text="No more playlists" variant="outlined"></v-alert>
       </template>
       <template v-slot:error>
-        <v-alert type="error" text="Error during loading playlists" closable
-          variant="outlined" @click:close="reset">
+        <v-alert type="error" text="Error during loading playlists" closable variant="outlined" @click:close="reset">
           <template #close="{ props }">
             <v-btn v-bind="props" icon="mdi-refresh" size="small"></v-btn>
           </template>

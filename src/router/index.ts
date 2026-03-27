@@ -1,23 +1,13 @@
+import { setupLayouts } from 'virtual:generated-layouts';
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/pages/HomeView.vue'
-import CallbackView from '@/pages/CallbackView.vue'
-import LoginView from '@/pages/LoginView.vue'
-import CassetteView from '@/pages/CassetteView.vue'
+import { routes } from 'vue-router/auto-routes';
 
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: '/HomeView', component: HomeView },
-    { path: '/callback', name: '/CallbackView', component: CallbackView },
-    { path: '/login', name: '/LoginView', component: LoginView },
-    {
-      path: '/cassette',
-      name: '/CassetteView',
-      component: CassetteView,
-      props: (route: any) => ({ id: route.query.id, type: route.query.type }),
-    },
+    ...setupLayouts(routes),
   ],
-})
+});
 
 router.onError((err: unknown, to: any) => {
   const e = err as Error | undefined

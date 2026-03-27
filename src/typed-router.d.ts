@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 /* prettier-ignore */
 // @ts-nocheck
 // noinspection ES6UnusedImports
@@ -30,30 +30,23 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/CallbackView': RouteRecordInfo<
-      '/CallbackView',
-      '/CallbackView',
+    '/callback': RouteRecordInfo<
+      '/callback',
+      '/callback',
       Record<never, never>,
       Record<never, never>,
       | never
     >,
-    '/CassetteView': RouteRecordInfo<
-      '/CassetteView',
-      '/CassetteView',
-      Record<never, never>,
-      Record<never, never>,
+    '/cassette/[spotify_id]': RouteRecordInfo<
+      '/cassette/[spotify_id]',
+      '/cassette/:spotify_id',
+      { spotify_id: ParamValue<true> },
+      { spotify_id: ParamValue<false> },
       | never
     >,
-    '/HomeView': RouteRecordInfo<
-      '/HomeView',
-      '/HomeView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/LoginView': RouteRecordInfo<
-      '/LoginView',
-      '/LoginView',
+    '/login': RouteRecordInfo<
+      '/login',
+      '/login',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -77,27 +70,21 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/CallbackView.vue': {
+    'src/pages/callback.vue': {
       routes:
-        | '/CallbackView'
+        | '/callback'
       views:
         | never
     }
-    'src/pages/CassetteView.vue': {
+    'src/pages/cassette/[spotify_id].vue': {
       routes:
-        | '/CassetteView'
+        | '/cassette/[spotify_id]'
       views:
         | never
     }
-    'src/pages/HomeView.vue': {
+    'src/pages/login.vue': {
       routes:
-        | '/HomeView'
-      views:
-        | never
-    }
-    'src/pages/LoginView.vue': {
-      routes:
-        | '/LoginView'
+        | '/login'
       views:
         | never
     }

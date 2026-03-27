@@ -7,7 +7,7 @@ import { useCassettesStore } from '@/stores/cassette';
 
 const route = useRoute()
 
-const showBar = computed(() => route.name === '/CassetteView')
+const showBar = computed(() => route.name === '/cassette/[spotify_id]')
 
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
