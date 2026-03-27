@@ -7,7 +7,6 @@ import { usePlaylistsStore } from '@/stores/playlists';
 import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
-import { useAnchorsStore } from '@/stores/anchor';
 import { useTrackGridNavigation } from '@/composables/UseTrackGridNavigation';
 
 const gridNav = useTrackGridNavigation()
