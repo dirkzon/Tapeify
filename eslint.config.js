@@ -3,6 +3,7 @@
  *
  * ESLint configuration file.
  */
+import vueParser from 'vue-eslint-parser'
 import vue from 'eslint-plugin-vue'
 import vuetify from 'eslint-plugin-vuetify'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
@@ -18,8 +19,12 @@ export default [
       '@typescript-eslint': tsPlugin,
     },
     languageOptions: {
-      parser: tsParser,
-      parserOptions: { sourceType: 'module' },
+      parser: vueParser,
+      parserOptions: {
+        parser: tsParser,
+        sourceType: 'module',
+        ecmaVersion: 'latest',
+      },
     },
     rules: {
       '@typescript-eslint/no-unused-expressions': [
@@ -38,4 +43,3 @@ export default [
   ...vue.configs['flat/base'],
   ...vuetify.configs['flat/base'],
 ]
-
