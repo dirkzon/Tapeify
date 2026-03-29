@@ -81,11 +81,11 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
-  <v-container role="grid" aria-label="Cassette track grid" :aria-colcount="cassetteStore.cassettes.length * 2" class="ma-0">
+  <div role="grid" aria-label="Cassette track grid" :aria-colcount="cassetteStore.cassettes.length * 2" class="ma-0">
     <v-row justify="center">
       <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
         <cassette :cassetteId="cassette.id" class="included" />
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
