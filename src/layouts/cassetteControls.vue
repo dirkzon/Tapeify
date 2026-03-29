@@ -1,7 +1,7 @@
 <template>
-  <v-main>
-    <cassette-info-drawer />
-    <cassette-actions-bar />
+  <cassette-info-drawer />
+  <cassette-actions-bar />
+  <v-container class="pa-10">
     <router-view />
-  </v-main>
+  </v-container>
 </template>
