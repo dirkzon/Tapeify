@@ -5,10 +5,6 @@ import { useSortingStore } from '@/stores/sorting';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useCassettesStore } from '@/stores/cassette';
 
-const route = useRoute()
-
-const showBar = computed(() => route.name === '/cassette/[spotify_id]')
-
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 const sortStore = useSortingStore()
@@ -50,7 +46,7 @@ const selectedSortType = computed({
 </script>
 
 <template>
-  <v-app-bar v-if="showBar" class="included pa-1">
+  <v-app-bar class="included pa-1">
     <template v-slot:prepend>
       <v-select v-model="selectedSortType" :items="sortStore.getAvailableSorters()" item-value="type" density="compact"
         label="Sorting Algorithm" item-title="name" hide-details min-width="200" variant="outlined">
