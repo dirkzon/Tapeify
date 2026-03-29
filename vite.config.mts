@@ -5,6 +5,7 @@ import Fonts from 'unplugin-fonts/vite'
 import Vue from '@vitejs/plugin-vue'
 import VueRouter from 'unplugin-vue-router/vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import Layouts from 'vite-plugin-vue-layouts-next'
 
 // Utilities
 import { defineConfig } from 'vitest/config';
@@ -17,6 +18,7 @@ export default defineConfig({
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),
+    Layouts(),
     AutoImport({
       imports: [
         'vue',

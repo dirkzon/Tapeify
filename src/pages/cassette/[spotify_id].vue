@@ -1,3 +1,11 @@
+<route>
+{
+  "meta": {
+    "layout": "cassetteControls"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
@@ -38,7 +46,11 @@ onMounted(async () => {
   cassetteStore.initAlerts()
   tracksStore.ClearTracks()
   const url = new URL(location.href)
-  const id = url.searchParams.get('id')
+
+  const route = useRoute()
+
+  const params = route.params
+  const id = params.spotify_id
   const type = url.searchParams.get('type')
 
   if (id && type) {
@@ -69,13 +81,11 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
-  <v-layout>
-    <v-main class="d-flex align-center justify-center" role="grid" aria-label="Cassette track grid" :aria-colcount="cassetteStore.cassettes.length * 2">
-      <v-row justify="center" class="pa-15">
-        <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
-          <cassette :cassetteId="cassette.id" class="included" />
-        </v-col>
-      </v-row>
-    </v-main>
-  </v-layout>
+  <v-container role="grid" aria-label="Cassette track grid" :aria-colcount="cassetteStore.cassettes.length * 2" class="ma-0">
+    <v-row justify="center">
+      <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
+        <cassette :cassetteId="cassette.id" class="included" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
