@@ -29,7 +29,9 @@ function anchor() {
     })
   }
   sortStore.sortTracks()
-  tracksStore.ClearSelectedTracks()
+  if (tracksStore.lastSelectedTrackId) {
+    tracksStore.selectedTracks = [tracksStore.lastSelectedTrackId]
+  }
 }
 
 function unanchor() {
@@ -37,7 +39,9 @@ function unanchor() {
     anchorStore.removeAnchor(id)
   }
   sortStore.sortTracks()
-  tracksStore.ClearSelectedTracks()
+  if (tracksStore.lastSelectedTrackId) {
+    tracksStore.selectedTracks = [tracksStore.lastSelectedTrackId]
+  }
 }
 const selectedSortType = computed({
   get: () => sortStore.selectedSortType,
