@@ -55,7 +55,6 @@ function toggleAnchor(anchored: boolean) {
 </script>
 
 <template>
-  <!-- Do not remove top div -->
   <div :key="layout?.position"> 
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
