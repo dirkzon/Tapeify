@@ -10,7 +10,6 @@ const anchorsStore = useAnchorsStore();
 
 const props = defineProps<{
   cassetteId: string
-  cassetteIndex: number
 }>()
 
 const cassette = computed(() => {
@@ -86,15 +85,13 @@ const name = computed<string>({
     </v-alert>
     <v-row class="pa-2">
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" :col-index="cassetteIndex * 2"
-          :key="cassetteIndex * 2" />
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />
       </v-col>
 
       <v-divider vertical class="full-height-divider" />
 
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" :col-index="cassetteIndex * 2 + 1"
-          :key="cassetteIndex * 2 + 1" />
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
       </v-col>
     </v-row>
   </v-card>

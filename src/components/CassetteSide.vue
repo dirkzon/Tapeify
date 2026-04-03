@@ -12,7 +12,6 @@ const sortStore = useSortingStore()
 const props = defineProps<{
   cassetteId: string,
   sideIndex: number,
-  colIndex: number,
 }>()
 
 const tracksCache = ref<string[]>([])
@@ -80,7 +79,7 @@ function onListKeydown(e: KeyboardEvent) {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged" handle=".drag-handle">
-      <cassette-item v-for="id in tracks" :key="id" :track-id="id" :col-index="colIndex" />
+      <cassette-item v-for="id in tracks" :key="id" :track-id="id" />
     </draggable>
   </v-list>
 </template>
