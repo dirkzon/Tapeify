@@ -58,30 +58,33 @@ function toggleAnchor(anchored: boolean) {
 </script>
 
 <template>
-  <v-hover :key="Number(isAnchored)">
-    <template v-slot:default="{ isHovering, props }">
-      <v-list-item active-class="text-secondary" class="py-2 grid-item" handle=".drag-handle" v-bind="props"
-        @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
-        :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="rowIndex" :data-v-kbd-trap-col="colIndex">
-        <template v-slot:prepend>
-          <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
-          <v-avatar class="rounded-sm">
-            <v-img v-if="track?.image" :src="track.image.href" />
-            <v-icon v-else icon="mdi-music" />
-          </v-avatar>
-        </template>
-        <v-list-item-title :title="track?.name">{{ track?.name }}</v-list-item-title>
-        <v-list-item-subtitle :title="track?.artists.join()">{{ track?.artists.join() }}</v-list-item-subtitle>
-        <template v-slot:append>
-          <div class="track-meta d-flex align-center">
-            <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
-              @click.stop="toggleAnchor(isAnchored)" tabindex="-1" />
-            <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
-          </div>
-        </template>
-      </v-list-item>
-    </template>
-  </v-hover>
+  <!-- Do not remove top div -->
+  <div> 
+    <v-hover :key="Number(isAnchored)">
+      <template v-slot:default="{ isHovering, props }">
+        <v-list-item active-class="text-secondary" class="py-2 grid-item" handle=".drag-handle" v-bind="props"
+          @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
+          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="rowIndex" :data-v-kbd-trap-col="colIndex">
+          <template v-slot:prepend>
+            <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
+            <v-avatar class="rounded-sm">
+              <v-img v-if="track?.image" :src="track.image.href" />
+              <v-icon v-else icon="mdi-music" />
+            </v-avatar>
+          </template>
+          <v-list-item-title :title="track?.name">{{ track?.name }}</v-list-item-title>
+          <v-list-item-subtitle :title="track?.artists.join()">{{ track?.artists.join() }}</v-list-item-subtitle>
+          <template v-slot:append>
+            <div class="track-meta d-flex align-center">
+              <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
+                @click.stop="toggleAnchor(isAnchored)" tabindex="-1" />
+              <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
+            </div>
+          </template>
+        </v-list-item>
+      </template>
+    </v-hover>
+  </div>
 </template>
 
 <style scoped>
