@@ -6,7 +6,6 @@ import { formatDuration } from '@/utils/duration/durationHelper';
 
 const props = defineProps<{
   trackId: string,
-  rowIndex: number,
   colIndex: number
 }>()
 
@@ -17,6 +16,7 @@ const sortStore = useSortingStore()
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
 const anchorIcon = computed(() => anchorStore.isTrackAnchored(props.trackId) ? "mdi-lock" : "mdi-lock-open")
+const layout = computed(() => sortStore.getTrackLayout(props.trackId))
 
 function selectTrack(e: MouseEvent | KeyboardEvent) {
   if (e.shiftKey) {
@@ -34,16 +34,13 @@ function selectTrack(e: MouseEvent | KeyboardEvent) {
 }
 
 function toggleAnchor(anchored: boolean) {
-  const trackLayout = sortStore.getTrackLayout(props.trackId)
-  if (!trackLayout) return
-
   if (anchored) {
     anchorStore.removeAnchor(props.trackId)
   } else {
     anchorStore.anchorTrack(props.trackId, {
-      cassetteId: trackLayout.cassetteId,
-      sideIndex: trackLayout.sideIndex,
-      position: trackLayout.position
+      cassetteId: layout.value!.cassetteId,
+      sideIndex: layout.value!.sideIndex,
+      position: layout.value!.position
     })
   }
 
@@ -59,12 +56,12 @@ function toggleAnchor(anchored: boolean) {
 
 <template>
   <!-- Do not remove top div -->
-  <div> 
+  <div :key="layout?.position"> 
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
         <v-list-item active-class="text-secondary" class="py-2 grid-item" handle=".drag-handle" v-bind="props"
           @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
-          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="rowIndex" :data-v-kbd-trap-col="colIndex">
+          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="layout?.position" :data-v-kbd-trap-col="colIndex">
           <template v-slot:prepend>
             <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
             <v-avatar class="rounded-sm">
