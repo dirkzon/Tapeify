@@ -54,12 +54,13 @@ function toggleAnchor(anchored: boolean) {
 </script>
 
 <template>
-  <div :key="layout?.position"> 
+  <div :key="layout?.position">
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
         <v-list-item active-class="text-secondary" class="py-2 grid-item" handle=".drag-handle" v-bind="props"
           @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
-          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="layout?.position" :data-v-kbd-trap-col="sortStore.sideColumnIndex(layout?.cassetteId ?? '', layout?.sideIndex ?? 0)">
+          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="layout?.position"
+          :data-v-kbd-trap-col="sortStore.sideColumnIndex(layout?.cassetteId ?? '', layout?.sideIndex ?? 0)">
           <template v-slot:prepend>
             <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
             <v-avatar class="rounded-sm">
