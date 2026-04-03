@@ -88,6 +88,17 @@ function toggleAnchor(anchored: boolean) {
 </template>
 
 <style scoped>
+.drag-handle {
+  cursor: grab;
+  margin-right: 10px;
+  color: #999;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
 .grid-item {
   user-select: none;
   /* Prevent text selection */
