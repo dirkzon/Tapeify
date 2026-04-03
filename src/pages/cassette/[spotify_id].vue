@@ -94,23 +94,4 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 .grid-shell {
   display: flex;
 }
-
-.grid-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.grid-item {
-  cursor: pointer;
-  border-radius: 10px;
-  margin: 4px 0;
-  padding: 8px;
-  border: 1px solid #ccc;
-    user-select: none;
-  /* Prevent text selection */
-  -webkit-user-select: none;
-  /* For Safari */
-  -moz-user-select: none;
-  /* For Firefox */
-}
 </style>

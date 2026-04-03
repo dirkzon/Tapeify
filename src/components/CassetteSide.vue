@@ -69,19 +69,23 @@ function onListKeydown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="grid-column">
-    <v-list @keydown="onListKeydown">
-      <v-chip size="small" variant="tonal" :color="durationChipColor">
-        {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
-      </v-chip>
-      <v-list-subheader>
-        Side {{ String.fromCharCode(65 + sideIndex) }}
-      </v-list-subheader>
-      <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged"
-        handle=".drag-handle">
-        <cassette-item v-for="(id, rowIndex) in layout?.trackIds" :key="id" :track-id="id" :row-index="rowIndex"
-          :col-index="colIndex" />
-      </draggable>
-      </v-list>
-    </div>
+  <v-list @keydown="onListKeydown" class="grid-column">
+    <v-chip size="small" variant="tonal" :color="durationChipColor">
+      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
+    </v-chip>
+    <v-list-subheader>
+      Side {{ String.fromCharCode(65 + sideIndex) }}
+    </v-list-subheader>
+    <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged" handle=".drag-handle">
+      <cassette-item v-for="(id, rowIndex) in layout?.trackIds" :key="id" :track-id="id" :row-index="rowIndex"
+        :col-index="colIndex" />
+    </draggable>
+  </v-list>
 </template>
+
+<style scoped>
+.grid-column {
+  display: flex;
+  flex-direction: column;
+}
+</style>

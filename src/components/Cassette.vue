@@ -86,14 +86,14 @@ const name = computed<string>({
     </v-alert>
     <v-row class="pa-2">
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" :col-index="cassetteIndex * 2" class="grid-column"
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" :col-index="cassetteIndex * 2"
           :key="cassetteIndex * 2" />
       </v-col>
 
       <v-divider vertical class="full-height-divider" />
 
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" :col-index="cassetteIndex * 2 + 1" class="grid-column"
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" :col-index="cassetteIndex * 2 + 1"
           :key="cassetteIndex * 2 + 1" />
       </v-col>
     </v-row>
@@ -103,10 +103,5 @@ const name = computed<string>({
 <style scoped>
 .cassette-card {
   border-radius: 12px;
-}
-
-.grid-column {
-  display: flex;
-  flex-direction: column;
 }
 </style>
