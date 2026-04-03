@@ -3,15 +3,14 @@ import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
 import { useSortingStore } from '@/stores/sorting';
 import { useAnchorsStore } from '@/stores/anchor';
-import { useTracksStore } from '@/stores/tracks';
 
 const cassetteStore = useCassettesStore()
 const sortingStore = useSortingStore();
 const anchorsStore = useAnchorsStore();
-const trackStore = useTracksStore();
 
 const props = defineProps<{
   cassetteId: string
+  cassetteIndex: number
 }>()
 
 const cassette = computed(() => {
@@ -60,11 +59,12 @@ const name = computed<string>({
   <v-card class="cassette-card">
     <v-toolbar color="primary">
       <template v-slot:prepend>
-        <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details class="ma-0"
-          style="min-width:150px" label="Capacity (min)" />
+        <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details
+          class="ma-0" style="min-width:150px" label="Capacity (min)" />
       </template>
       <template v-slot:title>
-        <v-text-field v-model="name" density="compact" hide-details placeholder="Cassette name" class="cassette-title-field" />
+        <v-text-field v-model="name" density="compact" hide-details placeholder="Cassette name"
+          class="cassette-title-field" />
       </template>
       <template v-slot:append>
         <v-btn icon @click="addCassette" title="Add cassette">
@@ -86,13 +86,15 @@ const name = computed<string>({
     </v-alert>
     <v-row class="pa-2">
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" :col-index="cassetteIndex * 2" class="grid-column"
+          :key="cassetteIndex * 2" />
       </v-col>
 
       <v-divider vertical class="full-height-divider" />
 
       <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" :col-index="cassetteIndex * 2 + 1" class="grid-column"
+          :key="cassetteIndex * 2 + 1" />
       </v-col>
     </v-row>
   </v-card>
@@ -101,5 +103,10 @@ const name = computed<string>({
 <style scoped>
 .cassette-card {
   border-radius: 12px;
+}
+
+.grid-column {
+  display: flex;
+  flex-direction: column;
 }
 </style>

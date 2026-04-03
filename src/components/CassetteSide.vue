@@ -11,7 +11,8 @@ const sortStore = useSortingStore()
 
 const props = defineProps<{
   cassetteId: string,
-  sideIndex: number
+  sideIndex: number,
+  colIndex: number,
 }>()
 
 const tracksCache = ref<string[]>([])
@@ -59,24 +60,28 @@ const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
   return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'error' : 'secondary'
 })
+
+function onListKeydown(e: KeyboardEvent) {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.stopPropagation()
+  }
+}
 </script>
 
 <template>
-  <v-list class="hide-scrollbar">
-    <v-chip size="small" variant="tonal" :color="durationChipColor">
-      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
-    </v-chip>
-    <v-list-subheader>
-      Side {{ String.fromCharCode(65 + sideIndex) }}
-    </v-list-subheader>
-    <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged" handle=".drag-handle">
-      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id" />
-    </draggable>
-  </v-list>
+  <div class="grid-column">
+    <v-list @keydown="onListKeydown">
+      <v-chip size="small" variant="tonal" :color="durationChipColor">
+        {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
+      </v-chip>
+      <v-list-subheader>
+        Side {{ String.fromCharCode(65 + sideIndex) }}
+      </v-list-subheader>
+      <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged"
+        handle=".drag-handle">
+        <cassette-item v-for="(id, rowIndex) in layout?.trackIds" :key="id" :track-id="id" :row-index="rowIndex"
+          :col-index="colIndex" />
+      </draggable>
+      </v-list>
+    </div>
 </template>
-
-<style lang="css">
-.hide-scrollbar {
-  overflow: hidden;
-}
-</style>
