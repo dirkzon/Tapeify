@@ -87,5 +87,6 @@ function onListKeydown(e: KeyboardEvent) {
 .grid-column {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 </style>
