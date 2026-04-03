@@ -15,11 +15,11 @@ import { usePlaylistsStore } from '@/stores/playlists';
 import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
-import { useTrackGridNavigation } from '@/composables/UseTrackGridNavigation';
+import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'
 
-const gridNav = useTrackGridNavigation()
-
-provide("trackGridNav", gridNav)
+const gridRef = ref<HTMLElement | null>(null)
+const useKeyboardTrap = useKeyboardTrapFactory({})
+useKeyboardTrap(gridRef, { roving: true, grid: true }, true)
 
 const sortStore = useSortingStore()
 const tracksStore = useTracksStore()
@@ -81,7 +81,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
-  <div role="grid" aria-label="Cassette track grid" :aria-colcount="cassetteStore.cassettes.length * 2" class="ma-0">
+  <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid" class="grid-shell">
     <v-row justify="center">
       <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
         <cassette :cassetteId="cassette.id" class="included" />
@@ -89,3 +89,9 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
     </v-row>
   </div>
 </template>
+
+<style scoped>
+.grid-shell {
+  display: flex;
+}
+</style>

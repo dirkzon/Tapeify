@@ -11,7 +11,7 @@ const sortStore = useSortingStore()
 
 const props = defineProps<{
   cassetteId: string,
-  sideIndex: number
+  sideIndex: number,
 }>()
 
 const tracksCache = ref<string[]>([])
@@ -21,7 +21,9 @@ const cassette = computed(() => cassetteStore.getCassetteById(props.cassetteId))
 
 const tracks = computed<string[]>({
   get: () => layout.value?.trackIds ?? [],
-  set: (tracks: string[]) => tracksCache.value = tracks
+  set: (newTracks: string[]) => {
+    tracksCache.value = newTracks
+  }
 })
 
 async function onChanged(event: DragChangeEvent<string>) {
@@ -53,16 +55,23 @@ async function onChanged(event: DragChangeEvent<string>) {
   }
 
   sortStore.sortTracks()
+  tracksCache.value = []
 }
 
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
   return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'error' : 'secondary'
 })
+
+function onListKeydown(e: KeyboardEvent) {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.stopPropagation()
+  }
+}
 </script>
 
 <template>
-  <v-list class="hide-scrollbar">
+  <v-list @keydown="onListKeydown" class="grid-column">
     <v-chip size="small" variant="tonal" :color="durationChipColor">
       {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
     </v-chip>
@@ -70,13 +79,15 @@ const durationChipColor = computed(() => {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged" handle=".drag-handle">
-      <cassette-item v-for="id in layout?.trackIds" :key="id" :track-id="id" />
+      <cassette-item v-for="id in tracks" :key="id" :track-id="id" />
     </draggable>
   </v-list>
 </template>
 
-<style lang="css">
-.hide-scrollbar {
+<style scoped>
+.grid-column {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 </style>

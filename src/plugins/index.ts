@@ -11,7 +11,9 @@ import router from '../router'
 
 // Types
 import type { App } from 'vue'
+import VueKeyboardTrapDirectivePlugin from '@pdanpdan/vue-keyboard-trap'
 
 export function registerPlugins(app: App) {
   app.use(vuetify).use(pinia).use(router)
+  app.use(VueKeyboardTrapDirectivePlugin, {})
 }

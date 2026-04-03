@@ -22,6 +22,12 @@ export const useSortingStore = defineStore('sorting', {
         return state.layout.find(side => side.cassetteId === cassetteId && side.sideIndex === sideIndex)
       }
     },
+    sideColumnIndex: (state) => {
+      return (cassetteId: string, sideIndex: number) => {
+        const cassetteSides = state.layout.filter(side => side.cassetteId === cassetteId)
+        return cassetteSides.findIndex(side => side.sideIndex === sideIndex)
+      }
+    }
   },
   actions: {
     sortTracks() {
