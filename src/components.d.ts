@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 // @ts-nocheck
 // biome-ignore lint: disable
 // oxlint-disable
@@ -26,6 +26,7 @@ declare module 'vue' {
     TrackItem: typeof import('./components/TrackItem.vue')['default']
     UnavailableCassetteItem: typeof import('./components/UnavailableCassetteItem.vue')['default']
     UnavailableTracksList: typeof import('./components/UnavailableTracksList.vue')['default']
+    UploadCassetteDialog: typeof import('./components/UploadCassetteDialog.vue')['default']
     UserPlaylistsTab: typeof import('./components/UserPlaylistsTab.vue')['default']
   }
 }

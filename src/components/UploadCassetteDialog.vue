@@ -24,7 +24,7 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
                     <div class="text-h6">Issues detected</div>
                     <div class="text-body-2">Fix these issues before uploading.</div>
 
-                    <v-list dense two-line>
+                    <v-list density="compact" lines="two">
                         <v-list-item v-for="(alert, id) in cassetteStore.alerts" :key="id">
                             <template v-slot:append>
                                 <v-icon icon="mdi-alert-circle" color="warning"></v-icon>
@@ -38,8 +38,8 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
 
                 <v-card-actions class="pa-4">
                     <v-spacer />
-                    <v-btn text @click="isActive.value = false">Cancel</v-btn>
-                    <v-btn :disabled="projectHasAlerts" text dark @click="cassetteStore.uploadCassette">
+                    <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
+                    <v-btn :disabled="projectHasAlerts" variant="text" dark @click="cassetteStore.uploadCassette">
                         Upload
                     </v-btn>
                 </v-card-actions>
