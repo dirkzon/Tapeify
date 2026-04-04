@@ -3,12 +3,10 @@ import { useTracksStore } from '@/stores/tracks';
 import { useAnchorsStore } from '@/stores/anchor';
 import { useSortingStore } from '@/stores/sorting';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
-import { useCassettesStore } from '@/stores/cassette';
 
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 const sortStore = useSortingStore()
-const cassetteStore = useCassettesStore()
 
 const atLeastOneTrackSelected = computed(() => tracksStore.selectedTracks.length > 0)
 
@@ -77,8 +75,9 @@ const selectedSortType = computed({
     </template>
 
     <template v-slot:append>
-      <v-btn block variant="outlined" :disabled="cassetteStore.alerts.length > 0" @click="cassetteStore.uploadCassette">
+      <v-btn block variant="outlined">
         Upload Cassette
+        <upload-cassette-dialog />
       </v-btn>
 
     </template>
