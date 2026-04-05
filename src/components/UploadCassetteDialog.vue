@@ -21,7 +21,7 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
                 <v-divider />
 
                 <v-card-item class="pa-4" v-if="projectHasAlerts">
-                    <div class="text-h6">Issues detected</div>
+                    <div class="text-h6">Issues</div>
                     <div class="text-body-2">Fix these issues before uploading.</div>
 
                     <v-list density="compact" lines="two">
@@ -36,10 +36,26 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
                     <v-divider />
                 </v-card-item>
 
+                <!-- <v-card-item class="pa-4">
+                    <div class="text-h6">Playlists</div>
+                    <div class="text-body-2">Each side of a cassette will be uploaded as a separate playlist.</div>
+
+                    <v-list density="compact" lines="two">
+                        <v-list-item v-for="(alert, id) in cassetteStore.alerts" :key="id">
+                            <template v-slot:append>
+                                <v-icon icon="mdi-alert-circle" color="warning"></v-icon>
+                            </template>
+                            <v-list-item-title>{{ cassetteStore.getCassetteById(id)!.name }}</v-list-item-title>
+                            <v-list-item-subtitle>{{ alert.message }}</v-list-item-subtitle>
+                        </v-list-item>
+                    </v-list>
+                    <v-divider />
+                </v-card-item> -->
+
                 <v-card-actions class="pa-4">
                     <v-spacer />
                     <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
-                    <v-btn :disabled="projectHasAlerts" variant="text" dark @click="cassetteStore.uploadCassette">
+                    <v-btn :disabled="projectHasAlerts" variant="text" @click="cassetteStore.uploadCassette">
                         Upload
                     </v-btn>
                 </v-card-actions>
