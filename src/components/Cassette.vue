@@ -17,7 +17,7 @@ const cassette = computed(() => {
 })
 
 const topAlert = computed(() => {
-  return cassetteStore.topAlertForCassette(props.cassetteId)
+  return cassetteStore.alertForCassette(props.cassetteId)
 })
 
 function addCassette() {

@@ -18,7 +18,7 @@ export const useCassettesStore = defineStore('cassettes', {
     cassettes: [
       { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000 },
     ] as Cassette[],
-    alerts: [] as CassetteAlert[],
+    alerts: {} as Record<string, CassetteAlert>,
   }),
 
   getters: {
@@ -26,14 +26,8 @@ export const useCassettesStore = defineStore('cassettes', {
       return (cassetteId: string) =>
         state.cassettes.find(cassette => cassette.id === cassetteId)
     },
-    alertsForCassette: (state) => (cassetteId: string): CassetteAlert[] =>
-      state.alerts.filter(alert => alert.cassetteId === cassetteId),
-    topAlertForCassette: (state) => (cassetteId: string): CassetteAlert | undefined => {
-      const alertsForCassette = state.alerts.filter(alert => alert.cassetteId === cassetteId)
-      if (alertsForCassette.length === 0) return undefined
-      return alertsForCassette.reduce((prev, current) => {
-        return (current.priority > prev.priority) ? current : prev;
-      })
+    alertForCassette: (state) => (cassetteId: string): CassetteAlert | undefined => {
+      return state.alerts[cassetteId]
     },
   },
   actions: {
@@ -47,7 +41,7 @@ export const useCassettesStore = defineStore('cassettes', {
 
     removeCassette(cassetteId: string) {
       this.cassettes = this.cassettes.filter(c => c.id !== cassetteId)
-      this.alerts = this.alerts.filter(a => a.cassetteId !== cassetteId)
+      delete this.alerts[cassetteId]
     },
 
     updateName(cassetteId: string, newName: string) {
@@ -71,7 +65,7 @@ export const useCassettesStore = defineStore('cassettes', {
       const sortStore = useSortingStore()
 
       sortStore.$subscribe((_mutation, state) => {
-        this.alerts = []
+        this.alerts = {}
 
         const sidesByCassette: Record<
           string,
@@ -105,12 +99,22 @@ export const useCassettesStore = defineStore('cassettes', {
         const payload = rule.when(cassette, sides)
         if (!payload) continue
 
-        this.alerts.push({
-          cassetteId: cassette.id,
-          message: rule.message(cassette, sides, payload),
-          action: rule.action?.(cassette, sides, payload),
-          priority: rule.priority(cassette, sides, payload),
-        })
+        if (!this.alerts[cassette.id]) {
+          this.alerts[cassette.id] = {
+            message: rule.message(cassette, sides, payload),
+            action: rule.action?.(cassette, sides, payload),
+            priority: rule.priority(cassette, sides, payload),
+          }
+        } else {
+          const existingAlert = this.alerts[cassette.id]
+          if (rule.priority(cassette, sides, payload) > existingAlert.priority) {
+            this.alerts[cassette.id] = {
+              message: rule.message(cassette, sides, payload),
+              action: rule.action?.(cassette, sides, payload),
+              priority: rule.priority(cassette, sides, payload),
+            }
+          }
+        }
       }
     },
     async uploadCassette() {

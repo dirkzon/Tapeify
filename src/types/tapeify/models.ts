@@ -76,7 +76,6 @@ export interface CassetteMetadata {
 }
 
 export interface CassetteAlert {
-  cassetteId: string
   message: string
   priority: number
   action?: {
