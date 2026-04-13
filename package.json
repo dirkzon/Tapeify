@@ -18,7 +18,7 @@
     "@pdanpdan/vue-keyboard-trap": "^1.2.0",
     "@typescript-eslint/types": "^8.57.2",
     "@vueuse/core": "^14.1.0",
-    "axios": "^1.13.2",
+    "axios": "^1.15.0",
     "core-js": "^3.37.1",
     "lodash-es": "^4.17.23",
     "prettier": "^3.4.2",
