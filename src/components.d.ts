@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 // @ts-nocheck
 // biome-ignore lint: disable
 // oxlint-disable
@@ -23,7 +23,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchAlbumsTab: typeof import('./components/SearchAlbumsTab.vue')['default']
     SearchPlaylistsTab: typeof import('./components/SearchPlaylistsTab.vue')['default']
-    TrackItem: typeof import('./components/TrackItem.vue')['default']
     UnavailableCassetteItem: typeof import('./components/UnavailableCassetteItem.vue')['default']
     UnavailableTracksList: typeof import('./components/UnavailableTracksList.vue')['default']
     UploadCassetteDialog: typeof import('./components/UploadCassetteDialog.vue')['default']
