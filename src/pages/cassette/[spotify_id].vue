@@ -16,6 +16,7 @@ import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'
 import { useLayoutStore } from '@/stores/layout';
+import { resetStores } from '@/utils/reset.stores';
 
 const gridRef = ref<HTMLElement | null>(null)
 const useKeyboardTrap = useKeyboardTrapFactory({})
@@ -68,6 +69,8 @@ onMounted(async () => {
 
   layoutStore.calculateLayout()
 })
+
+onUnmounted(() => resetStores())
 
 function onGlobalClick(e: MouseEvent) {
   const target = e.target as HTMLElement | null
