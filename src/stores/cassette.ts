@@ -108,7 +108,9 @@ export const useCassettesStore = defineStore('cassettes', {
 
       for (const cassette of this.cassettes) {
         const layouts = layoutStore.getLayoutByCassetteId(cassette.id)
-
+        if (layouts == undefined) {
+          break
+        }
         for (const layout of layouts.sides) {
           const trackUris = layout.trackIds.map(id => trackStore.GetTrackById(id)?.uri).filter(uri => uri !== undefined)
 
