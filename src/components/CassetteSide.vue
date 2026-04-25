@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
-import { useSortingStore } from '@/stores/sorting';
+import { useLayoutStore } from '@/stores/layout';
 import type { DragChangeEvent } from '@/types/draggable/types';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const cassetteStore = useCassettesStore()
 const anchorStore = useAnchorsStore()
-const sortStore = useSortingStore()
+const layoutStore = useLayoutStore()
 
 const props = defineProps<{
   cassetteId: string,
@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const tracksCache = ref<string[]>([])
 
-const layout = computed(() => sortStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex))
+const layout = computed(() => layoutStore.getLayoutbyCassetteAndSide(props.cassetteId, props.sideIndex))
 const cassette = computed(() => cassetteStore.getCassetteById(props.cassetteId))
 
 const tracks = computed<string[]>({
@@ -54,7 +54,7 @@ async function onChanged(event: DragChangeEvent<string>) {
     }
   }
 
-  sortStore.sortTracks()
+  layoutStore.calculateLayout()
   tracksCache.value = []
 }
 
@@ -79,7 +79,7 @@ function onListKeydown(e: KeyboardEvent) {
       Side {{ String.fromCharCode(65 + sideIndex) }}
     </v-list-subheader>
     <draggable v-model="tracks" group="tracks" item-key="id" animation="200" @change="onChanged" handle=".drag-handle">
-      <cassette-item v-for="id in tracks" :key="id" :track-id="id" />
+      <cassette-item v-for="id in tracks" :key="id" :track-id="id" :column-index="layout.columnIndex"/>
     </draggable>
   </v-list>
 </template>

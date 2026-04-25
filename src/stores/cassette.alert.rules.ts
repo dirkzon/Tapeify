@@ -1,6 +1,6 @@
 import type { AlertRule } from "@/types/tapeify/models";
 import { useCassettesStore } from "./cassette";
-import { useSortingStore } from "./sorting";
+import { useLayoutStore } from "./layout";
 
 const emptyCassetteRule: AlertRule = {
   when: (cassette, sides) =>
@@ -68,9 +68,9 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
 
   action: (cassette, _sides, payload) => ({
     fn: () => {
-      const sortStore = useSortingStore()
+      const layoutStore = useLayoutStore()
       cassette.capacityMs = payload!.suggestedCapacityMs
-      sortStore.sortTracks()
+      layoutStore.calculateLayout()
     },
     message: `Set capacity to ${payload!.label}`,
   }),
@@ -113,9 +113,9 @@ const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
 
   action: (cassette, _sides, payload) => ({
     fn: () => {
-      const sortStore = useSortingStore()
+      const layoutStore = useLayoutStore()
       cassette.capacityMs = payload!.suggestedCapacityMs
-      sortStore.sortTracks()
+      layoutStore.calculateLayout()
     },
     message: `Expand to ${payload!.label}`,
   }),
@@ -161,10 +161,10 @@ const needsNewCassetteRule: AlertRule<AddCassettePayload> = {
   action: (_cassette) => ({
     fn: () => {
       const cassetteStore = useCassettesStore()
-      const sortStore = useSortingStore()
+      const layoutStore = useLayoutStore()
 
       cassetteStore.addCassette()
-      sortStore.sortTracks()
+      layoutStore.calculateLayout()
     },
     message: "Add another cassette",
   }),

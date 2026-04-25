@@ -6,10 +6,10 @@ import type {
   TapeSideLayout,
 } from '@/types/tapeify/models'
 import { v4 as uuidv4 } from 'uuid'
-import { useSortingStore } from './sorting'
 import { CASSETTE_ALERT_RULES } from './cassette.alert.rules'
 import { usePlaylistsStore } from './playlists'
 import { useTracksStore } from './tracks'
+import { useLayoutStore } from './layout'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
@@ -62,37 +62,21 @@ export const useCassettesStore = defineStore('cassettes', {
       this.metadata = newMetadata
     },
     initAlerts() {
-      const sortStore = useSortingStore()
+      const layoutStore = useLayoutStore()
 
-      sortStore.$subscribe((_mutation, state) => {
+      layoutStore.$subscribe((_mutation, state) => {
         this.alerts = {}
 
-        const sidesByCassette: Record<
-          string,
-          Record<number, TapeSideLayout>
-        > = {}
-
-        for (const side of Object.values(state.layout)) {
-          if (!sidesByCassette[side.cassetteId]) {
-            sidesByCassette[side.cassetteId] = {}
-          }
-
-          sidesByCassette[side.cassetteId][side.sideIndex] = side
-        }
-
-        for (const cassetteId in sidesByCassette) {
+        for (const cassetteId in state.cassettesLayout) {
           const cassette = this.getCassetteById(cassetteId)
           if (!cassette) continue
 
-          this._createAlertsForCassette(
-            sidesByCassette[cassetteId],
-            cassette
-          )
+          this._createAlertsForCassette(state.cassettesLayout[cassetteId].sides, cassette)
         }
       })
     },
     _createAlertsForCassette(
-      sides: Record<number, TapeSideLayout>,
+      sides: TapeSideLayout[],
       cassette: Cassette
     ) {
       for (const rule of CASSETTE_ALERT_RULES) {
@@ -118,14 +102,14 @@ export const useCassettesStore = defineStore('cassettes', {
       }
     },
     async uploadCassette() {
-      const sortStore = useSortingStore()
+      const layoutStore = useLayoutStore()
       const playlistStore = usePlaylistsStore()
       const trackStore = useTracksStore()
 
       for (const cassette of this.cassettes) {
-        const layouts = sortStore.getLayoutByCassetteId(cassette.id)
+        const layouts = layoutStore.getLayoutByCassetteId(cassette.id)
 
-        for (const layout of layouts) {
+        for (const layout of layouts.sides) {
           const trackUris = layout.trackIds.map(id => trackStore.GetTrackById(id)?.uri).filter(uri => uri !== undefined)
 
           const playlist = await playlistStore.UploadNewPlaylist(`${cassette.name} side ${String.fromCharCode(65 + layout.sideIndex)}`, "Made with Tapeify", false)
