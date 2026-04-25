@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
-import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 
 const tracksStore = useTracksStore()
