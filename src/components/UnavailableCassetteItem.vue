@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useSortingStore } from '@/stores/sorting';
+import { useLayoutStore } from '@/stores/layout';
 import { useTracksStore } from '@/stores/tracks';
 
 const props = defineProps<{
@@ -7,13 +7,13 @@ const props = defineProps<{
 }>()
 
 const tracksStore = useTracksStore()
-const sortingStore = useSortingStore()
+const layoutStore = useLayoutStore() 
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 
 function makeTrackAvailable() {
   tracksStore.MarkTrackAsAvailable(props.trackId)
-  sortingStore.sortTracks()
+  layoutStore.calculateLayout()
 }
 </script>
 

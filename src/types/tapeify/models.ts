@@ -59,11 +59,21 @@ export interface Track {
   artists: string[]
 }
 
-export interface TapeSideLayout {
+export interface TrackLocation {
   cassetteId: string
   sideIndex: number
+  position: number
+}
+
+export interface TapeSideLayout {
   trackIds: Array<string>
+  columnIndex: number
   durationMs: number
+  sideIndex: number
+}
+
+export interface CassetteLayout {
+  sides: Array<TapeSideLayout>
 }
 
 export interface CassetteMetadata {

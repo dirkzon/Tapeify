@@ -7,7 +7,6 @@
 </route>
 
 <script setup lang="ts">
-import { useSortingStore } from '@/stores/sorting';
 import { useTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
@@ -16,12 +15,14 @@ import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'
+import { useLayoutStore } from '@/stores/layout';
+import { resetStores } from '@/utils/reset.stores';
 
 const gridRef = ref<HTMLElement | null>(null)
 const useKeyboardTrap = useKeyboardTrapFactory({})
 useKeyboardTrap(gridRef, { roving: true, grid: true }, true)
 
-const sortStore = useSortingStore()
+const layoutStore = useLayoutStore()
 const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
@@ -30,9 +31,9 @@ const cassetteStore = useCassettesStore()
 useHotkey('ctrl+a', () => {
   const lastSelectedTrackId = tracksStore.lastSelectedTrackId
   if (lastSelectedTrackId) {
-    const lastSelectedTrackLayout = sortStore.getTrackLayout(lastSelectedTrackId)
+    const lastSelectedTrackLayout = layoutStore.getTrackLayout(lastSelectedTrackId)
     if (lastSelectedTrackLayout) {
-      const trackIdsOnSameSide = sortStore.getLayoutbyCassetteAndSide(lastSelectedTrackLayout.cassetteId, lastSelectedTrackLayout.sideIndex)
+      const trackIdsOnSameSide = layoutStore.getLayoutbyCassetteAndSide(lastSelectedTrackLayout.cassetteId, lastSelectedTrackLayout.sideIndex)
       if (trackIdsOnSameSide) {
         for (const trackId of trackIdsOnSameSide.trackIds) {
           tracksStore.selectedTracks.push(trackId)
@@ -57,16 +58,19 @@ onMounted(async () => {
     switch (type) {
       case 'album':
         await albumStore.FetchAlbumTracks(id)
-        sortStore.setSortType('keep-order')
+        layoutStore.setSortType('keep-order')
         break
       case 'playlist':
         await playlistsStore.FetchPlaylistTracks(id)
-        sortStore.setSortType('greedy')
+        layoutStore.setSortType('greedy')
         break
     }
   }
-  sortStore.sortTracks()
+
+  layoutStore.calculateLayout()
 })
+
+onUnmounted(() => resetStores())
 
 function onGlobalClick(e: MouseEvent) {
   const target = e.target as HTMLElement | null

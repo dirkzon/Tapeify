@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { useCassettesStore } from '@/stores/cassette';
 import CassetteSide from './CassetteSide.vue';
-import { useSortingStore } from '@/stores/sorting';
 import { useAnchorsStore } from '@/stores/anchor';
+import { useLayoutStore } from '@/stores/layout';
 
 const cassetteStore = useCassettesStore()
-const sortingStore = useSortingStore();
 const anchorsStore = useAnchorsStore();
+const layoutStore = useLayoutStore()
 
 const props = defineProps<{
   cassetteId: string
@@ -22,13 +22,13 @@ const topAlert = computed(() => {
 
 function addCassette() {
   cassetteStore.addCassette()
-  sortingStore.sortTracks()
+  layoutStore.calculateLayout()
 }
 
 function removeCassette() {
   cassetteStore.removeCassette(props.cassetteId)
   anchorsStore.removeAnchoresByCassetteId(props.cassetteId)
-  sortingStore.sortTracks()
+  layoutStore.calculateLayout()
 }
 
 const capacityMinutes = computed<number>({
@@ -39,7 +39,7 @@ const capacityMinutes = computed<number>({
   set(mins: number) {
     if (!cassette.value) return
     cassetteStore.updateCapacity(cassette.value.id, mins * 60000)
-    sortingStore.sortTracks()
+    layoutStore.calculateLayout()
   }
 })
 
