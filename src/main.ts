@@ -5,6 +5,7 @@
  */
 
 import './utils/sorting/registerTrackSorters'
+import "@/api";
 
 // Plugins
 import { registerPlugins } from '@/plugins'
