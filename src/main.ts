@@ -4,8 +4,8 @@
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
-import './utils/sorting/registerTrackSorters'
 import "@/api";
+import './sorting/registerTrackSorters'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
@@ -13,7 +13,6 @@ import { registerPlugins } from '@/plugins'
 // Components
 import App from './App.vue'
 import CassetteSide from './components/CassetteSide.vue'
-import TrackItem from './components/TrackItem.vue'
 import AlbumsList from './components/AlbumList.vue'
 import PlaylistsList from './components/PlaylistList.vue'
 import UserPlaylistsTab from './components/UserPlaylistsTab.vue'
@@ -36,7 +35,6 @@ const app = createApp(App)
 registerPlugins(app)
 
 app.component('cassette-side', CassetteSide)
-app.component('track-item', TrackItem)
 app.component('playlist-list', PlaylistsList)
 app.component('album-list', AlbumsList)
 app.component('draggable', VueDraggableNext)

@@ -1,26 +1,27 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
-import { useSortingStore } from '@/stores/sorting';
+import { useLayoutStore } from '@/stores/layout';
 import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
 const props = defineProps<{
   trackId: string,
+  columnIndex: number
 }>()
 
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
-const sortStore = useSortingStore()
+const layoutStore = useLayoutStore()
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
 const anchorIcon = computed(() => anchorStore.isTrackAnchored(props.trackId) ? "mdi-lock" : "mdi-lock-open")
-const layout = computed(() => sortStore.getTrackLayout(props.trackId))
+const trackLayout = computed(() => layoutStore.getTrackLayout(props.trackId))
 
 function selectTrack(e: MouseEvent | KeyboardEvent) {
   if (e.shiftKey) {
     if (!tracksStore.lastSelectedTrackId) return;
-    const bulk = sortStore.getTracksRange(tracksStore.lastSelectedTrackId, props.trackId);
+    const bulk = layoutStore.getTracksRange(tracksStore.lastSelectedTrackId, props.trackId);
     tracksStore.selectedTracks = Array.from(new Set([...tracksStore.selectedTracks, ...bulk]));
   } else if (e.ctrlKey || e.metaKey) {
     if (!tracksStore.selectedTracks.includes(props.trackId)) {
@@ -37,13 +38,13 @@ function toggleAnchor(anchored: boolean) {
     anchorStore.removeAnchor(props.trackId)
   } else {
     anchorStore.anchorTrack(props.trackId, {
-      cassetteId: layout.value!.cassetteId,
-      sideIndex: layout.value!.sideIndex,
-      position: layout.value!.position
+      cassetteId: trackLayout.value!.cassetteId,
+      sideIndex: trackLayout.value!.sideIndex,
+      position: trackLayout.value!.position
     })
   }
 
-  sortStore.sortTracks()
+  layoutStore.calculateLayout()
 
   const trackSelected = tracksStore.selectedTracks.includes(props.trackId)
   tracksStore.ClearSelectedTracks()
@@ -54,13 +55,13 @@ function toggleAnchor(anchored: boolean) {
 </script>
 
 <template>
-  <div :key="layout?.position">
+  <div :key="trackLayout?.position">
     <v-hover :key="Number(isAnchored)">
       <template v-slot:default="{ isHovering, props }">
         <v-list-item active-class="text-secondary" class="py-2 grid-item" handle=".drag-handle" v-bind="props"
           @click="selectTrack" :active="tracksStore.selectedTracks.includes(trackId)" :value="trackId" role="gridcell"
-          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="layout?.position"
-          :data-v-kbd-trap-col="sortStore.sideColumnIndex(layout?.cassetteId ?? '', layout?.sideIndex ?? 0)">
+          :data-track-id="trackId" tabindex="0" :data-v-kbd-trap-row="trackLayout?.position"
+          :data-v-kbd-trap-col="columnIndex">
           <template v-slot:prepend>
             <v-icon class="drag-handle" icon="mdi-drag-vertical" size="large" />
             <v-avatar class="rounded-sm">
