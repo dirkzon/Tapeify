@@ -4,6 +4,7 @@
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
+import "@/api";
 import './sorting/registerTrackSorters'
 
 // Plugins
