@@ -1,10 +1,10 @@
 import type { CassetteLayout, TapeSideLayout, TrackLocation } from "@/types/tapeify/models"
 import { defineStore } from "pinia"
-import { trackSorterRegistry } from "@/utils/sorting/trackSorterRegistry";
+import { trackSorterRegistry } from "@/sorting/trackSorterRegistry";
 import { useCassettesStore } from "./cassette";
 import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
-import { TapeSide } from "@/utils/sorting/tapeSideLayout";
+import { TapeSide } from "@/sorting/tapeSideLayout";
 
 export const useLayoutStore = defineStore('layout', {
     state: () => ({
