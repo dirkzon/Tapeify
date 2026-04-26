@@ -71,7 +71,7 @@ export const useLayoutStore = defineStore('layout', {
             const sides: TapeSide[] = []
 
             for (const cassette of cassetteStore.cassettes) {
-                for (let sideIndex = 0; sideIndex < 2; sideIndex++) {
+                for (let sideIndex = 0; sideIndex < cassette.sidesCount; sideIndex++) {
                     const side = new TapeSide(cassette, sideIndex)
                     sides.push(side)
                 }

@@ -49,7 +49,7 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
     )
 
     const suggestedCapacity = possibleCapacitiesMs.find(
-      total => total / 2 >= longestSide
+      total => total / cassette.sidesCount >= longestSide
     )
 
     if (!suggestedCapacity || cassette.capacityMs <= suggestedCapacity)
@@ -94,7 +94,7 @@ const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
     const requiredPerSide = totalDuration / 2
 
     const requiredTotal = possibleCapacitiesMs.find(
-      total => total / 2 >= requiredPerSide
+      total => total / cassette.sidesCount >= requiredPerSide
     )
 
     if (!requiredTotal || cassette.capacityMs >= requiredTotal)

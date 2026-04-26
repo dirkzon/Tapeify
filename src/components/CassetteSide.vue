@@ -73,7 +73,7 @@ function onListKeydown(e: KeyboardEvent) {
 <template>
   <v-list @keydown="onListKeydown" class="grid-column">
     <v-chip size="small" variant="tonal" :color="durationChipColor">
-      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / 2) }}
+      {{ formatDuration(layout?.durationMs ?? 0) }} / {{ formatDuration((cassette?.capacityMs ?? 0) / cassette!.sidesCount) }}
     </v-chip>
     <v-list-subheader>
       Side {{ String.fromCharCode(65 + sideIndex) }}

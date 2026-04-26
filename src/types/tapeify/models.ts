@@ -39,6 +39,7 @@ export interface Cassette {
   name: string
   id: string
   capacityMs: number
+  sidesCount: number
 }
 
 export interface Anchor {

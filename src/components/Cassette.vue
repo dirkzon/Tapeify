@@ -84,14 +84,8 @@ const name = computed<string>({
       </div>
     </v-alert>
     <v-row class="pa-2">
-      <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="0" />
-      </v-col>
-
-      <v-divider vertical class="full-height-divider" />
-
-      <v-col>
-        <CassetteSide :cassetteId="cassetteId" :sideIndex="1" />
+      <v-col v-for="index in Array.from({ length: cassette?.sidesCount || 0 }, (_, i) => i)" :key="index">
+        <CassetteSide :cassetteId="cassetteId" :sideIndex="index" />
       </v-col>
     </v-row>
   </v-card>
