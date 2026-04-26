@@ -13,10 +13,10 @@ import { useLayoutStore } from './layout'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
-    possibleLengthsMin: [60, 90, 120],
+    possibleLengthsMin: [30, 45, 60, 90, 120],
     metadata: {} as CassetteMetadata,
     cassettes: [
-      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000 },
+      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000, sidesCount: 2 },
     ] as Cassette[],
     alerts: {} as Record<string, CassetteAlert>,
   }),
@@ -36,6 +36,7 @@ export const useCassettesStore = defineStore('cassettes', {
         id: uuidv4(),
         name: `${this.metadata.item_name} ${this.cassettes.length + 1}`,
         capacityMs: 90 * 60000,
+        sidesCount: 2
       })
     },
 
@@ -55,6 +56,16 @@ export const useCassettesStore = defineStore('cassettes', {
       const cassette = this.getCassetteById(cassetteId)
       if (cassette) {
         cassette.capacityMs = newCapacityMs
+      }
+    },
+
+    updateSidesCount(cassetteId: string, newSidesCount: number) {
+      if (newSidesCount < 1) {
+        throw new Error("New sides count cannot be less than 1.")
+      }
+      const cassette = this.getCassetteById(cassetteId)
+      if (cassette) {
+        cassette.sidesCount = newSidesCount
       }
     },
 
