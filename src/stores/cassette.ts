@@ -13,7 +13,7 @@ import { useLayoutStore } from './layout'
 
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
-    possibleLengthsMin: [60, 90, 120],
+    possibleLengthsMin: [30, 45, 60, 90, 120],
     metadata: {} as CassetteMetadata,
     cassettes: [
       { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000, sidesCount: 2 },
