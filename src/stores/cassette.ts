@@ -16,7 +16,7 @@ export const useCassettesStore = defineStore('cassettes', {
     possibleLengthsMin: [60, 90, 120],
     metadata: {} as CassetteMetadata,
     cassettes: [
-      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000, sidesCount: 3 },
+      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000, sidesCount: 2 },
     ] as Cassette[],
     alerts: {} as Record<string, CassetteAlert>,
   }),
@@ -56,6 +56,16 @@ export const useCassettesStore = defineStore('cassettes', {
       const cassette = this.getCassetteById(cassetteId)
       if (cassette) {
         cassette.capacityMs = newCapacityMs
+      }
+    },
+
+    updateSidesCount(cassetteId: string, newSidesCount: number) {
+      if (newSidesCount < 1) {
+        throw new Error("New sides count cannot be less than 1.")
+      }
+      const cassette = this.getCassetteById(cassetteId)
+      if (cassette) {
+        cassette.sidesCount = newSidesCount
       }
     },
 
