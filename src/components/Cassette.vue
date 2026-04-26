@@ -41,6 +41,7 @@ function removeSide() {
   if (cassette.value == undefined) return
   if (cassette.value.sidesCount <= 1) return
   cassetteStore.updateSidesCount(props.cassetteId, cassette.value.sidesCount - 1)
+  anchorsStore.removeAnchorsByTapeSide(props.cassetteId, cassette.value.sidesCount)
   layoutStore.calculateLayout()
 }
 
