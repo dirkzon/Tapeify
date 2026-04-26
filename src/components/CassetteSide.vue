@@ -60,7 +60,7 @@ async function onChanged(event: DragChangeEvent<string>) {
 
 const durationChipColor = computed(() => {
   if (!layout.value || !cassette?.value) return 'secondary'
-  return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / 2) ? 'error' : 'secondary'
+  return (layout.value.durationMs ?? 0) > (cassette.value.capacityMs / cassette!.value.sidesCount) ? 'error' : 'secondary'
 })
 
 function onListKeydown(e: KeyboardEvent) {

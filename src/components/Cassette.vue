@@ -31,6 +31,19 @@ function removeCassette() {
   layoutStore.calculateLayout()
 }
 
+function addSide() {
+  if (cassette.value == undefined) return
+  cassetteStore.updateSidesCount(props.cassetteId, cassette.value.sidesCount + 1)
+  layoutStore.calculateLayout()
+}
+
+function removeSide() {
+  if (cassette.value == undefined) return
+  if (cassette.value.sidesCount <= 1) return
+  cassetteStore.updateSidesCount(props.cassetteId, cassette.value.sidesCount - 1)
+  layoutStore.calculateLayout()
+}
+
 const capacityMinutes = computed<number>({
   get() {
     const ms = cassette.value?.capacityMs ?? 0
@@ -61,18 +74,28 @@ const name = computed<string>({
         <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details
           class="ma-0" style="min-width:150px" label="Capacity (min)" />
       </template>
+
       <template v-slot:title>
         <v-text-field v-model="name" density="compact" hide-details placeholder="Cassette name"
           class="cassette-title-field" />
       </template>
-      <template v-slot:append>
-        <v-btn icon @click="addCassette" title="Add cassette">
-          <v-icon>mdi-playlist-plus</v-icon>
-        </v-btn>
-        <v-btn v-if="cassetteStore.cassettes.length > 1" icon @click="removeCassette" title="Remove cassette">
-          <v-icon>mdi-playlist-minus</v-icon>
-        </v-btn>
-      </template>
+
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+        </template>
+
+        <v-list>
+          <v-list-subheader>Cassette</v-list-subheader>
+          <v-divider />
+          <v-list-item title="Add cassette" @click="addCassette" />
+          <v-list-item title="Remove this cassette" @click="removeCassette" />
+          <v-list-subheader>Sides</v-list-subheader>
+          <v-divider />
+          <v-list-item title="Add side" @click="addSide" />
+          <v-list-item title="Remove side" @click="removeSide" :disabled="cassette!.sidesCount <= 1" />
+        </v-list>
+      </v-menu>
     </v-toolbar>
     <v-alert v-if="topAlert" type="warning" variant="outlined">
       <div class="d-flex justify-space-between align-center w-100">
@@ -84,7 +107,8 @@ const name = computed<string>({
       </div>
     </v-alert>
     <v-row class="pa-2">
-      <v-col v-for="index in Array.from({ length: cassette?.sidesCount || 0 }, (_, i) => i)" :key="index">
+      <v-col v-for="index in Array.from({ length: cassette?.sidesCount || 0 }, (_, i) => i)" :key="index" cols="12"
+        sm="6">
         <CassetteSide :cassetteId="cassetteId" :sideIndex="index" />
       </v-col>
     </v-row>
