@@ -18,6 +18,7 @@ declare module 'vue' {
     CassetteInfoDrawer: typeof import('./components/CassetteInfoDrawer.vue')['default']
     CassetteItem: typeof import('./components/CassetteItem.vue')['default']
     CassetteSide: typeof import('./components/CassetteSide.vue')['default']
+    Player: typeof import('./components/Player.vue')['default']
     PlaylistList: typeof import('./components/PlaylistList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

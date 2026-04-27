@@ -119,3 +119,27 @@ export type AlertRule<TPayload = any> = {
     payload?: TPayload
   ) => CassetteAlert['action']
 }
+
+export type DeviceType =
+  | "Computer"
+  | "Smartphone"
+  | "Speaker"
+  | "Tablet"
+  | "AVR"
+  | "TV"
+  | "STB"
+  | "AudioDongle"
+  | "GameConsole"
+  | "CastVideo"
+  | "CastAudio"
+  | "Automobile"
+  | "Unknown"
+  | string; 
+
+export interface Device {
+  id: string,
+  is_active: boolean,
+  name: string,
+  type: DeviceType,
+  icon: string
+}

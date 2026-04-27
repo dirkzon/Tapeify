@@ -1,4 +1,4 @@
-import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, ImageDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO, ProfileDTO } from "./dto"
+import type { AlbumDTO, AlbumPaginationDTO, AlbumTracksPaginationDTO, DeviceDTO, ImageDTO, PlaylistDTO, PlaylistPaginationDTO, PlaylistTracksPaginationDTO, ProfileDTO } from "./dto"
 
 export interface UsersPlaylistsResponse extends PlaylistPaginationDTO { }
 
@@ -30,3 +30,7 @@ export interface TokenResponse {
 }
 
 export interface CreatePlaylistResponse extends PlaylistDTO { }
+
+export interface GetAvailableDevicesResponse {
+    devices: Array<DeviceDTO>
+}

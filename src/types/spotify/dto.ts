@@ -3,13 +3,13 @@ export interface UserDTO {
     display_name: string
     external_urls: ExternalUrlsDTO
 }
-  
+
 export interface ImageDTO {
     url: string
     height: number
     width: number
 }
-  
+
 export interface PlaylistDTO {
     href: string
     id: string
@@ -105,4 +105,15 @@ export interface ProfileDTO {
 
 export interface ExternalUrlsDTO {
     spotify: string
+}
+
+export interface DeviceDTO {
+    id: string,
+    is_active: boolean,
+    is_private_session: boolean,
+    is_restricted: boolean,
+    name: string,
+    type: string,
+    volume_percent: number,
+    supports_volume: boolean
 }
