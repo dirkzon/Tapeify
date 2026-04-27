@@ -4,7 +4,7 @@ const releaseUrl = `https://github.com/dirkzon/Tapeify/releases/tag/${releaseTag
 </script>
 
 <template>
-  <v-app-bar density="compact" height="48" location="bottom" flat>
+  <v-app-bar density="compact" height="48" location="bottom" flat color="transparent">
     <template v-slot:append>
       <v-btn class="me-2 text-none" prepend-icon="mdi-github" density="comfortable" variant="plain"
         href="https://github.com/dirkzon/Tapeify" target="_blank">
