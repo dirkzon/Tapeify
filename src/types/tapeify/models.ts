@@ -143,3 +143,10 @@ export interface Device {
   type: DeviceType,
   icon: string
 }
+
+export interface PlaybackState {
+  progress_ms: number,
+  is_playing: boolean,
+  volume: number
+  spotify_track_id: string | undefined
+}

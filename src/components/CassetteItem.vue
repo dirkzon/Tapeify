@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
 import { useLayoutStore } from '@/stores/layout';
+import { usePlayerStore } from '@/stores/player';
 import { useTracksStore } from '@/stores/tracks';
 import { formatDuration } from '@/utils/duration/durationHelper';
 
@@ -12,6 +13,7 @@ const props = defineProps<{
 const tracksStore = useTracksStore()
 const anchorStore = useAnchorsStore()
 const layoutStore = useLayoutStore()
+const playerStore = usePlayerStore()
 
 const track = computed(() => tracksStore.GetTrackById(props.trackId))
 const isAnchored = computed(() => anchorStore.isTrackAnchored(props.trackId))
@@ -75,7 +77,9 @@ function toggleAnchor(anchored: boolean) {
             <div class="track-meta d-flex align-center">
               <v-btn v-if="isAnchored || isHovering" :icon="anchorIcon" size="small" variant="text"
                 @click.stop="toggleAnchor(isAnchored)" tabindex="-1" />
-              <div class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
+              <v-btn v-if="isHovering" icon="mdi-play" size="small" variant="text" tabindex="-1"
+                @click.stop="playerStore.playTrack(trackId)" />
+              <div v-if="!isHovering" class="text-subtitle-1">{{ formatDuration(track?.durationMs || 0) }}</div>
             </div>
           </template>
         </v-list-item>

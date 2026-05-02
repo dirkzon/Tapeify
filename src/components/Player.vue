@@ -1,13 +1,33 @@
 <script lang="ts" setup>
 import { usePlayerStore } from '@/stores/player';
+import { useTracksStore } from '@/stores/tracks';
 
 const playerStore = usePlayerStore();
+const trackStore = useTracksStore();
 
-onMounted(() => playerStore.fetchAvailableDevices())
+onMounted(async () => {
+    await playerStore.fetchAvailableDevices()
+    await playerStore.fetchPlaybackState()
+})
+
+async function pause() {
+    await playerStore.pausePlayback()
+    await playerStore.fetchPlaybackState()
+}
+
+// async function play() {
+//     await playerStore.pausePlayback()
+//     await playerStore.fetchPlaybackState() 
+// }
 </script>
 
 <template>
-    <v-app-bar color="grey-lighten-2" height="75" location="bottom" flat>
+    <v-app-bar location="bottom" v-if="playerStore.spotify_playback_state">
+        <v-spacer />
+        <v-btn v-if="playerStore.spotify_playback_state.is_playing" icon="mdi-pause" @click="pause" />
+        <v-btn v-else icon="mdi-play" />
+        <v-spacer />
+
         <template v-slot:append>
             <v-select :items="playerStore.available_devices" v-model="playerStore.selected_device" item-value="id"
                 @update:modelValue="playerStore.transferPlayback" :menu-icon="null">
