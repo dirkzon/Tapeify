@@ -28,6 +28,11 @@ describe('Auth store', () => {
     vi.setSystemTime(mockTime);
 
     vi.mocked(authApiClient.post).mockResolvedValue({ data: tokenResponseMock });
+
+    const authStore = useAuthStore();
+    authStore._generateCodeVerifier = vi.fn().mockReturnValue('test-code-verifier');
+    authStore._hashCodeVerifier = vi.fn().mockResolvedValue(new ArrayBuffer(32));
+    authStore._generateCodeChallenge = vi.fn().mockReturnValue('test-code-challenge');
   });
 
   afterEach(() => {
@@ -44,12 +49,14 @@ describe('Auth store', () => {
       expect(authStore.refreshToken).not.toBeDefined();
       expect(authStore.expiresAt).not.toBeDefined();
 
+      authStore.codeVerifier = 'test-code-verifier';
+
       await authStore.requestAccessToken(code);
 
       expect(postSpy).toHaveBeenCalledTimes(1);
       expect(postSpy).toHaveBeenCalledWith(
         '/api/token',
-        'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback',
+        'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback&code_verifier=test-code-verifier&client_id=0123456789',
         {
           headers: {
             Authorization: `Basic ${btoa('0123456789:9876543210')}`
@@ -115,11 +122,11 @@ describe('Auth store', () => {
       expect(authStore.accessTokenExpired).toBe(false);
     });
   });
-describe('userAuthorizationUrl', () => {
-  it('builds a correct Spotify authorize URL when expiresAt is undefined', () => {
+describe('userAuthorizationUrl', async () => {
+  it('builds a correct Spotify authorize URL when expiresAt is undefined', async() => {
     const authStore = useAuthStore();
 
-    const url = new URL(authStore.userAuthorizationUrl.toString());
+    const url = await authStore.generateUserAuthorizationUrl();
 
     expect(url.origin + url.pathname).toBe('https://accounts.spotify.com/authorize');
 
@@ -127,6 +134,8 @@ describe('userAuthorizationUrl', () => {
     expect(params.get('response_type')).toBe('code');
     expect(params.get('client_id')).toBe('0123456789');
     expect(params.get('redirect_uri')).toBe('http://127.0.0.1:5173/Tapeify/callback');
+    expect(params.get('code_challenge_method')).toBe('S256');
+    expect(params.get('code_challenge')).toBe('test-code-challenge');
 
     const scope = params.get('scope') || '';
     const scopes = scope.split(/\s+/).filter(Boolean);

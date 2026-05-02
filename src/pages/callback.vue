@@ -20,6 +20,6 @@ onMounted(async () => {
 
 <template>
   <main>
-    <a>a</a>
+    <a>Redirecting...</a>
   </main>
 </template>

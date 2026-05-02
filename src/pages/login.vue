@@ -3,14 +3,14 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
-function AuthorizeUser() {
-  window.location.href = authStore.userAuthorizationUrl.toString()
+async function AuthorizeUser() {
+  const authUrl = await authStore.generateUserAuthorizationUrl()
+  window.location.href = authUrl.toString()
 }
 </script>
 
 <template>
   <main>
-    <h2>hello!</h2>
-    <button elevation="2" @click="AuthorizeUser">log in with Spotify</button>
+    <v-btn color="primary" @click="AuthorizeUser" prepend-icon="mdi-spotify" size="large">Login with Spotify</v-btn>
   </main>
 </template>
