@@ -83,7 +83,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
-  <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid" class="grid-shell">
+  <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid">
     <v-row justify="center">
       <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
         <cassette :cassetteId="cassette.id" class="included" />
@@ -91,9 +91,3 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
     </v-row>
   </div>
 </template>
-
-<style scoped>
-.grid-shell {
-  display: flex;
-}
-</style>
