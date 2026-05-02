@@ -9,7 +9,8 @@ const anchorsStore = useAnchorsStore();
 const layoutStore = useLayoutStore()
 
 const props = defineProps<{
-  cassetteId: string
+  cassetteId: string,
+  disableControls?: boolean
 }>()
 
 const cassette = computed(() => {
@@ -81,7 +82,7 @@ const name = computed<string>({
           class="cassette-title-field" />
       </template>
 
-      <v-menu>
+      <v-menu v-if="!props.disableControls">
         <template v-slot:activator="{ props }">
           <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
         </template>

@@ -94,11 +94,11 @@ function ClearSearchBar() {
 function updateUrl() {
   if (query.value === '') {
     router.push({
-      name: '/',
+      name: '/search',
     });
   } else {
     router.push({
-      name: '/',
+      name: '/search',
       query: {
         query: query.value,
         tab: TAB_NAME

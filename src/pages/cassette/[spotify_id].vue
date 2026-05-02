@@ -10,10 +10,7 @@
 import { useTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
-
-import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
-import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'
 import { useLayoutStore } from '@/stores/layout';
 import { resetStores } from '@/utils/reset.stores';
@@ -27,21 +24,6 @@ const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
-
-useHotkey('ctrl+a', () => {
-  const lastSelectedTrackId = tracksStore.lastSelectedTrackId
-  if (lastSelectedTrackId) {
-    const lastSelectedTrackLayout = layoutStore.getTrackLayout(lastSelectedTrackId)
-    if (lastSelectedTrackLayout) {
-      const trackIdsOnSameSide = layoutStore.getLayoutbyCassetteAndSide(lastSelectedTrackLayout.cassetteId, lastSelectedTrackLayout.sideIndex)
-      if (trackIdsOnSameSide) {
-        for (const trackId of trackIdsOnSameSide.trackIds) {
-          tracksStore.selectedTracks.push(trackId)
-        }
-      }
-    }
-  }
-})
 
 onMounted(async () => {
   cassetteStore.initAlerts()
@@ -71,21 +53,10 @@ onMounted(async () => {
 })
 
 onUnmounted(() => resetStores())
-
-function onGlobalClick(e: MouseEvent) {
-  const target = e.target as HTMLElement | null
-  if (!target) return
-  if (target.closest('.included')) return
-  tracksStore.ClearSelectedTracks()
-  tracksStore.lastSelectedTrackId = undefined
-}
-
-onMounted(() => document.addEventListener('click', onGlobalClick))
-onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
-  <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid" class="grid-shell">
+  <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid">
     <v-row justify="center">
       <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
         <cassette :cassetteId="cassette.id" class="included" />
@@ -93,9 +64,3 @@ onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
     </v-row>
   </div>
 </template>
-
-<style scoped>
-.grid-shell {
-  display: flex;
-}
-</style>

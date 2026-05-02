@@ -12,7 +12,7 @@ import { registerPlugins } from '@/plugins'
 
 // Components
 import App from './App.vue'
-import CassetteSide from './components/CassetteSide.vue'
+import CassetteSide from './components/cassette/CassetteSide.vue'
 import AlbumsList from './components/AlbumList.vue'
 import PlaylistsList from './components/PlaylistList.vue'
 import UserPlaylistsTab from './components/UserPlaylistsTab.vue'
@@ -22,10 +22,11 @@ import CassetteInfoDrawer from './components/CassetteInfoDrawer.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import AppFooter from './components/AppFooter.vue'
 import UnavailableTracksList from './components/UnavailableTracksList.vue'
-import CassetteItem from './components/CassetteItem.vue'
+import CassetteItem from './components/cassette/CassetteItem.vue'
 import CassetteActionsBar from './components/CassetteActionsBar.vue'
 import UnavailableCassetteItem from './components/UnavailableCassetteItem.vue'
 import UploadCassetteDialog from './components/UploadCassetteDialog.vue'
+import Cassette from "./components/cassette/Cassette.vue";
 
 // Composables
 import { createApp } from 'vue'
@@ -48,5 +49,6 @@ app.component('cassette-item', CassetteItem)
 app.component('unavailable-cassette-item', UnavailableCassetteItem)
 app.component('cassette-actions-bar', CassetteActionsBar)
 app.component('upload-cassette-dialog', UploadCassetteDialog)
+app.component('cassette', Cassette)
 
 app.mount('#app')
