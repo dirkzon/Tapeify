@@ -11,7 +11,6 @@ import { useTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
 import { useCassettesStore } from '@/stores/cassette';
-import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'
 import { useLayoutStore } from '@/stores/layout';
 import { resetStores } from '@/utils/reset.stores';
@@ -25,21 +24,6 @@ const tracksStore = useTracksStore()
 const albumStore = useAlbumsStore()
 const playlistsStore = usePlaylistsStore()
 const cassetteStore = useCassettesStore()
-
-useHotkey('ctrl+a', () => {
-  const lastSelectedTrackId = tracksStore.lastSelectedTrackId
-  if (lastSelectedTrackId) {
-    const lastSelectedTrackLayout = layoutStore.getTrackLayout(lastSelectedTrackId)
-    if (lastSelectedTrackLayout) {
-      const trackIdsOnSameSide = layoutStore.getLayoutbyCassetteAndSide(lastSelectedTrackLayout.cassetteId, lastSelectedTrackLayout.sideIndex)
-      if (trackIdsOnSameSide) {
-        for (const trackId of trackIdsOnSameSide.trackIds) {
-          tracksStore.selectedTracks.push(trackId)
-        }
-      }
-    }
-  }
-})
 
 onMounted(async () => {
   cassetteStore.initAlerts()
@@ -69,17 +53,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => resetStores())
-
-function onGlobalClick(e: MouseEvent) {
-  const target = e.target as HTMLElement | null
-  if (!target) return
-  if (target.closest('.included')) return
-  tracksStore.ClearSelectedTracks()
-  tracksStore.lastSelectedTrackId = undefined
-}
-
-onMounted(() => document.addEventListener('click', onGlobalClick))
-onBeforeUnmount(() => document.removeEventListener('click', onGlobalClick))
 </script>
 
 <template>
