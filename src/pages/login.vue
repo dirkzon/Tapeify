@@ -11,7 +11,6 @@ async function AuthorizeUser() {
 
 <template>
   <main>
-    <h2>hello!</h2>
-    <button elevation="2" @click="AuthorizeUser">log in with Spotify</button>
+    <v-btn color="primary" @click="AuthorizeUser" prepend-icon="mdi-spotify" size="large">Login with Spotify</v-btn>
   </main>
 </template>
