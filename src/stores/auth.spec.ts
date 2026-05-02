@@ -119,7 +119,7 @@ describe('userAuthorizationUrl', () => {
   it('builds a correct Spotify authorize URL when expiresAt is undefined', () => {
     const authStore = useAuthStore();
 
-    const url = new URL(authStore.userAuthorizationUrl.toString());
+    const url = new URL(authStore.generateUserAuthorizationUrl.toString());
 
     expect(url.origin + url.pathname).toBe('https://accounts.spotify.com/authorize');
 
