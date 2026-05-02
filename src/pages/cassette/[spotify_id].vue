@@ -10,8 +10,6 @@
 import { useTracksStore } from '@/stores/tracks';
 import { useAlbumsStore } from '@/stores/album'
 import { usePlaylistsStore } from '@/stores/playlists';
-
-import Cassette from '@/components/Cassette.vue';
 import { useCassettesStore } from '@/stores/cassette';
 import { useHotkey } from 'vuetify/dist/vuetify.js';
 import { useKeyboardTrapFactory } from '@pdanpdan/vue-keyboard-trap'

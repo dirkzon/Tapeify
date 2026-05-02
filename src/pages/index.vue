@@ -10,5 +10,7 @@ async function AuthorizeUser() {
 </script>
 
 <template>
+    <cassette cassetteId="default" class="included" />
+
     <v-btn color="primary" @click="AuthorizeUser" prepend-icon="mdi-spotify" size="large">Login with Spotify</v-btn>
 </template>
