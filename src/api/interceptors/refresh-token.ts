@@ -11,7 +11,7 @@ apiClient.interceptors.response.use(
 
     if (error.response?.status === 401 || error.response?.status === 403) {
       if (!authStore.refreshToken && !authStore.accessToken) {
-        router.push({ name: '/login' })
+        router.push({ name: '/' })
         return Promise.reject(error);
       }
       if (authStore.accessTokenExpired && authStore.refreshToken) {
@@ -21,7 +21,7 @@ apiClient.interceptors.response.use(
 
         return apiClient.request(error.config);
       }
-      router.push({ name: '/login' })
+      router.push({ name: '/' })
       return Promise.reject(error);
     }
   }

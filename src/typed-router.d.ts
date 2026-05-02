@@ -44,9 +44,9 @@ declare module 'vue-router/auto-routes' {
       { spotify_id: ParamValue<false> },
       | never
     >,
-    '/login': RouteRecordInfo<
-      '/login',
-      '/login',
+    '/search': RouteRecordInfo<
+      '/search',
+      '/search',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -82,9 +82,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/login.vue': {
+    'src/pages/search.vue': {
       routes:
-        | '/login'
+        | '/search'
       views:
         | never
     }

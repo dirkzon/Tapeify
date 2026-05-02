@@ -14,7 +14,7 @@ onMounted(async () => {
   await authStore.requestAccessToken(String(code))
 
   profileStore.FetchProfile()
-  router.push({ name: '/' })
+  router.push({ name: '/search' })
 })
 </script>
 
