@@ -26,7 +26,8 @@ export const useAuthStore = defineStore('auth', {
       searchParams.append('scope', 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private')
       searchParams.append('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
       searchParams.append('code_challenge_method', 'S256')
-      this.codeVerifier = this._generateCodeVerifier()
+      const codeVerifier = this._generateCodeVerifier()
+      this.codeVerifier = codeVerifier
       const hashedVerifier = await this._hashCodeVerifier(this.codeVerifier)
       const codeChallenge = this._generateCodeChallenge(hashedVerifier)
       searchParams.append('code_challenge', codeChallenge)
@@ -34,10 +35,14 @@ export const useAuthStore = defineStore('auth', {
       return url
     },
     async requestAccessToken(code: string): Promise<void> {
+      const client_id = import.meta.env.VITE_CLIENT_ID
+
       const body = qs.stringify({
         grant_type: "authorization_code",
         code,
         redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+        code_verifier: this.codeVerifier,
+        client_id: client_id
       });
 
       const response = await authApiClient.post<TokenResponse>(
@@ -46,7 +51,7 @@ export const useAuthStore = defineStore('auth', {
         {
           headers: {
             "Authorization": `Basic ${btoa(
-              `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
+              `${client_id}:${import.meta.env.VITE_CLIENT_SECRET}`
             )}`
           }
         }
@@ -70,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
         {
           headers: {
             "Authorization": `Basic ${btoa(
-              `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
+              `${client_id}:${import.meta.env.VITE_CLIENT_SECRET}`
             )}`
           }
         }
@@ -80,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
       this.refreshToken = response.data.refresh_token;
       this.expiresAt = Date.now() + response.data.expires_in * 1000
     },
-    _generateCodeVerifier(): string {
+    _generateCodeVerifier(length: number = 128): string {
       const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       const values = crypto.getRandomValues(new Uint8Array(length));
       return values.reduce((acc, x) => acc + possible[x % possible.length], "");
