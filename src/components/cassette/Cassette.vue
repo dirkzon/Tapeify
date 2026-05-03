@@ -21,11 +21,6 @@ const topAlert = computed(() => {
   return cassetteStore.alertForCassette(props.cassetteId)
 })
 
-function addCassette() {
-  cassetteStore.addCassette()
-  layoutStore.calculateLayout()
-}
-
 function removeCassette() {
   cassetteStore.removeCassette(props.cassetteId)
   anchorsStore.removeAnchoresByCassetteId(props.cassetteId)
@@ -88,11 +83,7 @@ const name = computed<string>({
         </template>
 
         <v-list>
-          <v-list-subheader>Cassette</v-list-subheader>
-          <v-divider />
-          <v-list-item title="Add cassette" @click="addCassette" />
           <v-list-item title="Remove this cassette" @click="removeCassette" />
-          <v-list-subheader>Sides</v-list-subheader>
           <v-divider />
           <v-list-item title="Add side" @click="addSide" />
           <v-list-item title="Remove side" @click="removeSide" :disabled="cassette!.sidesCount <= 1" />

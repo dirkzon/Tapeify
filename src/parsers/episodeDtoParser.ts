@@ -3,7 +3,7 @@ import type { Track } from "@/types/tapeify/models";
 import { GetSmallestImage } from "@/utils/images/imageUtils";
 import { v4 as uuidv4 } from 'uuid';
 
-export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO): Track {
+export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO, playlistId: string): Track {
     return {
         name: episodeDTO.name,
         spotifyId: episodeDTO.id,
@@ -12,6 +12,7 @@ export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO): Track {
         explicit: episodeDTO.explicit,
         durationMs: episodeDTO.duration_ms,
         artists: episodeDTO.album.artists.map(a => a.type),
-        image: GetSmallestImage(episodeDTO.album.images)
+        image: GetSmallestImage(episodeDTO.album.images),
+        origin: playlistId
     }
 }

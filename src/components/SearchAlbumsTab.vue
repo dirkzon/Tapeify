@@ -15,14 +15,12 @@ const albums = ref<AlbumSearchResult>({
   next: false,
   previous: false
 })
-const TAB_NAME = 'search_albums'
 const DEBOUNCE_DELAY_MS = 200
 
 let query = ref('')
 watch(query, (newQuery) => {
   if (newQuery.length === 0) {
     albums.value.albums = []
-    updateUrl()
     return
   }
   loading.value = true
@@ -30,25 +28,8 @@ watch(query, (newQuery) => {
   loading.value = false
 })
 
-onMounted(async () => {
-  const url = new URL(location.href)
-
-  const queryParam = url.searchParams.get('query')
-  const tabParam = url.searchParams.get('tab')
-
-  if (queryParam !== null && tabParam === TAB_NAME) {
-    query.value = queryParam
-    albums.value = await albumsStore.searchAlbums(
-      query.value,
-      limit.value,
-      offset.value
-    )
-  }
-})
-
 const searchAlbums = debounce(async (query: string, limit: number = 10, offset: number = 0) => {
   {
-    updateUrl()
     if (query === '') {
       albums.value.albums = []
     } else {
@@ -67,7 +48,6 @@ async function LoadMoreAlbums({ side, done }: { side: InfiniteScrollSide; done: 
     albums.value.albums = []
     return
   }
-  updateUrl()
   offset.value += limit.value
   done('loading')
   await albumsStore.searchAlbums(
@@ -88,23 +68,6 @@ function ClearSearchBar() {
   albums.value.albums = []
   query.value = ''
   offset.value = 0
-  updateUrl()
-}
-
-function updateUrl() {
-  if (query.value === '') {
-    router.push({
-      name: '/search',
-    });
-  } else {
-    router.push({
-      name: '/search',
-      query: {
-        query: query.value,
-        tab: TAB_NAME
-      }
-    });
-  }
 }
 
 </script>

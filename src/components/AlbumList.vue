@@ -1,8 +1,12 @@
 <script lang="ts" setup>
-import router from '@/router';
 import type { Album } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 import { VInfiniteScroll } from 'vuetify/components';
+import { useAlbumsStore } from '@/stores/album';
+import { useLayoutStore } from '@/stores/layout';
+
+const albumsStore = useAlbumsStore()
+const layoutStore = useLayoutStore()
 
 const props = defineProps<{
   albums: Album[]
@@ -11,12 +15,9 @@ const props = defineProps<{
 
 const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('albumsScroll')
 
-function SelectItem(id: string) {
-  router.push({
-    name: '/cassette/[spotify_id]',
-    params: { spotify_id: id },
-    query: { type: 'album' }
-  })
+async function SelectItem(id: string) {
+  await albumsStore.FetchAlbumTracks(id)
+  layoutStore.calculateLayout()
 }
 
 function reset() {

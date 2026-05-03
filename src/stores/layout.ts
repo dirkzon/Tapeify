@@ -5,6 +5,7 @@ import { useCassettesStore } from "./cassette";
 import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
 import { TapeSide } from "@/sorting/tapeSideLayout";
+import { useProjectStore } from "./project";
 
 export const useLayoutStore = defineStore('layout', {
     state: () => ({
@@ -63,6 +64,7 @@ export const useLayoutStore = defineStore('layout', {
             const cassetteStore = useCassettesStore()
             const trackStore = useTracksStore()
             const anchorsStore = useAnchorsStore()
+            const projectStore = useProjectStore()
 
             this.orderedTracks = []
             this.trackLocations = {}
@@ -79,10 +81,11 @@ export const useLayoutStore = defineStore('layout', {
 
             const trackSorter = trackSorterRegistry.create(this.selectedSortType, sides)
 
-            const tracks = trackStore.availableTracks
+            const availableTracks = trackStore.availableTracks
+            const tracksInSelectedOrigins = availableTracks.filter(track => projectStore.selectedOrigins.includes(track.origin))
 
-            const anchored_tracks = trackSorter.prepackAnchoredTracks(tracks, anchorsStore.anchors)
-            const unanchored_tracks = tracks.filter(t => !anchored_tracks.includes(t))
+            const anchored_tracks = trackSorter.prepackAnchoredTracks(tracksInSelectedOrigins, anchorsStore.anchors)
+            const unanchored_tracks = tracksInSelectedOrigins.filter(t => !anchored_tracks.includes(t))
             trackSorter.sortTracks(sides, unanchored_tracks)
 
             this._calculate_cassette_layout(sides)

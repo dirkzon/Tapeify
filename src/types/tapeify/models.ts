@@ -58,6 +58,7 @@ export interface Track {
   explicit: boolean
   durationMs: number
   artists: string[]
+  origin: string
 }
 
 export interface TrackLocation {
@@ -75,15 +76,6 @@ export interface TapeSideLayout {
 
 export interface CassetteLayout {
   sides: Array<TapeSideLayout>
-}
-
-export interface CassetteMetadata {
-  owner_display_name: string
-  item_name: string
-  original_item_url: string
-  owner_url: string
-  description: string
-  image_url?: URL
 }
 
 export interface CassetteAlert {
@@ -118,4 +110,13 @@ export type AlertRule<TPayload = any> = {
     sides: Array<TapeSideLayout>,
     payload?: TPayload
   ) => CassetteAlert['action']
+}
+
+export interface Origin {
+  type: 'playlist' | 'album',
+  name: string
+  owner_display_name: string
+  original_item_url: string
+  owner_url: string
+  description: string
 }

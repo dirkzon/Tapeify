@@ -9,7 +9,7 @@ import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { Playlist, PlaylistSearchResult, Track } from '@/types/tapeify/models'
 import { useProfileStore } from './profile'
-import { GetSmallestImage } from '@/utils/images/imageUtils'
+import { useProjectStore } from './project'
 
 export const usePlaylistsStore = defineStore('playlists', {
   actions: {
@@ -56,6 +56,7 @@ export const usePlaylistsStore = defineStore('playlists', {
     async FetchPlaylistTracks(playlistId: string) {
       const cassetteStore = useCassettesStore()
       const tracksStore = useTracksStore()
+      const projectStore = useProjectStore()
 
       const playlistResponse = await apiClient.get<GetPlaylistsResponse>('/playlists/' + playlistId)
       const playlist = playlistResponse.data
@@ -77,25 +78,24 @@ export const usePlaylistsStore = defineStore('playlists', {
         for (const item of tracks.items) {
           const track = item.track
           if (track.type === 'track') {
-            tracksStore.AddTrack(ParsePlaylistTrackDTO(track as PlaylistTrackDTO))
+            tracksStore.AddTrack(ParsePlaylistTrackDTO(track as PlaylistTrackDTO, playlistId))
           }
           if (track.type === 'episode') {
-            tracksStore.AddTrack(ParsePlaylistEpisodeDTO(track as EpisodeDTO))
+            tracksStore.AddTrack(ParsePlaylistEpisodeDTO(track as EpisodeDTO, playlistId))
           }
         }
 
         offset += limit
       }
 
-      cassetteStore.updateName('default', playlist.name)
-      cassetteStore.updateMetadata({
+      projectStore.addOrigin({
+        name: playlist.name,
+        type: 'playlist',
         owner_display_name: playlist.owner.display_name,
+        original_item_url: playlist.external_urls.spotify,
         owner_url: playlist.owner.external_urls.spotify,
         description: playlist.description,
-        image_url: new URL(playlist.images[0].url),
-        original_item_url: playlist.external_urls.spotify,
-        item_name: playlist.name,
-      })
+      }, playlist.id)
     },
     async UploadNewPlaylist(name: string, description: string, isPublic: boolean): Promise<Playlist> {
       const profileStore = useProfileStore()

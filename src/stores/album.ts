@@ -8,12 +8,14 @@ import { apiClient } from '@/api/clients'
 import { useProfileStore } from './profile'
 import type { AlbumDTO } from '@/types/spotify/dto'
 import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
+import { useProjectStore } from './project'
 
 export const useAlbumsStore = defineStore('albums', {
   actions: {
     async FetchAlbumTracks(albumId: string) {
       const tracksStore = useTracksStore()
       const cassetteStore = useCassettesStore()
+      const projectStore = useProjectStore()
 
       const response = await apiClient.get<GetAlbumResponse>('/albums/' + albumId)
       const album = response.data
@@ -34,21 +36,20 @@ export const useAlbumsStore = defineStore('albums', {
         })
 
         for (const item of tracksResponse.data.items) {
-          tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl))
+          tracksStore.AddTrack(ParseAlbumTrackDTO(item, imageUrl, albumId))
         }
 
         offset += limit
       }
 
-      cassetteStore.updateName('default', album.name)
-      cassetteStore.updateMetadata({
+      projectStore.addOrigin({
+        name: album.name,
+        type: 'album',
         owner_display_name: album.artists[0].name,
-        owner_url: album.artists[0].external_urls.spotify,
-        description: '',
-        image_url: new URL(album.images[0].url),
         original_item_url: album.external_urls.spotify,
-        item_name: album.name,
-      })
+        owner_url: album.artists[0].external_urls.spotify,
+        description: ""
+      }, album.id)
     },
     async searchAlbums(query: string, limit: number = 10, offset: number = 0) {
       const profileStore = useProfileStore()
