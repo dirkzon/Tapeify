@@ -9,6 +9,10 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
 
 <template>
     <v-dialog activator="parent" max-width="420">
+        <template v-slot:activator="{ props: activatorProps }">
+            <v-btn v-bind="activatorProps" icon="mdi-upload-multiple" size="small" variant="text" />
+        </template>
+
         <template v-slot:default="{ isActive }">
             <v-card elevation="6">
                 <v-card-title class="text-h6">

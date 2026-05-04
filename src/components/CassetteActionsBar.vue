@@ -37,12 +37,20 @@ const sources = computed(() => {
   }))
 })
 
+const menuIcon = computed(() => projectStore.drawerOpen ? "mdi-menu-close" : "mdi-menu-open")
+const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 0 ? trackStore.unavailableTrackIds.length : undefined)
 </script>
 
 <template>
   <v-app-bar class="included pa-1" flat color="transparent">
-    <template v-slot:prepend>
-      <v-btn @click="projectStore.drawerOpen = !projectStore.drawerOpen" icon="mdi-page-layout-sidebar-left"/>
+    <template v-slot:append>
+      <v-btn @click="projectStore.drawerOpen = !projectStore.drawerOpen" stacked>
+        <v-badge v-if="menuBadgeContent" color="secondary" :content="menuBadgeContent" location="top left">
+          <v-icon :icon="menuIcon" />
+        </v-badge>
+        <v-icon v-else :icon="menuIcon" />
+      </v-btn>
+
     </template>
 
     <v-spacer />
@@ -50,7 +58,7 @@ const sources = computed(() => {
       <template v-slot:actions>
 
         <!-- Add items -->
-        <v-btn icon="mdi-playlist-plus" size="small" variant="text"> <add-source-dialog /> </v-btn>
+        <add-source-dialog />
 
         <!-- Remove items -->
         <v-select :items="sources" item-value="id" item-title="name" label="Sources" chips multiple density="compact"
@@ -93,11 +101,7 @@ const sources = computed(() => {
         <v-btn icon="mdi-export" size="small" variant="text" :disabled="!projectStore.hasSources" />
 
         <v-divider vertical />
-
-        <v-btn size="small" variant="text" :disabled="!projectStore.hasSources">
-          <v-icon icon="mdi-upload-multiple" />
-          <upload-cassette-dialog />
-        </v-btn>
+        <upload-cassette-dialog />
       </template>
     </v-card>
     <v-spacer />

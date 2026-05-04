@@ -37,7 +37,7 @@ function clearUnavailableTracks() {
 </script>
 
 <template>
-    <v-card class="ml-4 mt-4 mr-2" style="border-radius: 12px;" subtitle="Drag unwanted tracks here">
+    <v-card class="ma-5" style="border-radius: 12px;" subtitle="Drag unwanted tracks here">
         <template v-slot:title>
             <span class="font-weight-black">Unused Tracks</span>
         </template>
