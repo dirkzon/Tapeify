@@ -24,16 +24,11 @@ onUnmounted(() => resetStores())
 </script>
 
 <template>
-    {{ projectStore.origins }}
-    {{ projectStore.hasOrigins }}
-    <div v-if="projectStore.hasOrigins" :key="Object.keys(projectStore.origins).join()">
-
-        <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid">
-            <v-row justify="center">
-                <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
-                    <cassette :cassetteId="cassette.id" class="included" />
-                </v-col>
-            </v-row>
-        </div>
+    <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid">
+        <v-row justify="center" v-if="projectStore.hasOrigins">
+            <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
+                <cassette :cassetteId="cassette.id" class="included" />
+            </v-col>
+        </v-row>
     </div>
 </template>

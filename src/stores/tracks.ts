@@ -43,13 +43,14 @@ export const useTracksStore = defineStore('tracks', {
     ClearSelectedTracks() {
       this.selectedTracks = []
     },
-    RemoveTracksByOrigin(originId: string) {
+    RemoveTracksByOrigin(originId: string): string[] {
       const tracksToRemove = this._masterTrackList.filter(track => track.origin === originId)
       const trackIdsToRemove = tracksToRemove.map(t => t.id)
 
       this._masterTrackList = this._masterTrackList.filter(track => track.origin !== originId)
       this.unavailableTrackIds = this.unavailableTrackIds.filter(id => !trackIdsToRemove.includes(id))
       this.selectedTracks = this.selectedTracks.filter(id => !trackIdsToRemove.includes(id))
+      return trackIdsToRemove
     }
   }
 })

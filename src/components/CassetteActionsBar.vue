@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useAnchorsStore } from '@/stores/anchor';
 import { useCassettesStore } from '@/stores/cassette';
 import { useLayoutStore } from '@/stores/layout';
 import { useProjectStore } from '@/stores/project';
@@ -8,6 +9,7 @@ const layoutStore = useLayoutStore()
 const projectStore = useProjectStore()
 const cassetteStore = useCassettesStore()
 const trackStore = useTracksStore()
+const anchorStore = useAnchorsStore()
 
 const selectedSortType = computed({
   get: () => layoutStore.selectedSortType,
@@ -21,7 +23,10 @@ function addCassette() {
 
 function removeOrigin(originId: string) {
   projectStore.removeOrigin(originId)
-  trackStore.RemoveTracksByOrigin(originId)
+  const removedTracks = trackStore.RemoveTracksByOrigin(originId)
+  removedTracks.forEach(trackId => {
+    anchorStore.removeAnchor(trackId)
+  })
   layoutStore.calculateLayout()
 }
 
@@ -49,7 +54,7 @@ const origins = computed(() => {
           </template>
 
           <template v-slot:default>
-            <v-card class="cassette-card">
+            <v-card style="border-radius: 12px;">
               <v-toolbar color="primary" title="Select Playlist or Album">
                 <template v-slot:extension>
                   <v-tabs v-model="selectedTab" align-tabs="center">
@@ -94,7 +99,7 @@ const origins = computed(() => {
 
         <v-divider vertical />
 
-        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette" />
+        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette" :disabled="!projectStore.hasOrigins" />
 
         <v-divider vertical />
 
@@ -111,11 +116,11 @@ const origins = computed(() => {
 
 
         <v-btn icon="mdi-import" size="small" variant="text" />
-        <v-btn icon="mdi-export" size="small" variant="text" />
+        <v-btn icon="mdi-export" size="small" variant="text" :disabled="!projectStore.hasOrigins" />
 
         <v-divider vertical />
 
-        <v-btn size="small" variant="text">
+        <v-btn size="small" variant="text" :disabled="!projectStore.hasOrigins" >
           <v-icon icon="mdi-upload-multiple" />
           <upload-cassette-dialog />
         </v-btn>

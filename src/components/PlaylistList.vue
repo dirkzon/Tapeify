@@ -17,7 +17,7 @@ const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('
 
 async function SelectItem(id: string) {
   await playlistStore.FetchPlaylistTracks(id)
-  layoutStore.calculateLayout()
+    layoutStore.calculateLayout()
 }
 
 function reset() {

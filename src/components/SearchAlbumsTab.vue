@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import router from '@/router'
 import { useAlbumsStore } from '@/stores/album';
 import type { AlbumSearchResult } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';

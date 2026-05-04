@@ -4,7 +4,6 @@ import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksRes
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
-import { useCassettesStore } from './cassette'
 import { apiClient } from '@/api/clients'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { Playlist, PlaylistSearchResult, Track } from '@/types/tapeify/models'
@@ -54,7 +53,6 @@ export const usePlaylistsStore = defineStore('playlists', {
 
     },
     async FetchPlaylistTracks(playlistId: string) {
-      const cassetteStore = useCassettesStore()
       const tracksStore = useTracksStore()
       const projectStore = useProjectStore()
 
