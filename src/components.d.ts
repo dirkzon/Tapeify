@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddSourceDialog: typeof import('./components/dialogs/AddSourceDialog.vue')['default']
     AlbumList: typeof import('./components/AlbumList.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Cassette: typeof import('./components/cassette/Cassette.vue')['default']
@@ -25,7 +26,7 @@ declare module 'vue' {
     SearchPlaylistsTab: typeof import('./components/SearchPlaylistsTab.vue')['default']
     UnavailableCassetteItem: typeof import('./components/UnavailableCassetteItem.vue')['default']
     UnavailableTracksList: typeof import('./components/UnavailableTracksList.vue')['default']
-    UploadCassetteDialog: typeof import('./components/UploadCassetteDialog.vue')['default']
+    UploadCassetteDialog: typeof import('./components/dialogs/UploadCassetteDialog.vue')['default']
     UserPlaylistsTab: typeof import('./components/UserPlaylistsTab.vue')['default']
   }
 }

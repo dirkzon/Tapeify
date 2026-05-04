@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import router from '@/router'
 import { usePlaylistsStore } from '@/stores/playlists';
 import type { PlaylistSearchResult } from '@/types/tapeify/models';
 import debounce from 'lodash-es/debounce'
@@ -16,14 +15,12 @@ const playlists = ref<PlaylistSearchResult>({
   previous: false
 })
 
-const TAB_NAME = 'search_playlists'
 const DEBOUNCE_DELAY_MS = 200
 
 let query = ref('')
 watch(query, (newQuery) => {
   if (newQuery.length === 0) {
     playlists.value.playlists = []
-    updateUrl()
     return
   }
   loading.value = true
@@ -31,24 +28,7 @@ watch(query, (newQuery) => {
   loading.value = false
 })
 
-onMounted(async () => {
-  const url = new URL(location.href)
-
-  const queryParam = url.searchParams.get('query')
-  const tabParam = url.searchParams.get('tab')
-
-  if (queryParam !== null && tabParam === TAB_NAME) {
-    query.value = queryParam
-    playlists.value = await playlistsStore.searchPlaylists(
-      query.value,
-      limit.value,
-      offset.value
-    )
-  }
-})
-
 const searchPlaylists = debounce(async (query: string, limit: number = 10, offset: number = 0) => {
-  updateUrl()
   if (query === '') {
     playlists.value.playlists = []
   } else {
@@ -68,7 +48,6 @@ async function LoadMorePlaylists({ side, done }: { side: InfiniteScrollSide; don
     playlists.value.playlists = []
     return
   }
-  updateUrl()
   offset.value += limit.value
   done('loading')
   await playlistsStore.searchPlaylists(
@@ -89,23 +68,6 @@ function ClearSearchBar() {
   playlists.value.playlists = []
   offset.value = 0
   query.value = ''
-  updateUrl()
-}
-
-function updateUrl() {
-  if (query.value === '') {
-    router.push({
-      name: '/search',
-    });
-  } else {
-    router.push({
-      name: '/search',
-      query: {
-        query: query.value,
-        tab: TAB_NAME
-      }
-    });
-  }
 }
 </script>
 

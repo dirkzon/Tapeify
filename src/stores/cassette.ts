@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import type {
   Cassette,
   CassetteAlert,
-  CassetteMetadata,
   TapeSideLayout,
 } from '@/types/tapeify/models'
 import { v4 as uuidv4 } from 'uuid'
@@ -14,9 +13,8 @@ import { useLayoutStore } from './layout'
 export const useCassettesStore = defineStore('cassettes', {
   state: () => ({
     possibleLengthsMin: [30, 45, 60, 90, 120],
-    metadata: {} as CassetteMetadata,
     cassettes: [
-      { id: 'default', name: 'My First Cassette', capacityMs: 90 * 60000, sidesCount: 2 },
+      { id: 'default', name: 'Cassette', capacityMs: 90 * 60000, sidesCount: 2 },
     ] as Cassette[],
     alerts: {} as Record<string, CassetteAlert>,
   }),
@@ -34,7 +32,7 @@ export const useCassettesStore = defineStore('cassettes', {
     addCassette() {
       this.cassettes.push({
         id: uuidv4(),
-        name: `${this.metadata.item_name} ${this.cassettes.length + 1}`,
+        name: `Cassette ${this.cassettes.length + 1}`,
         capacityMs: 90 * 60000,
         sidesCount: 2
       })
@@ -67,10 +65,6 @@ export const useCassettesStore = defineStore('cassettes', {
       if (cassette) {
         cassette.sidesCount = newSidesCount
       }
-    },
-
-    updateMetadata(newMetadata: CassetteMetadata) {
-      this.metadata = newMetadata
     },
     initAlerts() {
       const layoutStore = useLayoutStore()
