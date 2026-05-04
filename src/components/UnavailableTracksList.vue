@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import { useAnchorsStore } from '@/stores/anchor';
+import { useLayoutStore } from '@/stores/layout';
 import { useTracksStore } from '@/stores/tracks';
 
 const tracksStore = useTracksStore()
 const anchorsStore = useAnchorsStore()
+const layoutStore = useLayoutStore()
 
 function onChanged(changeEvent: any) {
     const eventType = Object.keys(changeEvent)[0]
@@ -22,20 +24,37 @@ function onChanged(changeEvent: any) {
             break
     }
 }
+
+function clearUnavailableTracks() {
+    if (tracksStore.unavailableTrackIds.length === 0) {
+        return;
+    }
+    for (const trackId of tracksStore.unavailableTrackIds) {
+        tracksStore.MarkTrackAsAvailable(trackId)
+    }
+    layoutStore.calculateLayout()
+}
 </script>
 
 <template>
-    <v-sheet color="secondary":rounded="true" class="pa-1">
+    <v-card class="ml-4 mt-4 mr-2" style="border-radius: 12px;" subtitle="Drag unwanted tracks here">
+        <template v-slot:title>
+            <span class="font-weight-black">Unused Tracks</span>
+        </template>
+        <v-divider class="mb-2" />
         <v-list select-strategy="leaf" v-model:selected="tracksStore.unavailableTracks" color="secondary">
-            <v-list-subheader class="text-subtitle-1" style="color: inherit">
-                Unused Tracks
-            </v-list-subheader>
             <draggable :list="tracksStore.unavailableTrackIds" group="tracks" item-key="id" animation="200"
                 @change="onChanged" :sort="false" class="drag-container">
-                <unavailable-cassette-item v-for="trackId in tracksStore.unavailableTrackIds" :key="trackId" :track-id="trackId"/>
+                <unavailable-cassette-item v-for="trackId in tracksStore.unavailableTrackIds" :key="trackId"
+                    :track-id="trackId" />
             </draggable>
         </v-list>
-    </v-sheet>
+        <v-divider class="mb-2" />
+
+        <template v-slot:actions>
+            <v-btn text @click="clearUnavailableTracks">Clear List</v-btn>
+        </template>
+    </v-card>
 </template>
 
 <style scoped>

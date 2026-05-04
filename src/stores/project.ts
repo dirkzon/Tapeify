@@ -5,6 +5,7 @@ export const useProjectStore = defineStore('project', {
     state: () => ({
         sources: {} as Record<string, Source>,
         selectedSources: [] as string[],
+        drawerOpen: false
     }),
     getters: {
         hasSources: (state) => Object.keys(state.sources).length > 0,

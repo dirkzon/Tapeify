@@ -41,12 +41,16 @@ const sources = computed(() => {
 
 <template>
   <v-app-bar class="included pa-1" flat color="transparent">
+    <template v-slot:prepend>
+      <v-btn @click="projectStore.drawerOpen = !projectStore.drawerOpen" icon="mdi-page-layout-sidebar-left"/>
+    </template>
+
     <v-spacer />
     <v-card>
       <template v-slot:actions>
 
         <!-- Add items -->
-        <v-btn icon="mdi-playlist-plus" size="small" variant="text" > <add-source-dialog /> </v-btn>
+        <v-btn icon="mdi-playlist-plus" size="small" variant="text"> <add-source-dialog /> </v-btn>
 
         <!-- Remove items -->
         <v-select :items="sources" item-value="id" item-title="name" label="Sources" chips multiple density="compact"

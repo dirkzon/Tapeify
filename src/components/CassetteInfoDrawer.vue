@@ -1,43 +1,11 @@
-<script setup lang="ts">
-import { useCassettesStore } from '@/stores/cassette';
-import { useTracksStore } from '@/stores/tracks';
-import { formatDuration } from '@/utils/duration/durationHelper';
+<script lang="ts" setup>
+import { useProjectStore } from '@/stores/project';
 
-const cassetteStore = useCassettesStore()
-const tracksStore = useTracksStore()
-
+const projectStore = useProjectStore()
 </script>
 
 <template>
-    <v-navigation-drawer location="left" class="pa-4" color="primary" permanent>
-        <v-img :src="cassetteStore.metadata.image_url?.toString()" aspect-ratio="1" cover class="rounded-lg" />
-        <a :href="cassetteStore.metadata.original_item_url?.toString()" class="text-h5 clickable" target="_blank"
-            v-text="cassetteStore.metadata.item_name"></a>
-        <br />
-        <a :href="cassetteStore.metadata.owner_url?.toString()" class="text-subtitle-1 clickable" target="_blank"
-            v-text="cassetteStore.metadata.owner_display_name"></a>
-        <v-divider class="my-4" />
-        <div class="text-body-1"><strong>Cassettes:</strong> {{ cassetteStore.cassettes.length }}</div>
-        <div class="text-body-1"><strong>Tracks:</strong> {{ tracksStore.availableTracks.length }}</div>
-        <div class="text-body-1"><strong>Total Duration:</strong> {{ formatDuration(tracksStore.availableTracksTotalDuration) }}</div>
-        <v-divider class="my-4" />
+    <v-navigation-drawer floating v-model="projectStore.drawerOpen">
         <unavailable-tracks-list />
     </v-navigation-drawer>
 </template>
-
-<style scoped>
-.clickable {
-    text-decoration: none;
-    color: inherit;
-}
-
-.clickable:visited,
-.clickable:hover,
-.clickable:active {
-    color: inherit;
-}
-
-.clickable:hover {
-    text-decoration: underline;
-}
-</style>
