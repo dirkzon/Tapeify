@@ -45,7 +45,7 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
   <v-app-bar class="included pa-1" flat color="transparent">
     <template v-slot:append>
       <v-btn @click="projectStore.drawerOpen = !projectStore.drawerOpen" stacked>
-        <v-badge v-if="menuBadgeContent" color="secondary" :content="menuBadgeContent" location="top left">
+        <v-badge v-if="menuBadgeContent" color="secondary" :content="menuBadgeContent" location="top left" :offset-x="-5">
           <v-icon :icon="menuIcon" />
         </v-badge>
         <v-icon v-else :icon="menuIcon" />
