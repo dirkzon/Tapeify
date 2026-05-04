@@ -13,7 +13,7 @@ const track = computed(() => tracksStore.GetTrackById(props.trackId))
 
 function makeTrackAvailable() {
   tracksStore.MarkTrackAsAvailable(props.trackId)
-  layoutStore.calculateLayout()
+  layoutStore.calculateLayoutDebounced()
 }
 </script>
 

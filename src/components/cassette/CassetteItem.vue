@@ -44,7 +44,7 @@ function toggleAnchor(anchored: boolean) {
     })
   }
 
-  layoutStore.calculateLayout()
+  layoutStore.calculateLayoutDebounced()
 
   const trackSelected = tracksStore.selectedTracks.includes(props.trackId)
   tracksStore.ClearSelectedTracks()
