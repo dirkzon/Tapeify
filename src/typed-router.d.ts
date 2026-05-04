@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 /* prettier-ignore */
 // @ts-nocheck
 // noinspection ES6UnusedImports
@@ -37,23 +37,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/cassette/[spotify_id]': RouteRecordInfo<
-      '/cassette/[spotify_id]',
-      '/cassette/:spotify_id',
-      { spotify_id: ParamValue<true> },
-      { spotify_id: ParamValue<false> },
-      | never
-    >,
     '/project': RouteRecordInfo<
       '/project',
       '/project',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/search': RouteRecordInfo<
-      '/search',
-      '/search',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -83,21 +69,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/cassette/[spotify_id].vue': {
-      routes:
-        | '/cassette/[spotify_id]'
-      views:
-        | never
-    }
     'src/pages/project.vue': {
       routes:
         | '/project'
-      views:
-        | never
-    }
-    'src/pages/search.vue': {
-      routes:
-        | '/search'
       views:
         | never
     }
