@@ -52,7 +52,7 @@ function clearUnavailableTracks() {
         <v-divider class="mb-2" />
 
         <template v-slot:actions>
-            <v-btn text @click="clearUnavailableTracks">Clear List</v-btn>
+            <v-btn variant="text" @click="clearUnavailableTracks">Clear List</v-btn>
         </template>
     </v-card>
 </template>

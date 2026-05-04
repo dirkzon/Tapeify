@@ -35,8 +35,6 @@ onMounted(() => {
     source: item.source
   }))
   tracks.forEach((track) => trackStore.AddTrack(track))
-  projectStore
-
   layoutStore.calculateLayout()
 })
 projectStore.addSource({
