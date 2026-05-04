@@ -25,7 +25,8 @@ import UnavailableTracksList from './components/UnavailableTracksList.vue'
 import CassetteItem from './components/cassette/CassetteItem.vue'
 import CassetteActionsBar from './components/CassetteActionsBar.vue'
 import UnavailableCassetteItem from './components/UnavailableCassetteItem.vue'
-import UploadCassetteDialog from './components/UploadCassetteDialog.vue'
+import UploadCassetteDialog from './components/dialogs/UploadCassetteDialog.vue'
+import AddSourceDialog from "./components/dialogs/AddSourceDialog.vue";
 import Cassette from "./components/cassette/Cassette.vue";
 
 // Composables
@@ -49,6 +50,7 @@ app.component('cassette-item', CassetteItem)
 app.component('unavailable-cassette-item', UnavailableCassetteItem)
 app.component('cassette-actions-bar', CassetteActionsBar)
 app.component('upload-cassette-dialog', UploadCassetteDialog)
+app.component('add-source-dialog', AddSourceDialog)
 app.component('cassette', Cassette)
 
 app.mount('#app')

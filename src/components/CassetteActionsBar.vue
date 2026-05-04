@@ -30,8 +30,6 @@ function removeOrigin(originId: string) {
   layoutStore.calculateLayout()
 }
 
-const selectedTab = ref('user_playlists')
-
 const origins = computed(() => {
   return Object.entries(projectStore.origins).map(([id, origin]) => ({
     id,
@@ -48,36 +46,7 @@ const origins = computed(() => {
       <template v-slot:actions>
 
         <!-- Add items -->
-        <v-dialog max-width="800">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps" icon="mdi-playlist-plus" size="small" variant="text" />
-          </template>
-
-          <template v-slot:default>
-            <v-card style="border-radius: 12px;">
-              <v-toolbar color="primary" title="Select Playlist or Album">
-                <template v-slot:extension>
-                  <v-tabs v-model="selectedTab" align-tabs="center">
-                    <v-tab value="user_playlists">My Playlists</v-tab>
-                    <v-tab value="search_albums">Search Albums</v-tab>
-                    <v-tab value="search_playlists">Search Playlists</v-tab>
-                  </v-tabs>
-                </template>
-              </v-toolbar>
-              <v-tabs-window v-model="selectedTab" class="pa-3">
-                <v-tabs-window-item value="user_playlists">
-                  <user-playlists-tab />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="search_albums">
-                  <SearchAlbumsTab />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="search_playlists">
-                  <SearchPlaylistsTab />
-                </v-tabs-window-item>
-              </v-tabs-window>
-            </v-card>
-          </template>
-        </v-dialog>
+        <v-btn icon="mdi-playlist-plus" size="small" variant="text" > <add-source-dialog /> </v-btn>
 
         <!-- Remove items -->
         <v-select :items="origins" item-value="id" item-title="name" label="Origins" chips multiple density="compact"
@@ -99,7 +68,8 @@ const origins = computed(() => {
 
         <v-divider vertical />
 
-        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette" :disabled="!projectStore.hasOrigins" />
+        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette"
+          :disabled="!projectStore.hasOrigins" />
 
         <v-divider vertical />
 
@@ -120,7 +90,7 @@ const origins = computed(() => {
 
         <v-divider vertical />
 
-        <v-btn size="small" variant="text" :disabled="!projectStore.hasOrigins" >
+        <v-btn size="small" variant="text" :disabled="!projectStore.hasOrigins">
           <v-icon icon="mdi-upload-multiple" />
           <upload-cassette-dialog />
         </v-btn>
