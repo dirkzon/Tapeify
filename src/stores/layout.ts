@@ -6,6 +6,7 @@ import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
 import { TapeSide } from "@/sorting/tapeSideLayout";
 import { useProjectStore } from "./project";
+import { debounce } from "lodash";
 
 export const useLayoutStore = defineStore('layout', {
     state: () => ({
@@ -55,12 +56,13 @@ export const useLayoutStore = defineStore('layout', {
                 throw new Error(`Unknown sorter type: ${type}`);
             }
             this.selectedSortType = type;
-            this.calculateLayout();
+            this.calculateLayoutDebounced();
         },
         getAvailableSorters() {
             return trackSorterRegistry.list();
         },
         calculateLayout() {
+            console.log("Calculating layout...") // --- IGNORE ---
             const cassetteStore = useCassettesStore()
             const trackStore = useTracksStore()
             const anchorsStore = useAnchorsStore()
@@ -92,6 +94,9 @@ export const useLayoutStore = defineStore('layout', {
             this._calculate_ordered_tracks(sides)
             this._calculate_track_locations(sides)
         },
+        calculateLayoutDebounced: debounce(function (this: any) {
+            this.calculateLayout()
+        }, 2),
         _calculate_ordered_tracks(sides: TapeSide[]) {
             sides.forEach(side => {
                 this.orderedTracks.push(...side.toArray())

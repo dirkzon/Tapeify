@@ -75,7 +75,7 @@ const shorterCassetteRule: AlertRule<ShorterCassettePayload> = {
     fn: () => {
       const layoutStore = useLayoutStore();
       cassette.capacityMs = payload!.suggestedCapacityMs;
-      layoutStore.calculateLayout();
+      layoutStore.calculateLayoutDebounced();
     },
     message: `Set capacity to ${payload!.label}`,
   }),
@@ -121,7 +121,7 @@ const expandCassetteRule: AlertRule<ExpandCassettePayload> = {
     fn: () => {
       const layoutStore = useLayoutStore();
       cassette.capacityMs = payload!.suggestedCapacityMs;
-      layoutStore.calculateLayout();
+      layoutStore.calculateLayoutDebounced();
     },
     message: `Expand to ${payload!.label}`,
   }),
@@ -169,7 +169,7 @@ const needsNewCassetteRule: AlertRule<AddCassettePayload> = {
       const layoutStore = useLayoutStore();
 
       cassetteStore.addCassette();
-      layoutStore.calculateLayout();
+      layoutStore.calculateLayoutDebounced();
     },
     message: "Add another cassette",
   }),

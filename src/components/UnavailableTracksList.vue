@@ -32,7 +32,7 @@ function clearUnavailableTracks() {
     for (const trackId of tracksStore.unavailableTrackIds) {
         tracksStore.MarkTrackAsAvailable(trackId)
     }
-    layoutStore.calculateLayout()
+    layoutStore.calculateLayoutDebounced()
 }
 </script>
 
