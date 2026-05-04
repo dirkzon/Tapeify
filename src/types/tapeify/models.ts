@@ -112,7 +112,7 @@ export type AlertRule<TPayload = any> = {
   ) => CassetteAlert['action']
 }
 
-export interface Origin {
+export interface Source {
   type: 'playlist' | 'album',
   name: string
   owner_display_name: string

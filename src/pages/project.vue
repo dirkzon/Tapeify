@@ -25,7 +25,7 @@ onUnmounted(() => resetStores())
 
 <template>
     <div ref="gridRef" v-kbd-trap.roving.grid aria-label="item grid">
-        <v-row justify="center" v-if="projectStore.hasOrigins">
+        <v-row justify="center" v-if="projectStore.hasSources">
             <v-col v-for="cassette in cassetteStore.cassettes" :key="cassette.id" cols="12" sm="6">
                 <cassette :cassetteId="cassette.id" class="included" />
             </v-col>

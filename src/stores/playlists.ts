@@ -86,7 +86,7 @@ export const usePlaylistsStore = defineStore('playlists', {
         offset += limit
       }
 
-      projectStore.addOrigin({
+      projectStore.addSource({
         name: playlist.name,
         type: 'playlist',
         owner_display_name: playlist.owner.display_name,

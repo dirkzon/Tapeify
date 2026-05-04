@@ -21,19 +21,19 @@ function addCassette() {
   layoutStore.calculateLayout()
 }
 
-function removeOrigin(originId: string) {
-  projectStore.removeOrigin(originId)
-  const removedTracks = trackStore.RemoveTracksByOrigin(originId)
+function removeSource(sourceId: string) {
+  projectStore.removeSource(sourceId)
+  const removedTracks = trackStore.RemoveTracksBySource(sourceId)
   removedTracks.forEach(trackId => {
     anchorStore.removeAnchor(trackId)
   })
   layoutStore.calculateLayout()
 }
 
-const origins = computed(() => {
-  return Object.entries(projectStore.origins).map(([id, origin]) => ({
+const sources = computed(() => {
+  return Object.entries(projectStore.sources).map(([id, source]) => ({
     id,
-    name: origin.name
+    name: source.name
   }))
 })
 
@@ -49,9 +49,9 @@ const origins = computed(() => {
         <v-btn icon="mdi-playlist-plus" size="small" variant="text" > <add-source-dialog /> </v-btn>
 
         <!-- Remove items -->
-        <v-select :items="origins" item-value="id" item-title="name" label="Origins" chips multiple density="compact"
-          variant="outlined" hide-details v-model="projectStore.selectedOrigins"
-          @update:modelValue="layoutStore.calculateLayout" :disabled="!projectStore.hasOrigins">
+        <v-select :items="sources" item-value="id" item-title="name" label="Sources" chips multiple density="compact"
+          variant="outlined" hide-details v-model="projectStore.selectedSources"
+          @update:modelValue="layoutStore.calculateLayout" :disabled="!projectStore.hasSources">
           <template v-slot:item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps" :title="item.raw.name">
               <template v-slot:prepend="{ isSelected, select }">
@@ -60,7 +60,7 @@ const origins = computed(() => {
                 </v-list-item-action>
               </template>
               <template v-slot:append>
-                <v-btn icon="mdi-playlist-remove" size="small" variant="text" @click.stop="removeOrigin(item.raw.id)" />
+                <v-btn icon="mdi-playlist-remove" size="small" variant="text" @click.stop="removeSource(item.raw.id)" />
               </template>
             </v-list-item>
           </template>
@@ -69,14 +69,14 @@ const origins = computed(() => {
         <v-divider vertical />
 
         <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette"
-          :disabled="!projectStore.hasOrigins" />
+          :disabled="!projectStore.hasSources" />
 
         <v-divider vertical />
 
         <!-- Sorting select -->
         <v-select v-model="selectedSortType" :items="layoutStore.getAvailableSorters()" item-value="type"
           density="compact" label="Sorting Algorithm" item-title="name" hide-details min-width="200" variant="outlined"
-          :disabled="!projectStore.hasOrigins">
+          :disabled="!projectStore.hasSources">
           <template v-slot:item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name" />
           </template>
@@ -86,11 +86,11 @@ const origins = computed(() => {
 
 
         <v-btn icon="mdi-import" size="small" variant="text" />
-        <v-btn icon="mdi-export" size="small" variant="text" :disabled="!projectStore.hasOrigins" />
+        <v-btn icon="mdi-export" size="small" variant="text" :disabled="!projectStore.hasSources" />
 
         <v-divider vertical />
 
-        <v-btn size="small" variant="text" :disabled="!projectStore.hasOrigins">
+        <v-btn size="small" variant="text" :disabled="!projectStore.hasSources">
           <v-icon icon="mdi-upload-multiple" />
           <upload-cassette-dialog />
         </v-btn>

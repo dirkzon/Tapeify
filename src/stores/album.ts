@@ -42,7 +42,7 @@ export const useAlbumsStore = defineStore('albums', {
         offset += limit
       }
 
-      projectStore.addOrigin({
+      projectStore.addSource({
         name: album.name,
         type: 'album',
         owner_display_name: album.artists[0].name,

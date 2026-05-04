@@ -1,24 +1,24 @@
-import type { Origin } from "@/types/tapeify/models";
+import type { Source } from "@/types/tapeify/models";
 import { defineStore } from "pinia";
 
 export const useProjectStore = defineStore('project', {
     state: () => ({
-        origins: {} as Record<string, Origin>,
-        selectedOrigins: [] as string[],
+        sources: {} as Record<string, Source>,
+        selectedSources: [] as string[],
     }),
     getters: {
-        hasOrigins: (state) => Object.keys(state.origins).length > 0,
+        hasSources: (state) => Object.keys(state.sources).length > 0,
     },
     actions: {
-        addOrigin(origin: Origin, id: string) {
-            this.origins[id] = origin;
-            if (!this.selectedOrigins.includes(id)) {
-                this.selectedOrigins.push(id);
+        addSource(source: Source, id: string) {
+            this.sources[id] = source;
+            if (!this.selectedSources.includes(id)) {
+                this.selectedSources.push(id);
             }
         },
-        removeOrigin(id: string) {
-            delete this.origins[id];
-            this.selectedOrigins = this.selectedOrigins.filter(originId => originId !== id);
+        removeSource(id: string) {
+            delete this.sources[id];
+            this.selectedSources = this.selectedSources.filter(sourceId => sourceId !== id);
         }
     }
 })

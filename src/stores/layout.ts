@@ -82,7 +82,7 @@ export const useLayoutStore = defineStore('layout', {
             const trackSorter = trackSorterRegistry.create(this.selectedSortType, sides)
 
             const availableTracks = trackStore.availableTracks
-            const tracksInSelectedOrigins = availableTracks.filter(track => projectStore.selectedOrigins.includes(track.origin))
+            const tracksInSelectedOrigins = availableTracks.filter(track => projectStore.selectedSources.includes(track.origin))
 
             const anchored_tracks = trackSorter.prepackAnchoredTracks(tracksInSelectedOrigins, anchorsStore.anchors)
             const unanchored_tracks = tracksInSelectedOrigins.filter(t => !anchored_tracks.includes(t))
