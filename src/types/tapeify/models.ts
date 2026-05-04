@@ -58,7 +58,7 @@ export interface Track {
   explicit: boolean
   durationMs: number
   artists: string[]
-  origin: string
+  source: string
 }
 
 export interface TrackLocation {

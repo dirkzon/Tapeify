@@ -13,6 +13,6 @@ export function ParsePlaylistEpisodeDTO(episodeDTO: EpisodeDTO, playlistId: stri
         durationMs: episodeDTO.duration_ms,
         artists: episodeDTO.album.artists.map(a => a.type),
         image: GetSmallestImage(episodeDTO.album.images),
-        origin: playlistId
+        source: playlistId
     }
 }

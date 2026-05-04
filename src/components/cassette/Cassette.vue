@@ -66,8 +66,9 @@ const name = computed<string>({
 
 <template>
   <v-card class="cassette-card">
-    <v-toolbar color="primary">
+    <v-toolbar color="primary" class="pl-2 pr-4">
       <template v-slot:prepend>
+        <v-icon icon="mdi-cassette" size="30" class="mr-2" />
         <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details
           class="ma-0" style="min-width:150px" label="Capacity (min)" />
       </template>

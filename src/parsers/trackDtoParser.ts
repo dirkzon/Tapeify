@@ -13,7 +13,7 @@ export function ParsePlaylistTrackDTO(track: PlaylistTrackDTO, playlistId: strin
         durationMs: track.duration_ms,
         artists: track.artists.map(a => a.name),
         image: GetSmallestImage(track.album.images),
-        origin: playlistId
+        source: playlistId
     }
 }
 
@@ -27,6 +27,6 @@ export function ParseAlbumTrackDTO(track: TrackDTO, albumImage: URL | undefined,
         durationMs: track.duration_ms,
         artists: track.artists.map(a => a.name),
         image: albumImage,
-        origin: albumId
+        source: albumId
     }
 }  
