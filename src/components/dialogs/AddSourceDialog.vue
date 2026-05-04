@@ -10,7 +10,7 @@ const selectedTab = ref('user_playlists')
 
         <template v-slot:default>
             <v-card style="border-radius: 12px;">
-                <v-toolbar color="primary" title="Select Playlist or Album">
+                <v-toolbar color="primary" title="Add Playlist or Album as source">
                     <template v-slot:extension>
                         <v-tabs v-model="selectedTab" align-tabs="center">
                             <v-tab value="user_playlists">My Playlists</v-tab>

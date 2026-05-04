@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useCassettesStore } from '@/stores/cassette'
+import { useProjectStore } from '@/stores/project'
 
 const cassetteStore = useCassettesStore()
+const projectStore = useProjectStore()
 
 const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length > 0)
 </script>
@@ -10,7 +12,7 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
 <template>
     <v-dialog max-width="420">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps" icon="mdi-upload-multiple" size="small" variant="text" />
+            <v-btn v-bind="activatorProps" icon="mdi-upload-multiple" size="small" variant="text" :disabled="!projectStore.hasSources" />
         </template>
 
         <template v-slot:default="{ isActive }">
