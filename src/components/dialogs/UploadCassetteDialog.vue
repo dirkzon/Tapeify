@@ -8,7 +8,7 @@ const projectHasAlerts = computed(() => Object.keys(cassetteStore.alerts).length
 </script>
 
 <template>
-    <v-dialog activator="parent" max-width="420">
+    <v-dialog max-width="420">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn v-bind="activatorProps" icon="mdi-upload-multiple" size="small" variant="text" />
         </template>
