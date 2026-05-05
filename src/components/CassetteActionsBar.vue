@@ -35,6 +35,9 @@ const sources = computed(() => {
     id,
     name: source.name,
     icon: source.type === "playlist" ? "mdi-playlist-music" : source.type === "album" ? "mdi-album" : "mdi-file",
+    url: source.original_item_url,
+    owner: source.owner_display_name,
+    owner_url: source.owner_url,
   }))
 })
 
@@ -70,17 +73,21 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
           min-width="200">
           <template v-slot:chip="{ props: itemProps, item }">
             <v-chip v-bind="itemProps" :title="item.raw.name" size="small" class="text-truncate"
-              :prepend-icon="item.raw.icon" max-width="100" />
+              :prepend-icon="item.raw.icon" max-width="100"/>
           </template>
           <template v-slot:item="{ props: itemProps, item }">
-            <v-list-item v-bind="itemProps" :title="item.raw.name">
+            <v-list-item v-bind="itemProps">
+              <v-list-item-subtitle class="text-truncate">
+                <a :href="item.raw.owner_url" target="_blank" @click.stop="" style="text-decoration: underline; color: black;">{{ item.raw.owner }}</a>
+              </v-list-item-subtitle>
               <template v-slot:prepend="{ isSelected, select }">
                 <v-list-item-action start>
                   <v-checkbox-btn :model-value="isSelected" @update:model-value="select"></v-checkbox-btn>
                 </v-list-item-action>
               </template>
               <template v-slot:append>
-                <v-btn icon="mdi-trash-can-outline" size="small" variant="text" @click.stop="removeSource(item.raw.id)" />
+                <v-btn icon="mdi-open-in-new" size="small" variant="text" :href="item.raw.url" target="_blank" tabindex="-1" @click.stop=""/>
+                <v-btn icon="mdi-trash-can" size="small" variant="text" @click.stop="removeSource(item.raw.id)"/>
               </template>
             </v-list-item>
           </template>
