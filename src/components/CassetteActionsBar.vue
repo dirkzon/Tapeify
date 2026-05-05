@@ -99,8 +99,8 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
         
         <v-divider vertical />
 
-        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette"
-          :disabled="!projectStore.hasSources" />
+        <v-btn append-icon="mdi-cassette" size="small" variant="text" @click="addCassette"
+          :disabled="!projectStore.hasSources" text="+"/>
       </template>
     </v-card>
     <v-spacer />
