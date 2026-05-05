@@ -49,10 +49,9 @@ function clearUnavailableTracks() {
                     :track-id="trackId" />
             </draggable>
         </v-list>
-        <v-divider class="mb-2" />
 
         <template v-slot:actions>
-            <v-btn variant="text" @click="clearUnavailableTracks">Clear List</v-btn>
+            <v-btn variant="text" @click="clearUnavailableTracks" :disabled="tracksStore.unavailableTrackIds.length === 0">Clear List</v-btn>
         </template>
     </v-card>
 </template>
