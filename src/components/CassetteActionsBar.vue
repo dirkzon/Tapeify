@@ -33,7 +33,8 @@ function removeSource(sourceId: string) {
 const sources = computed(() => {
   return Object.entries(projectStore.sources).map(([id, source]) => ({
     id,
-    name: source.name
+    name: source.name,
+    icon: source.type === "playlist" ? "mdi-playlist-music" : source.type === "album" ? "mdi-album" : "mdi-file",
   }))
 })
 
@@ -43,9 +44,11 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
 
 <template>
   <v-app-bar class="included pa-1" flat color="transparent">
+    <!-- Open side menu button -->
     <template v-slot:append>
       <v-btn @click="projectStore.drawerOpen = !projectStore.drawerOpen" stacked>
-        <v-badge v-if="menuBadgeContent" color="secondary" :content="menuBadgeContent" location="top left" :offset-x="-5">
+        <v-badge v-if="menuBadgeContent" color="secondary" :content="menuBadgeContent" location="top left"
+          :offset-x="-5">
           <v-icon :icon="menuIcon" />
         </v-badge>
         <v-icon v-else :icon="menuIcon" />
@@ -60,10 +63,15 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
         <!-- Add items -->
         <add-source-dialog />
 
-        <!-- Remove items -->
+        <!-- Sources -->
         <v-select :items="sources" item-value="id" item-title="name" label="Sources" chips multiple density="compact"
           variant="outlined" hide-details v-model="projectStore.selectedSources"
-          @update:modelValue="layoutStore.calculateLayoutDebounced" :disabled="!projectStore.hasSources">
+          @update:modelValue="layoutStore.calculateLayoutDebounced" :disabled="!projectStore.hasSources"
+          min-width="200">
+          <template v-slot:chip="{ props: itemProps, item }">
+            <v-chip v-bind="itemProps" :title="item.raw.name" size="small" class="text-truncate"
+              :prepend-icon="item.raw.icon" max-width="100" />
+          </template>
           <template v-slot:item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps" :title="item.raw.name">
               <template v-slot:prepend="{ isSelected, select }">
@@ -72,7 +80,7 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
                 </v-list-item-action>
               </template>
               <template v-slot:append>
-                <v-btn icon="mdi-playlist-remove" size="small" variant="text" @click.stop="removeSource(item.raw.id)" />
+                <v-btn icon="mdi-trash-can-outline" size="small" variant="text" @click.stop="removeSource(item.raw.id)" />
               </template>
             </v-list-item>
           </template>
