@@ -66,7 +66,7 @@ const name = computed<string>({
 
 <template>
   <v-card class="cassette-card">
-    <v-toolbar color="primary" class="pl-2 pr-4">
+    <v-toolbar color="primary">
       <template v-slot:prepend>
         <v-icon icon="mdi-cassette" size="30" class="mr-2" />
         <v-select v-model="capacityMinutes" :items="cassetteStore.possibleLengthsMin" density="compact" hide-details
@@ -75,7 +75,7 @@ const name = computed<string>({
 
       <template v-slot:title>
         <v-text-field v-model="name" density="compact" hide-details placeholder="Cassette name"
-          class="cassette-title-field" />
+          class="mr-4"/>
       </template>
 
       <v-menu v-if="!props.disableControls">
