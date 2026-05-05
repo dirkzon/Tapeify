@@ -86,7 +86,7 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
                 </v-list-item-action>
               </template>
               <template v-slot:append>
-                <v-btn icon="mdi-open-in-new" size="small" variant="text" :href="item.raw.url" target="_blank" tabindex="-1" @click.stop=""/>
+                <v-btn icon="mdi-open-in-new" size="small" variant="text" :href="item.raw.url" target="_blank" @click.stop=""/>
                 <v-btn icon="mdi-trash-can" size="small" variant="text" @click.stop="removeSource(item.raw.id)"/>
               </template>
             </v-list-item>
