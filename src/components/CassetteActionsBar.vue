@@ -88,11 +88,6 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
 
         <v-divider vertical />
 
-        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette"
-          :disabled="!projectStore.hasSources" />
-
-        <v-divider vertical />
-
         <!-- Sorting select -->
         <v-select v-model="selectedSortType" :items="layoutStore.getAvailableSorters()" item-value="type"
           density="compact" label="Sorting Algorithm" item-title="name" hide-details min-width="200" variant="outlined"
@@ -101,15 +96,11 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
             <v-list-item v-bind="itemProps" :subtitle="item.raw.description" :title="item.raw.name" />
           </template>
         </v-select>
-
+        
         <v-divider vertical />
 
-
-        <v-btn icon="mdi-import" size="small" variant="text" />
-        <v-btn icon="mdi-export" size="small" variant="text" :disabled="!projectStore.hasSources" />
-
-        <v-divider vertical />
-        <upload-cassette-dialog />
+        <v-btn icon="mdi-cassette" size="small" variant="text" @click="addCassette"
+          :disabled="!projectStore.hasSources" />
       </template>
     </v-card>
     <v-spacer />
