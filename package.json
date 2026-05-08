@@ -46,6 +46,7 @@
     "eslint": "^10.1.0",
     "eslint-plugin-vuetify": "^2.7.2",
     "happy-dom": "^20.0.10",
+    "jsdom": "^29.1.1",
     "npm-run-all2": "^8.0.4",
     "pinia": "^2.3.1",
     "sass": "^1.77.8",
