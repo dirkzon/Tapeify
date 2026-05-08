@@ -4,7 +4,7 @@ import type { CreatePlaylistResponse, GetPlaylistsResponse, GetPlaylistTracksRes
 import type { EpisodeDTO, PlaylistDTO, PlaylistTrackDTO } from '@/types/spotify/dto'
 import { ParsePlaylistTrackDTO } from '@/parsers/trackDtoParser'
 import { ParsePlaylistEpisodeDTO } from '@/parsers/episodeDtoParser'
-import { apiClient } from '@/api/clients'
+import { apiClient } from '@/api'
 import { ParsePlaylistDTO } from '@/parsers/playlistDtoParser'
 import type { Playlist, PlaylistSearchResult, Track } from '@/types/tapeify/models'
 import { useProfileStore } from './profile'
