@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     accessToken: useStorage<string | undefined>('access_token', undefined),
     refreshToken: useStorage<string | undefined>('refresh_token', undefined),
-    expiresAt: useStorage<number | undefined>('expires_in', undefined),
+    expiresAt: useStorage<number | undefined>('expires_at', undefined),
     codeVerifier: useStorage<string | undefined>('code_verifier', undefined, sessionStorage),
   }),
   getters: {
