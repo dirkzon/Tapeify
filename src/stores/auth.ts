@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', {
     accessToken: useStorage<string | undefined>('access_token', undefined),
     refreshToken: useStorage<string | undefined>('refresh_token', undefined),
     expiresAt: useStorage<number | undefined>('expires_in', undefined),
-    codeVerifier: useStorage<string | undefined>('code_verifier', undefined),
+    codeVerifier: useStorage<string | undefined>('code_verifier', undefined, sessionStorage),
   }),
   getters: {
     accessTokenExpired(): boolean {
@@ -35,25 +35,19 @@ export const useAuthStore = defineStore('auth', {
       return url
     },
     async requestAccessToken(code: string): Promise<void> {
-      const client_id = import.meta.env.VITE_CLIENT_ID
-
-      const body = qs.stringify({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-        code_verifier: this.codeVerifier,
-        client_id: client_id
-      });
-
       const response = await authApiClient.post<TokenResponse>(
         "/api/token",
-        body,
+        qs.stringify({
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+          code_verifier: this.codeVerifier,
+          client_id: import.meta.env.VITE_CLIENT_ID,
+        }),
         {
           headers: {
-            "Authorization": `Basic ${btoa(
-              `${client_id}:${import.meta.env.VITE_CLIENT_SECRET}`
-            )}`
-          }
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
       );
 
@@ -63,15 +57,14 @@ export const useAuthStore = defineStore('auth', {
     },
     async refreshAccessToken(): Promise<void> {
       const client_id = import.meta.env.VITE_CLIENT_ID
-      const body = qs.stringify({
-        grant_type: "refresh_token",
-        refresh_token: this.refreshToken,
-        client_id: client_id,
-      });
 
       const response = await authApiClient.post<TokenResponse>(
         "/api/token",
-        body,
+        qs.stringify({
+        grant_type: "refresh_token",
+        refresh_token: this.refreshToken,
+        client_id: client_id,
+      }),
         {
           headers: {
             "Authorization": `Basic ${btoa(
