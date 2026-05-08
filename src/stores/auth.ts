@@ -58,19 +58,17 @@ export const useAuthStore = defineStore('auth', {
       sessionStorage.removeItem('code_verifier')
     },
     async refreshAccessToken(): Promise<void> {
-      const client_id = import.meta.env.VITE_CLIENT_ID
-
       const response = await authApiClient.post<TokenResponse>(
         "/api/token",
         qs.stringify({
         grant_type: "refresh_token",
         refresh_token: this.refreshToken,
-        client_id: client_id,
+        client_id: import.meta.env.VITE_CLIENT_ID,
       }),
         {
           headers: {
             "Authorization": `Basic ${btoa(
-              `${client_id}:${import.meta.env.VITE_CLIENT_SECRET}`
+              `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
             )}`
           }
         }
