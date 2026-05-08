@@ -54,6 +54,8 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = response.data.access_token;
       this.refreshToken = response.data.refresh_token;
       this.expiresAt = Date.now() + response.data.expires_in * 1000
+      this.codeVerifier = undefined
+      sessionStorage.removeItem('code_verifier')
     },
     async refreshAccessToken(): Promise<void> {
       const client_id = import.meta.env.VITE_CLIENT_ID
