@@ -1,5 +1,4 @@
 import type { AxiosError, AxiosInstance } from "axios";
-import type { Router } from "vue-router";
 
 type AuthStoreLike = {
   accessToken: string | undefined;
@@ -8,8 +7,12 @@ type AuthStoreLike = {
   refreshAccessToken: () => Promise<void>;
 };
 
+type RouterLike = {
+  push: (...args: any[]) => any;
+};
+
 export const createRefreshTokenInterceptor =
-  (client: AxiosInstance, authStore: AuthStoreLike, router: Router) =>
+  (client: AxiosInstance, authStore: AuthStoreLike, router: RouterLike) =>
   async (error: AxiosError) => {
     const status = error.response?.status;
 
