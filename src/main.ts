@@ -31,10 +31,12 @@ import Cassette from "./components/cassette/Cassette.vue";
 
 // Composables
 import { createApp } from 'vue'
+import { setupInterceptors } from "./api";
 
 const app = createApp(App)
 
 registerPlugins(app)
+setupInterceptors();
 
 app.component('cassette-side', CassetteSide)
 app.component('playlist-list', PlaylistsList)
