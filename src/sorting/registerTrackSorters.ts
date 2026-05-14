@@ -1,8 +1,7 @@
-import { trackSorterRegistry } from './trackSorterRegistry';
-import { GreedySort } from './greedySort';
-import { KeepTrackOrder } from './keepTrackOrder';
+import { Registry } from './core/';
+import { GreedySort, KeepTrackOrder } from './algorithms'; 
 
-trackSorterRegistry.register({
+Registry.register({
     meta: {
         type: "greedy",
         name: "Greedy Sort",
@@ -11,7 +10,7 @@ trackSorterRegistry.register({
     create: (sides) => new GreedySort(sides),
 });
 
-trackSorterRegistry.register({
+Registry.register({
     meta: {
         type: "keep-order",
         name: "Keep Track Order",

@@ -1,7 +1,7 @@
 import type { TapeSide } from "./tapeSideLayout";
 import type { TrackSorter } from "./trackSorter";
 
-export interface TrackSorterMetaData {
+interface TrackSorterMetaData {
     type: string
     name: string
     description: string
@@ -31,3 +31,4 @@ class TrackSorterRegistry {
 }
 
 export const trackSorterRegistry = new TrackSorterRegistry();
+

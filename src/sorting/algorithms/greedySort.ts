@@ -1,6 +1,6 @@
 import type { Track } from "@/types/tapeify/models";
-import type { TapeSide } from "./tapeSideLayout";
-import { TrackSorter } from "./trackSorter";
+import type { TapeSide } from "../core/tapeSideLayout";
+import { TrackSorter } from "../core/trackSorter";
 
 export class GreedySort extends TrackSorter {
   public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
