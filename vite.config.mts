@@ -6,15 +6,17 @@ import Vue from '@vitejs/plugin-vue'
 import VueRouter from 'unplugin-vue-router/vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 // Utilities
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/Tapeify/',
   plugins: [
+    tsconfigPaths(),
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),
