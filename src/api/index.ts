@@ -1,2 +1,2 @@
-import "./interceptors";
-import "./clients";
+export { setupInterceptors } from "./setup.interceptors";
+export * from "./clients";

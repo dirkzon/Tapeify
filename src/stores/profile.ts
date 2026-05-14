@@ -1,5 +1,5 @@
 import type { GetProfileResponse } from '@/types/spotify/responses'
-import { apiClient } from '@/api/clients'
+import { apiClient } from '@/api'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
