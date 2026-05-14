@@ -4,7 +4,7 @@ import type { GetAlbumResponse, GetAlbumTracksResponse, SearchResponse } from '@
 import { ParseAlbumTrackDTO } from '@/parsers/trackDtoParser'
 import { GetSmallestImage } from '@/utils/images/imageUtils'
 import { useCassettesStore } from './cassette'
-import { apiClient } from '@/api/clients'
+import { apiClient } from '@/api/'
 import { useProfileStore } from './profile'
 import type { AlbumDTO } from '@/types/spotify/dto'
 import { ParseAlbumDTO } from '@/parsers/albumDtoParser'

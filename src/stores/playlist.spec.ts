@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import { apiClient } from '@/api/clients';
 import type { GetPlaylistsResponse, GetPlaylistTracksResponse, UsersPlaylistsResponse } from '@/types/spotify/responses';
 import { usePlaylistsStore } from './playlists';
+import { apiClient } from '@/api'
 
 const mockGetUserPlaylistsResponse: UsersPlaylistsResponse = {
   items: [],

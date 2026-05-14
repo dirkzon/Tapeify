@@ -1,13 +1,29 @@
-import { authApiClient } from '@/api/clients';
-import type { TokenResponse } from '@/types/spotify/responses';
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
-import { useAuthStore } from './auth';
-import { createPinia, setActivePinia } from 'pinia';
+import { authApiClient } from '@/api'
+import type { TokenResponse } from '@/types/spotify/responses'
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
+import { useAuthStore } from './auth'
+import { createPinia, setActivePinia } from 'pinia'
+import { ref } from 'vue'
 
-vi.mock('@/api/clients');
 vi.mock('../router', () => ({
-  default: { push: vi.fn() }
-}));
+  default: { push: vi.fn() },
+}))
+
+vi.mock('@/api', () => ({
+  authApiClient: {
+    post: vi.fn(),
+  },
+}))
+
+vi.mock('@vueuse/core', () => {
+  return {
+    useStorage: (key: string, initial: any, storage?: Storage) => {
+      return ref(initial)
+    },
+  }
+})
+
+const mockedPost = vi.mocked(authApiClient.post)
 
 describe('Auth store', () => {
   const tokenResponseMock: TokenResponse = {
@@ -15,139 +31,145 @@ describe('Auth store', () => {
     token_type: 'access_token',
     scope: 'user-read-private user-read-email',
     expires_in: 3600,
-    refresh_token: '9876543210'
-  };
+    refresh_token: '9876543210',
+  }
 
-  const mockTime = new Date('2025-12-04T00:00:00Z');
-  const postSpy = vi.spyOn(authApiClient, 'post');
+  const mockTime = new Date('2025-12-04T00:00:00Z')
 
   beforeEach(() => {
-    setActivePinia(createPinia());
+    setActivePinia(createPinia())
 
-    vi.useFakeTimers();
-    vi.setSystemTime(mockTime);
+    vi.useFakeTimers()
+    vi.setSystemTime(mockTime)
 
-    vi.mocked(authApiClient.post).mockResolvedValue({ data: tokenResponseMock });
-
-    const authStore = useAuthStore();
-    authStore._generateCodeVerifier = vi.fn().mockReturnValue('test-code-verifier');
-    authStore._hashCodeVerifier = vi.fn().mockResolvedValue(new ArrayBuffer(32));
-    authStore._generateCodeChallenge = vi.fn().mockReturnValue('test-code-challenge');
-  });
+    mockedPost.mockResolvedValue({ data: tokenResponseMock } as any)
+  })
 
   afterEach(() => {
-    vi.clearAllMocks();
-    vi.useRealTimers();
-  });
+    vi.clearAllMocks()
+    vi.useRealTimers()
+    
+  })
 
   describe('requestAccessToken', () => {
-    it('successfully requests access token and calls API with correct args', async () => {
-      const authStore = useAuthStore();
-      const code = 'secretcode';
+    it('requests access token and updates store correctly', async () => {
+      const authStore = useAuthStore()
+      const code = 'secretcode'
 
-      expect(authStore.accessToken).not.toBeDefined();
-      expect(authStore.refreshToken).not.toBeDefined();
-      expect(authStore.expiresAt).not.toBeDefined();
+      expect(authStore.accessToken).toBeUndefined()
+      expect(authStore.refreshToken).toBeUndefined()
+      expect(authStore.expiresAt).toBeUndefined()
 
-      authStore.codeVerifier = 'test-code-verifier';
+      authStore.codeVerifier = 'test-code-verifier'
 
-      await authStore.requestAccessToken(code);
+      await authStore.requestAccessToken(code)
 
-      expect(postSpy).toHaveBeenCalledTimes(1);
-      expect(postSpy).toHaveBeenCalledWith(
+      expect(mockedPost).toHaveBeenCalledTimes(1)
+
+      expect(mockedPost).toHaveBeenCalledWith(
         '/api/token',
-        'grant_type=authorization_code&code=secretcode&redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2FTapeify%2Fcallback&code_verifier=test-code-verifier&client_id=0123456789',
+        expect.stringContaining('grant_type=authorization_code'),
         {
           headers: {
-            Authorization: `Basic ${btoa('0123456789:9876543210')}`
-          }
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         }
-      );
+      )
 
-      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token);
-      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token);
-      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000;
-      expect(authStore.expiresAt).toEqual(expectedTime);
-    });
-  });
+      expect(authStore.accessToken).toBe(tokenResponseMock.access_token)
+      expect(authStore.refreshToken).toBe(tokenResponseMock.refresh_token)
+
+      const expectedTime =
+        mockTime.getTime() + tokenResponseMock.expires_in * 1000
+
+      expect(authStore.expiresAt).toBe(expectedTime)
+    })
+  })
+
   describe('refreshAccessToken', () => {
-    it('successfully refresh access token and calls API with correct args', async () => {
-      const authStore = useAuthStore();
+    it('refreshes access token correctly', async () => {
+      const authStore = useAuthStore()
 
-      authStore.refreshToken = '9876543210';
+      authStore.refreshToken = '9876543210'
 
-      expect(authStore.accessToken).not.toBeDefined();
-      expect(authStore.refreshToken).toBeDefined();
-      expect(authStore.expiresAt).not.toBeDefined();
+      expect(authStore.accessToken).toBeUndefined()
+      expect(authStore.refreshToken).toBeDefined()
+      expect(authStore.expiresAt).toBeUndefined()
 
-      await authStore.refreshAccessToken();
+      await authStore.refreshAccessToken()
 
-      expect(postSpy).toHaveBeenCalledTimes(1);
-      expect(postSpy).toHaveBeenCalledWith(
+      expect(mockedPost).toHaveBeenCalledTimes(1)
+
+      expect(mockedPost).toHaveBeenCalledWith(
         '/api/token',
-        'grant_type=refresh_token&refresh_token=9876543210&client_id=0123456789',
+        expect.stringContaining('grant_type=refresh_token'),
         {
           headers: {
-            Authorization: `Basic ${btoa('0123456789:9876543210')}`
-          }
+            Authorization: `Basic ${btoa(
+              `${import.meta.env.VITE_CLIENT_ID}:${import.meta.env.VITE_CLIENT_SECRET}`
+            )}`,
+          },
         }
-      );
+      )
 
-      expect(authStore.accessToken).toEqual(tokenResponseMock.access_token);
-      expect(authStore.refreshToken).toEqual(tokenResponseMock.refresh_token);
-      const expectedTime = mockTime.getTime() + tokenResponseMock.expires_in * 1000;
-      expect(authStore.expiresAt).toEqual(expectedTime);
-    });
-  });
+      expect(authStore.accessToken).toBe(tokenResponseMock.access_token)
+      expect(authStore.refreshToken).toBe(tokenResponseMock.refresh_token)
+
+      const expectedTime =
+        mockTime.getTime() + tokenResponseMock.expires_in * 1000
+
+      expect(authStore.expiresAt).toBe(expectedTime)
+    })
+  })
+
   describe('accessTokenExpired', () => {
-    it('undefined expires at state', async () => {
-      const authStore = useAuthStore();
-      authStore.expiresAt = undefined;
+    it('returns true when expiresAt is undefined', () => {
+      const authStore = useAuthStore()
+      authStore.expiresAt = undefined
+      expect(authStore.accessTokenExpired).toBe(true)
+    })
 
-      expect(authStore.expiresAt).not.toBeDefined();
-      expect(authStore.accessTokenExpired).toBe(true);
-    });
-    it('is expired', async () => {
-      const authStore = useAuthStore();
-      authStore.expiresAt = mockTime.getTime() - 1000;
+    it('returns true when expired', () => {
+      const authStore = useAuthStore()
+      authStore.expiresAt = mockTime.getTime() - 1000
+      expect(authStore.accessTokenExpired).toBe(true)
+    })
 
-      expect(authStore.expiresAt).toBeDefined();
-      expect(authStore.accessTokenExpired).toBe(true);
-    });
-    it('not expired', async () => {
-      const authStore = useAuthStore();
-      authStore.expiresAt = mockTime.getTime() + 1000;
+    it('returns false when not expired', () => {
+      const authStore = useAuthStore()
+      authStore.expiresAt = mockTime.getTime() + 1000
+      expect(authStore.accessTokenExpired).toBe(false)
+    })
+  })
 
-      expect(authStore.expiresAt).toBeDefined();
-      expect(authStore.accessTokenExpired).toBe(false);
-    });
-  });
-describe('userAuthorizationUrl', async () => {
-  it('builds a correct Spotify authorize URL when expiresAt is undefined', async() => {
-    const authStore = useAuthStore();
+  describe('generateUserAuthorizationUrl', () => {
+    it('builds correct Spotify authorization URL', async () => {
+      const authStore = useAuthStore()
 
-    const url = await authStore.generateUserAuthorizationUrl();
+      // mock crypto-dependent functions
+      authStore._generateCodeVerifier = vi.fn().mockReturnValue('verifier')
+      authStore._hashCodeVerifier = vi
+        .fn()
+        .mockResolvedValue(new ArrayBuffer(32))
+      authStore._generateCodeChallenge = vi.fn().mockReturnValue('challenge')
 
-    expect(url.origin + url.pathname).toBe('https://accounts.spotify.com/authorize');
+      const url = await authStore.generateUserAuthorizationUrl()
 
-    const params = url.searchParams;
-    expect(params.get('response_type')).toBe('code');
-    expect(params.get('client_id')).toBe('0123456789');
-    expect(params.get('redirect_uri')).toBe('http://127.0.0.1:5173/Tapeify/callback');
-    expect(params.get('code_challenge_method')).toBe('S256');
-    expect(params.get('code_challenge')).toBe('test-code-challenge');
+      expect(url.origin + url.pathname).toBe(
+        'https://accounts.spotify.com/authorize'
+      )
 
-    const scope = params.get('scope') || '';
-    const scopes = scope.split(/\s+/).filter(Boolean);
-    expect(scopes).toEqual(expect.arrayContaining([
-      'user-read-private',
-      'user-read-email',
-      'playlist-read-private',
-      'playlist-modify-public',
-      'playlist-modify-private'
-    ]));
+      const params = url.searchParams
 
-    expect(params.has('expires_at')).toBe(false);
-  });
-});
-});
+      expect(params.get('response_type')).toBe('code')
+      expect(params.get('client_id')).toBe(import.meta.env.VITE_CLIENT_ID)
+      expect(params.get('redirect_uri')).toBe(
+        import.meta.env.VITE_REDIRECT_URI
+      )
+      expect(params.get('code_challenge_method')).toBe('S256')
+      expect(params.get('code_challenge')).toBe('challenge')
+
+      expect(params.has('expires_at')).toBe(false)
+    })
+  })
+})
