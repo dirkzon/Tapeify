@@ -1,32 +1,36 @@
-import type { Track } from '@/types/tapeify/models'
-import type { TapeSide } from '../core/tapeSideLayout'
-import { TrackSorter } from '../core/trackSorter'
+import type { Track } from "@/types/tapeify/models";
+import { TrackSorter } from "../core/trackSorter";
 
 export class KeepTrackOrder extends TrackSorter {
-  public sortTracks(sides: TapeSide[], unanchored_tracks: Track[]): void {
-    const numSides = sides.length
-    if (numSides === 0) return
+  sortTracks(unanchored_tracks: Track[]): void {
+    const numSides = this.sides.length;
+    if (numSides === 0) return;
 
-    let currentSideIndex = 0
+    let currentSideIndex = 0;
 
     for (const track of unanchored_tracks) {
-      let placed = false
+      let placed = false;
 
-      // Try to place track in the current side or later sides
       for (let attempt = currentSideIndex; attempt < numSides; attempt++) {
-        const side = sides[attempt]
-        if (side.getRemainingMs() >= track.durationMs) {
-          side.placeNext(track)
-          placed = true
-          currentSideIndex = attempt
-          break
+        const side = this.sides[attempt];
+
+        if (side.remainingMs >= track.durationMs) {
+          const index = side.nextAvailableIndex();
+          if (index === undefined) continue;
+
+          side.placeAtIndex(index, track);
+          placed = true;
+          currentSideIndex = attempt;
+          break;
         }
       }
 
-      // If the track doesn't fit in any remaining side, force it into the last side
       if (!placed) {
-        sides[numSides - 1].placeNext(track)
-        currentSideIndex = numSides - 1
+        const lastSide = this.sides[numSides - 1];
+        const index = lastSide.nextAvailableIndex();
+        if (index === undefined) throw new Error("No empty slot available on any side");
+        lastSide.placeAtIndex(index, track);
+        currentSideIndex = numSides - 1;
       }
     }
   }

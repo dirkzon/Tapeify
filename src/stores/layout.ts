@@ -1,12 +1,12 @@
 import type { CassetteLayout, TapeSideLayout, TrackLocation } from "@/types/tapeify/models"
 import { defineStore } from "pinia"
-import { trackSorterRegistry } from "@/sorting/core/trackSorterRegistry";
 import { useCassettesStore } from "./cassette";
 import { useTracksStore } from "./tracks";
 import { useAnchorsStore } from "./anchor";
-import { TapeSide } from "@/sorting/core/tapeSideLayout";
 import { useProjectStore } from "./project";
 import { debounce } from "lodash";
+import { trackSorterRegistry, type TrackSorterMetaData } from "@/sorting/core/trackSorterRegistry";
+import { Side } from "@/sorting/core/side";
 
 export const useLayoutStore = defineStore('layout', {
     state: () => ({
@@ -58,11 +58,10 @@ export const useLayoutStore = defineStore('layout', {
             this.selectedSortType = type;
             this.calculateLayoutDebounced();
         },
-        getAvailableSorters() {
+        getAvailableSorters(): TrackSorterMetaData[] {
             return trackSorterRegistry.list();
         },
         calculateLayout() {
-            console.log("Calculating layout...") // --- IGNORE ---
             const cassetteStore = useCassettesStore()
             const trackStore = useTracksStore()
             const anchorsStore = useAnchorsStore()
@@ -72,11 +71,11 @@ export const useLayoutStore = defineStore('layout', {
             this.trackLocations = {}
             this.cassettesLayout = {}
 
-            const sides: TapeSide[] = []
+            const sides: Side[] = []
 
             for (const cassette of cassetteStore.cassettes) {
                 for (let sideIndex = 0; sideIndex < cassette.sidesCount; sideIndex++) {
-                    const side = new TapeSide(cassette, sideIndex)
+                    const side = new Side(cassette, sideIndex)
                     sides.push(side)
                 }
             }
@@ -86,9 +85,9 @@ export const useLayoutStore = defineStore('layout', {
             const availableTracks = trackStore.availableTracks
             const tracksInSelectedOrigins = availableTracks.filter(track => projectStore.selectedSources.includes(track.source))
 
-            const anchored_tracks = trackSorter.prepackAnchoredTracks(tracksInSelectedOrigins, anchorsStore.anchors)
-            const unanchored_tracks = tracksInSelectedOrigins.filter(t => !anchored_tracks.includes(t))
-            trackSorter.sortTracks(sides, unanchored_tracks)
+            trackSorter._prepackAnchoredTracks(tracksInSelectedOrigins, anchorsStore.anchors)
+            const tracks_to_sort = tracksInSelectedOrigins.filter(t => anchorsStore.anchors[t.id] === undefined)
+            trackSorter.sortTracks(tracks_to_sort)
 
             this._calculate_cassette_layout(sides)
             this._calculate_ordered_tracks(sides)
@@ -97,31 +96,31 @@ export const useLayoutStore = defineStore('layout', {
         calculateLayoutDebounced: debounce(function (this: any) {
             this.calculateLayout()
         }, 2),
-        _calculate_ordered_tracks(sides: TapeSide[]) {
+        _calculate_ordered_tracks(sides: Side[]) {
             sides.forEach(side => {
-                this.orderedTracks.push(...side.toArray())
+                this.orderedTracks.push(...side.toFlatArrayTrackIds())
             });
         },
-        _calculate_track_locations(sides: TapeSide[]) {
+        _calculate_track_locations(sides: Side[]) {
             sides.forEach(side => {
-                const trackArray = side.toArray()
+                const trackArray = side.toFlatArrayTrackIds()
                 for (let i = 0; i < trackArray.length; i++) {
                     this.trackLocations[trackArray[i]] = {
-                        cassetteId: side.getCassetteId(),
-                        sideIndex: side.getSideIndex(),
+                        cassetteId: side.cassette.id,
+                        sideIndex: side.sideIndex,
                         position: i
                     }
                 }
             })
         },
-        _calculate_cassette_layout(sides: TapeSide[]) {
+        _calculate_cassette_layout(sides: Side[]) {
             for (let i = 0; i < sides.length; i++) {
-                const cassetteId = sides[i].getCassetteId()
+                const cassetteId = sides[i].cassette.id
                 const sideLayout: TapeSideLayout = {
-                    trackIds: sides[i].toArray(),
+                    trackIds: sides[i].toFlatArrayTrackIds(),
                     columnIndex: i,
-                    durationMs: sides[i].getUsedMs(),
-                    sideIndex: sides[i].getSideIndex()
+                    durationMs: sides[i].durationMs,
+                    sideIndex: sides[i].sideIndex
                 }
                 if (cassetteId in this.cassettesLayout) {
                     this.cassettesLayout[cassetteId].sides.push(sideLayout)
