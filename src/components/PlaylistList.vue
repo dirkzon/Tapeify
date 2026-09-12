@@ -2,11 +2,10 @@
 import type { Playlist } from '@/types/tapeify/models';
 import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 import { VInfiniteScroll } from 'vuetify/components';
-import { usePlaylistsStore } from '@/stores/playlists';
-import { useLayoutStore } from '@/stores/layout';
+import { useProjectStore } from '@/stores/project';
 
-const playlistStore = usePlaylistsStore()
-const layoutStore = useLayoutStore()
+const projectStore = useProjectStore()
+
 
 const props = defineProps<{
   playlists: Playlist[]
@@ -15,21 +14,16 @@ const props = defineProps<{
 
 const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('playlistScroll')
 
-async function SelectItem(id: string) {
-  await playlistStore.FetchPlaylistTracks(id)
-    layoutStore.calculateLayout()
-}
-
 function reset() {
   infiniteScrollRef.value?.reset('end')
 }
 </script>
 
 <template>
-  <v-list lines="two" density="compact" class="w-100 pa-3">
+  <v-list lines="two" density="compact" class="w-100 pa-3" v-model="projectStore.selectedSources">
     <v-infinite-scroll height="500" @load="load" v-if="playlists.length > 0" ref="playlistScroll">
       <v-list-item v-for="playlist in playlists" :key="playlist.id" :title="playlist.name" :subtitle="playlist.owner"
-        @click="SelectItem(playlist.id)" class="w-100">
+        @click="projectStore.selectSource(playlist.id, playlist.name)" class="w-100">
         <template #prepend>
           <v-avatar tile>
             <v-img v-if="playlist.image" :src="playlist.image.toString()" />
