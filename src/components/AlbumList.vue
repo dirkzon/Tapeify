@@ -1,23 +1,30 @@
-<script lang="ts" setup>
-import type { Album } from '@/types/tapeify/models';
-import type { InfiniteScrollSide, InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
-import { VInfiniteScroll } from 'vuetify/components';
-import { useAlbumsStore } from '@/stores/album';
-import { useLayoutStore } from '@/stores/layout';
+<script setup lang="ts">
+import type { Album } from '@/types/tapeify/models'
+import type {
+  InfiniteScrollSide,
+  InfiniteScrollStatus,
+} from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs'
+import { VInfiniteScroll } from 'vuetify/components'
+import { useProjectStore } from '@/stores/project'
 
-const albumsStore = useAlbumsStore()
-const layoutStore = useLayoutStore()
+
+const projectStore = useProjectStore()
+
 
 const props = defineProps<{
   albums: Album[]
-  load: (options: { side: InfiniteScrollSide; done: (status: InfiniteScrollStatus) => void }) => void
+  load: (options: {
+    side: InfiniteScrollSide
+    done: (status: InfiniteScrollStatus) => void
+  }) => void
 }>()
 
-const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>('albumsScroll')
+const infiniteScrollRef = useTemplateRef<InstanceType<typeof VInfiniteScroll>>(
+  'albumsScroll',
+)
 
-async function SelectItem(id: string) {
-  await albumsStore.FetchAlbumTracks(id)
-  layoutStore.calculateLayout()
+function isSelected(id: string) {
+  return projectStore.selectedSourceIds.includes(id)
 }
 
 function reset() {
@@ -26,27 +33,53 @@ function reset() {
 </script>
 
 <template>
-  <v-list lines="two" density="compact" class="w-100 pa-3">
-    <v-infinite-scroll height="500" @load="load" v-if="albums.length > 0" ref="albumsScroll">
-      <v-list-item v-for="album in albums" :key="album.id" :title="album.name" :subtitle="album.artists.toString()"
-        @click="SelectItem(album.id)">
+  <v-alert v-if="!props.albums.length" class="ma-4" type="info" variant="tonal" text="No albums found" />
+
+  <v-list v-else class="pa-2" lines="two" density="comfortable">
+    <v-infinite-scroll ref="albumsScroll" height="500" @load="props.load">
+      <v-list-item v-for="(album, index) in props.albums" :key="album.id" :title="album.name"
+        :subtitle="album.artists.toString()" rounded="lg" class="album-item my-1" @click="projectStore.selectSource(album.id, {
+          'name': album.name,
+          'type': 'album'
+        })">
         <template #prepend>
-          <v-avatar tile>
-            <v-img v-if="album.image" :src="album.image.toString()" />
-            <v-icon v-else icon="mdi-album" />
+          <v-avatar size="48" rounded="lg" color="surface-variant">
+            <v-img v-if="album.image" :src="album.image.toString()" :alt="`${album.name} cover`" cover />
+
+            <v-icon v-else icon="mdi-album" size="24" />
           </v-avatar>
         </template>
+
+        <template #append>
+          <v-icon :icon="isSelected(album.id)
+            ? 'mdi-check-circle'
+            : 'mdi-plus-circle-outline'
+            " :color="isSelected(album.id) ? 'primary' : undefined" />
+        </template>
       </v-list-item>
-      <template v-slot:empty>
-        <v-alert type="warning" text="No more albums" variant="outlined"></v-alert>
+
+      <template #empty>
+        <v-alert class="ma-2" type="success" variant="tonal" text="No more albums to load." />
       </template>
-      <template v-slot:error>
-        <v-alert type="error" text="Error on fetching new albums" closable variant="outlined" @click:close="reset">
-          <template #close="{ props }">
-            <v-btn v-bind="props" icon="mdi-refresh" size="small"></v-btn>
+
+      <template #error>
+        <v-alert class="ma-2" type="error" variant="tonal" title="Unable to load albums"
+          text="Try loading the albums again.">
+          <template #append>
+            <v-btn icon="mdi-refresh" variant="text" size="small" aria-label="Retry loading albums" @click="reset" />
           </template>
         </v-alert>
       </template>
     </v-infinite-scroll>
   </v-list>
 </template>
+
+<style scoped>
+.album-item {
+  transition: background-color 0.2s ease;
+}
+
+.album-item:hover {
+  background-color: rgba(var(--v-theme-primary), 0.06);
+}
+</style>

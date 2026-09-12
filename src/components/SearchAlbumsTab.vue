@@ -73,9 +73,15 @@ function ClearSearchBar() {
 
 <template>
   <v-card flat>
-    <v-text-field v-model:model-value="query" label="Search albums on Spotify" append-inner-icon="mdi-magnify"
-      :loading="loading" @click:clear="ClearSearchBar" density="compact" hide-details
-      @keydown.enter="searchAlbums(query, limit, offset)" clearable />
+    <v-card-text class="px-2 pb-2">
+      <v-text-field v-model:model-value="query" label="Search Spotify albums" prepend-inner-icon="mdi-magnify"
+        :loading="loading" variant="outlined" density="comfortable" clearable hide-details autocomplete="off"
+        aria-label="Search Spotify albums" @click:clear="ClearSearchBar" :rounded="true"
+        @keydown.enter="searchAlbums(query, limit, offset)" />
+    </v-card-text>
+
+    <v-divider />
+
     <AlbumList :albums="albums.albums" :load="LoadMoreAlbums" />
   </v-card>
 </template>
