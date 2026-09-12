@@ -18,7 +18,7 @@ const selectedSortType = computed({
 
 function addCassette() {
   cassetteStore.addCassette()
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 }
 
 function removeSource(sourceId: string) {
@@ -27,7 +27,7 @@ function removeSource(sourceId: string) {
   removedTracks.forEach(trackId => {
     anchorStore.removeAnchor(trackId)
   })
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 }
 
 const sources = computed(() => {
@@ -69,7 +69,7 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
         <!-- Sources -->
         <v-select :items="sources" item-value="id" item-title="name" label="Sources" chips multiple density="compact"
           variant="outlined" hide-details v-model="projectStore.selectedSources"
-          @update:modelValue="layoutStore.calculateLayoutDebounced" :disabled="!projectStore.hasSources"
+          @update:modelValue="layoutStore.calculateLayout" :disabled="!projectStore.hasSources"
           min-width="200">
           <template v-slot:chip="{ props: itemProps, item }">
             <v-chip v-bind="itemProps" :title="item.raw.name" size="small" class="text-truncate"

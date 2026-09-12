@@ -54,7 +54,7 @@ async function onChanged(event: DragChangeEvent<string>) {
     }
   }
 
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
   tracksCache.value = []
 }
 

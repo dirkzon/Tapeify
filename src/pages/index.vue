@@ -35,7 +35,7 @@ onMounted(() => {
     source: item.source
   }))
   tracks.forEach((track) => trackStore.AddTrack(track))
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 })
 projectStore.addSource({
   type: 'playlist',

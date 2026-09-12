@@ -1,6 +1,5 @@
-import { trackSorterRegistry } from './trackSorterRegistry';
-import { GreedySort } from './greedySort';
-import { KeepTrackOrder } from './keepTrackOrder';
+import { GreedySort, KeepTrackOrder } from './algorithms'; 
+import { trackSorterRegistry } from './core/trackSorterRegistry';
 
 trackSorterRegistry.register({
     meta: {

@@ -24,13 +24,13 @@ const topAlert = computed(() => {
 function removeCassette() {
   cassetteStore.removeCassette(props.cassetteId)
   anchorsStore.removeAnchoresByCassetteId(props.cassetteId)
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 }
 
 function addSide() {
   if (cassette.value == undefined) return
   cassetteStore.updateSidesCount(props.cassetteId, cassette.value.sidesCount + 1)
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 }
 
 function removeSide() {
@@ -38,7 +38,7 @@ function removeSide() {
   if (cassette.value.sidesCount <= 1) return
   cassetteStore.updateSidesCount(props.cassetteId, cassette.value.sidesCount - 1)
   anchorsStore.removeAnchorsByTapeSide(props.cassetteId, cassette.value.sidesCount)
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
 }
 
 const capacityMinutes = computed<number>({
@@ -49,7 +49,7 @@ const capacityMinutes = computed<number>({
   set(mins: number) {
     if (!cassette.value) return
     cassetteStore.updateCapacity(cassette.value.id, mins * 60000)
-    layoutStore.calculateLayoutDebounced()
+    layoutStore.calculateLayout()
   }
 })
 

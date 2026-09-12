@@ -1,5 +1,5 @@
-import type { TapeSide } from "./tapeSideLayout";
 import type { TrackSorter } from "./trackSorter";
+import type { Side } from "./side";
 
 export interface TrackSorterMetaData {
     type: string
@@ -8,7 +8,7 @@ export interface TrackSorterMetaData {
 }
 
 type TrackSorterFactory = {
-    create: (sides: TapeSide[]) => TrackSorter;
+    create: (sides: Side[]) => TrackSorter;
     meta: TrackSorterMetaData;
 };
 
@@ -19,7 +19,7 @@ class TrackSorterRegistry {
         this.sorters.set(sorter.meta.type, sorter);
     }
 
-    create(type: string, sides: TapeSide[]) {
+    create(type: string, sides: Side[]) {
         const factory = this.sorters.get(type);
         if (!factory) throw new Error(`Unknown sorter: ${type}`);
         return factory.create(sides);
@@ -31,3 +31,4 @@ class TrackSorterRegistry {
 }
 
 export const trackSorterRegistry = new TrackSorterRegistry();
+
