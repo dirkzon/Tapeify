@@ -79,22 +79,12 @@ function closeDialog() {
                 <v-divider />
 
                 <div class="pa-4">
-                    <div class="d-flex align-center mb-3">
-                        <span class="text-subtitle-1 font-weight-medium">
-                            Selected sources
-                        </span>
-
-                        <v-chip v-if="Object.keys(projectStore.selectedSources).length" size="small" color="primary"
-                            class="ml-2">
-                            {{ Object.keys(projectStore.selectedSources).length }}
-                        </v-chip>
-                    </div>
-
-                    <v-sheet v-if="Object.keys(projectStore.selectedSources).length" border rounded="lg" class="pa-3">
+                    <v-sheet v-if="Object.keys(projectStore.selectedSources).length" rounded="lg" class="pa-3">
                         <div class="d-flex flex-wrap ga-2">
                             <v-chip v-for="[id, name] in Object.entries(
                                 projectStore.selectedSources
-                            )" :key="id" closable variant="tonal" color="primary" @click:close="projectStore.deSelectSource(id)">
+                            )" :key="id" closable variant="tonal" color="primary"
+                                @click:close="projectStore.deSelectSource(id)">
                                 {{ name }}
                             </v-chip>
                         </div>
