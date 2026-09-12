@@ -47,7 +47,7 @@ function anchor() {
       position: trackLayout.position
     })
   }
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
   if (trackStore.lastSelectedTrackId) {
     trackStore.selectedTracks = [trackStore.lastSelectedTrackId]
   }
@@ -57,7 +57,7 @@ function unanchor() {
   for (const id of trackStore.selectedTracks) {
     anchorStore.removeAnchor(id)
   }
-  layoutStore.calculateLayoutDebounced()
+  layoutStore.calculateLayout()
   if (trackStore.lastSelectedTrackId) {
     trackStore.selectedTracks = [trackStore.lastSelectedTrackId]
   }
