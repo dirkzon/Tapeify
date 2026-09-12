@@ -1,10 +1,10 @@
-import type { Source } from "@/types/tapeify/models";
+import type { SelectedSource, Source } from "@/types/tapeify/models";
 import { defineStore } from "pinia";
 
 export const useProjectStore = defineStore('project', {
     state: () => ({
         sources: {} as Record<string, Source>,
-        selectedSources: {} as Record<string, string>,
+        selectedSources: {} as Record<string, SelectedSource>,
         drawerOpen: false
     }),
     getters: {
@@ -19,9 +19,9 @@ export const useProjectStore = defineStore('project', {
         removeSource(id: string) {
             delete this.sources[id];
         },
-        selectSource(id: string, name: string) {
+        selectSource(id: string, source: SelectedSource) {
             if (this.selectedSourceIds.includes(id)) return;
-            this.selectedSources[id] = name;
+            this.selectedSources[id] = source;
         },
         deSelectSource(id: string) {
             delete this.selectedSources[id]

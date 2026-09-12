@@ -1,14 +1,40 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useProjectStore } from '@/stores/project'
+import { usePlaylistsStore } from '@/stores/playlists'
+import { useAlbumsStore } from '@/stores/album'
+import { useLayoutStore } from '@/stores/layout'
 
 const projectStore = useProjectStore()
+const playlistStore = usePlaylistsStore()
+const albumStore = useAlbumsStore()
+const layoutStore = useLayoutStore()
 
 const dialogOpen = ref(false)
 const selectedTab = ref('user_playlists')
+const loading = ref(false)
 
 function closeDialog() {
     dialogOpen.value = false
+}
+
+async function importSources() {
+    loading.value = true
+    try {
+        for (const id of projectStore.selectedSourceIds) {
+            const source = projectStore.selectedSources[id]
+            if (source.type == "playlist") {
+                await playlistStore.FetchPlaylistTracks(id)
+            } else {
+                await albumStore.FetchAlbumTracks(id)
+            }
+        }
+        layoutStore.calculateLayout()
+
+        closeDialog()
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
@@ -48,7 +74,7 @@ function closeDialog() {
                 </v-tab>
 
                 <v-tab value="search_playlists">
-                    <v-icon start>mdi-magnify</v-icon>
+                    <v-icon start>mdi-playlist-music</v-icon>
                     Search playlists
                 </v-tab>
             </v-tabs>
@@ -58,21 +84,15 @@ function closeDialog() {
             <v-card-text class="pa-0">
                 <v-tabs-window v-model="selectedTab">
                     <v-tabs-window-item value="user_playlists">
-                        <div class="pa-4">
-                            <UserPlaylistsTab />
-                        </div>
+                        <UserPlaylistsTab />
                     </v-tabs-window-item>
 
                     <v-tabs-window-item value="search_albums">
-                        <div class="pa-4">
-                            <SearchAlbumsTab />
-                        </div>
+                        <SearchAlbumsTab />
                     </v-tabs-window-item>
 
                     <v-tabs-window-item value="search_playlists">
-                        <div class="pa-4">
-                            <SearchPlaylistsTab />
-                        </div>
+                        <SearchPlaylistsTab />
                     </v-tabs-window-item>
                 </v-tabs-window>
 
@@ -81,11 +101,11 @@ function closeDialog() {
                 <div class="pa-4">
                     <v-sheet v-if="Object.keys(projectStore.selectedSources).length" rounded="lg" class="pa-3">
                         <div class="d-flex flex-wrap ga-2">
-                            <v-chip v-for="[id, name] in Object.entries(
+                            <v-chip v-for="[id, source] in Object.entries(
                                 projectStore.selectedSources
                             )" :key="id" closable variant="tonal" color="primary"
                                 @click:close="projectStore.deSelectSource(id)">
-                                {{ name }}
+                                {{ source.name }}
                             </v-chip>
                         </div>
                     </v-sheet>
@@ -105,8 +125,8 @@ function closeDialog() {
                     Cancel
                 </v-btn>
 
-                <v-btn color="primary" variant="flat" :disabled="!Object.keys(projectStore.selectedSources).length"
-                    @click="closeDialog">
+                <v-btn color="primary" variant="flat" :loading="loading"
+                    :disabled="!Object.keys(projectStore.selectedSources).length || loading" @click="importSources">
                     Add sources
                 </v-btn>
             </v-card-actions>

@@ -38,8 +38,10 @@ function reset() {
   <v-list v-else class="pa-2" lines="two" density="comfortable">
     <v-infinite-scroll ref="albumsScroll" height="500" @load="props.load">
       <v-list-item v-for="(album, index) in props.albums" :key="album.id" :title="album.name"
-        :subtitle="album.artists.toString()" rounded="lg" class="album-item my-1"
-        @click="projectStore.selectSource(album.id, album.name)">
+        :subtitle="album.artists.toString()" rounded="lg" class="album-item my-1" @click="projectStore.selectSource(album.id, {
+          'name': album.name,
+          'type': 'album'
+        })">
         <template #prepend>
           <v-avatar size="48" rounded="lg" color="surface-variant">
             <v-img v-if="album.image" :src="album.image.toString()" :alt="`${album.name} cover`" cover />
@@ -54,8 +56,6 @@ function reset() {
             : 'mdi-plus-circle-outline'
             " :color="isSelected(album.id) ? 'primary' : undefined" />
         </template>
-
-        <v-divider v-if="index < props.albums.length - 1" class="mt-2" />
       </v-list-item>
 
       <template #empty>

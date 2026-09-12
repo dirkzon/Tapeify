@@ -2,11 +2,13 @@
 import { useTemplateRef } from 'vue'
 import { VInfiniteScroll } from 'vuetify/components'
 import { useProjectStore } from '@/stores/project'
-import type { Playlist } from '@/types/tapeify/models'
+import type { Playlist, SelectedSource } from '@/types/tapeify/models'
+
 import type {
   InfiniteScrollSide,
   InfiniteScrollStatus,
 } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs'
+import { ParseAlbumDTO } from '@/parsers/albumDtoParser'
 
 const projectStore = useProjectStore()
 
@@ -38,8 +40,10 @@ function reset() {
   <v-list v-else v-model="projectStore.selectedSources" class="pa-2" lines="two" density="comfortable">
     <v-infinite-scroll ref="playlistScroll" height="500" @load="props.load">
       <v-list-item v-for="(playlist, index) in props.playlists" :key="playlist.id" :title="playlist.name"
-        :subtitle="playlist.owner" rounded="lg" class="playlist-item my-1"
-        @click="projectStore.selectSource(playlist.id, playlist.name)">
+        :subtitle="playlist.owner" rounded="lg" class="playlist-item my-1" @click="projectStore.selectSource(playlist.id, {
+          'name': playlist.name,
+          'type': 'playlist'
+        })">
         <template #prepend>
           <v-avatar size="48" rounded="lg" color="surface-variant">
             <v-img v-if="playlist.image" :src="playlist.image.toString()" :alt="`${playlist.name} cover`" cover />
@@ -55,7 +59,6 @@ function reset() {
             " :color="isSelected(playlist.id) ? 'primary' : undefined" />
         </template>
 
-        <v-divider v-if="index < props.playlists.length - 1" class="mt-2" />
       </v-list-item>
 
       <template #empty>

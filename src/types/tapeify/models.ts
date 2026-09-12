@@ -120,3 +120,8 @@ export interface Source {
   owner_url: string
   description: string
 }
+
+export interface SelectedSource {
+  type: 'playlist' | 'album',
+  name: string
+}

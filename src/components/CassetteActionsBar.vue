@@ -80,11 +80,6 @@ const menuBadgeContent = computed(() => trackStore.unavailableTrackIds.length > 
                 <a :href="item.raw.owner_url" target="_blank" @click.stop=""
                   style="text-decoration: underline; color: black;">{{ item.raw.owner }}</a>
               </v-list-item-subtitle>
-              <!-- <template v-slot:prepend="{ isSelected, select }">
-                <v-list-item-action start>
-                  <v-checkbox-btn :model-value="isSelected" @update:model-value="select"></v-checkbox-btn>
-                </v-list-item-action>
-              </template> -->
               <template v-slot:append>
                 <v-btn icon="mdi-open-in-new" size="small" variant="text" :href="item.raw.url" target="_blank"
                   @click.stop="" />
