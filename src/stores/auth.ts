@@ -19,22 +19,34 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async generateUserAuthorizationUrl(): Promise<URL> {
-      const url = new URL(import.meta.env.VITE_SPOTIFY_AUTH_URI + '/authorize')
+      const url = new URL(`${import.meta.env.VITE_SPOTIFY_AUTH_URI}/authorize`)
       const searchParams = new URLSearchParams()
+
       searchParams.append('response_type', 'code')
       searchParams.append('client_id', import.meta.env.VITE_CLIENT_ID)
-      searchParams.append('scope', 'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private')
+      searchParams.append(
+        'scope',
+        'user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private'
+      )
       searchParams.append('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
       searchParams.append('code_challenge_method', 'S256')
+
       const codeVerifier = this._generateCodeVerifier()
+
       this.codeVerifier = codeVerifier
-      const hashedVerifier = await this._hashCodeVerifier(this.codeVerifier)
+
+      const hashedVerifier = await this._hashCodeVerifier(codeVerifier)
       const codeChallenge = this._generateCodeChallenge(hashedVerifier)
+
       searchParams.append('code_challenge', codeChallenge)
+
       url.search = searchParams.toString()
       return url
     },
     async requestAccessToken(code: string): Promise<void> {
+      if (!this.codeVerifier) {
+        throw new Error('Missing PKCE code verifier')
+      }
       const response = await authApiClient.post<TokenResponse>(
         "/api/token",
         qs.stringify({
@@ -54,17 +66,16 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = response.data.access_token;
       this.refreshToken = response.data.refresh_token;
       this.expiresAt = Date.now() + response.data.expires_in * 1000
-      this.codeVerifier = undefined
       sessionStorage.removeItem('code_verifier')
     },
     async refreshAccessToken(): Promise<void> {
       const response = await authApiClient.post<TokenResponse>(
         "/api/token",
         qs.stringify({
-        grant_type: "refresh_token",
-        refresh_token: this.refreshToken,
-        client_id: import.meta.env.VITE_CLIENT_ID,
-      }),
+          grant_type: "refresh_token",
+          refresh_token: this.refreshToken,
+          client_id: import.meta.env.VITE_CLIENT_ID,
+        }),
         {
           headers: {
             "Authorization": `Basic ${btoa(
